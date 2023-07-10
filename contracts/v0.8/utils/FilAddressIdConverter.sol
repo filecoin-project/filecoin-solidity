@@ -9,7 +9,7 @@ pragma solidity ^0.8.17;
  * See README for more details about how to use this when
  * developing for the FEVM.
  */
-library FilAddress {
+library FilAddressIdConverter {
     
     // Custom errors
     error CallFailed();
