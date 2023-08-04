@@ -2,9 +2,6 @@
 
 ---
 
-![zondax_light](docs/assets/zondax_light.png#gh-light-mode-only)
-![zondax_dark](docs/assets/zondax_dark.png#gh-dark-mode-only)
-
 Originally authored by Zondax. [zondax.ch](https://www.zondax.ch)
 Protocol Labs are now the owners of this library, and will mantain it moving forward.
 
