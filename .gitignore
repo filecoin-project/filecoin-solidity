@@ -10,3 +10,6 @@ node_modules/
 foundry-cache
 out/
 testing/*.csv
+package-lock.json
+
+vendor/solidity-BigNumber/cache/
