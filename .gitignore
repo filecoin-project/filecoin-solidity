@@ -13,3 +13,6 @@ testing/*.csv
 package-lock.json
 
 vendor/solidity-BigNumber/cache/
+artifacts
+cache
+ yarn.lock
