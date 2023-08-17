@@ -111,7 +111,7 @@ Find nice articles with rich and valuable content about different topics related
 
 ## Looking for the complete documentation? :books::books:
 
-Zondax documentation: [Let's go to docs web](https://docs.zondax.ch/fevm/filecoin-solidity) :arrow_upper_right:
+Filecoin solidity documentation: [Let's go to docs web](https://docs.filecoin.io/smart-contracts/developing-contracts/solidity-libraries/) :arrow_upper_right:
 
 ## Getting Started
 
