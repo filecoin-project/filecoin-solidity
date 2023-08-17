@@ -8,6 +8,21 @@ on:
       - master
 
 jobs:
+  smoke-tests:
+    name: "Run smoke tests"
+    timeout-minutes: 30
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - name: Install dependencies
+        run:  |
+          make install_solc_linux
+      - name: Compile contracts
+        run: ./testing/smoke_tests.sh
+
   build-mock:
     name: "Build Mock API"
     timeout-minutes: 30
@@ -657,8 +672,8 @@ jobs:
           cd testing
           rustup target add wasm32-unknown-unknown
           cargo test cbor_decode_test
-  
-  
+
+
 
   bigints-integration:
     name: "BigInt Tests"
