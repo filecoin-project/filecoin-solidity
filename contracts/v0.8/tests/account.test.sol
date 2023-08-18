@@ -28,7 +28,7 @@ import "../Utils.sol";
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract AccountApiTest {
-    function authenticate_message(CommonTypes.FilActorId target, AccountTypes.AuthenticateMessageParams memory params) public {
+    function authenticate_message(CommonTypes.FilActorId target, AccountTypes.AuthenticateMessageParams memory params) public view {
         AccountAPI.authenticateMessage(target, params);
     }
 

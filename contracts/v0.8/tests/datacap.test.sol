@@ -29,23 +29,23 @@ import "../Utils.sol";
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract DataCapApiTest {
-    function name() public returns (string memory) {
+    function name() public view returns (string memory) {
         return DataCapAPI.name();
     }
 
-    function symbol() public returns (string memory) {
+    function symbol() public view returns (string memory) {
         return DataCapAPI.symbol();
     }
 
-    function total_supply() public returns (CommonTypes.BigInt memory) {
+    function total_supply() public view returns (CommonTypes.BigInt memory) {
         return DataCapAPI.totalSupply();
     }
 
-    function balance(CommonTypes.FilAddress memory addr) public returns (CommonTypes.BigInt memory) {
+    function balance(CommonTypes.FilAddress memory addr) public view returns (CommonTypes.BigInt memory) {
         return DataCapAPI.balance(addr);
     }
 
-    function allowance(DataCapTypes.GetAllowanceParams memory params) public returns (CommonTypes.BigInt memory) {
+    function allowance(DataCapTypes.GetAllowanceParams memory params) public view returns (CommonTypes.BigInt memory) {
         return DataCapAPI.allowance(params);
     }
 

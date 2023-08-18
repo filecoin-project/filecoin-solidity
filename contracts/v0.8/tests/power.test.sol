@@ -31,19 +31,19 @@ contract PowerApiTest {
         return PowerAPI.createMiner(params, value);
     }
 
-    function miner_count() public returns (uint64) {
+    function miner_count() public view returns (uint64) {
         return PowerAPI.minerCount();
     }
 
-    function miner_consensus_count() public returns (int64) {
+    function miner_consensus_count() public view returns (int64) {
         return PowerAPI.minerConsensusCount();
     }
 
-    function network_raw_power() public returns (CommonTypes.BigInt memory) {
+    function network_raw_power() public view returns (CommonTypes.BigInt memory) {
         return PowerAPI.networkRawPower();
     }
 
-    function miner_raw_power(uint64 minerID) public returns (PowerTypes.MinerRawPowerReturn memory) {
+    function miner_raw_power(uint64 minerID) public view returns (PowerTypes.MinerRawPowerReturn memory) {
         return PowerAPI.minerRawPower(minerID);
     }
 }

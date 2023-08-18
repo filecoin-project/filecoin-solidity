@@ -27,7 +27,7 @@ import "../VerifRegAPI.sol";
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract VerifRegApiTest {
-    function get_claims(VerifRegTypes.GetClaimsParams memory params) public returns (VerifRegTypes.GetClaimsReturn memory) {
+    function get_claims(VerifRegTypes.GetClaimsParams memory params) public view returns (VerifRegTypes.GetClaimsReturn memory) {
         return VerifRegAPI.getClaims(params);
     }
 
