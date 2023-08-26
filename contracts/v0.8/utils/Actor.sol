@@ -20,6 +20,7 @@ pragma solidity ^0.8.17;
 
 import "./Misc.sol";
 import "../types/CommonTypes.sol";
+import {Errors} from "./Errors.sol";
 
 /// @title Call actors utilities library, meant to interact with Filecoin builtin actors
 /// @author Zondax AG
@@ -219,7 +220,7 @@ library Actor {
         }
 
         if (exit != 0) {
-            revert ActorError(exit);
+            Errors.revertWith(exit);
         }
 
         return return_value;
