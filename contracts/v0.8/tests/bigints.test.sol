@@ -30,7 +30,7 @@ import "../utils/BigInts.sol";
 contract BigIntsTest {
     using BigInts for CommonTypes.BigInt;
 
-    function to_uint256() public view {
+    function test_to_uint256() public view {
         CommonTypes.BigInt memory value;
         uint256 converted;
         bool isOverflow;
@@ -209,6 +209,14 @@ contract BigIntsTest {
         require(
             converted == -57896044618658097711785492504343953926634992332820282019728792003956564819967,
             "'(2 ** 256) / 2 - 1' should be '-57896044618658097711785492504343953926634992332820282019728792003956564819967'"
+        );
+
+        value = CommonTypes.BigInt(hex"8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", true);
+        (converted, isOverflow) = value.toInt256();
+        require(!isOverflow, "it should be valid");
+        require(
+            converted == -57896044618658097711785492504343953926634992332820282019728792003956564819968,
+            "'(2 ** 256) / 2' should be '-57896044618658097711785492504343953926634992332820282019728792003956564819968'"
         );
 
         value = CommonTypes.BigInt(hex"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", true);

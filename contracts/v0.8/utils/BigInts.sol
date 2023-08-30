@@ -26,8 +26,9 @@ import "../utils/Misc.sol";
 /// @notice This library is a set a functions that allows to handle filecoin addresses conversions and validations
 /// @author Zondax AG
 library BigInts {
-    uint256 constant MAX_UINT = (2 ** 256) - 1;
-    uint256 constant MAX_INT = ((2 ** 256) / 2) - 1;
+    uint256 constant MAX_UINT = type(uint).max; // (2 ** 256) - 1;
+    uint256 constant MAX_INT = uint(type(int).max); // ((2 ** 256) / 2) - 1;
+    uint256 constant MIN_INT = uint(-type(int).min);
 
     error NegativeValueNotAllowed();
 
@@ -72,11 +73,15 @@ library BigInts {
     /// @return a int256 value and flog that indicates whether it was possible to convert or not (the value overflows int256 type)
     function toInt256(CommonTypes.BigInt memory value) internal view returns (int256, bool) {
         BigNumber memory max = BigNumbers.init(MAX_INT, false);
+        BigNumber memory min = BigNumbers.init(MIN_INT, true);
         BigNumber memory bigNumValue = BigNumbers.init(value.val, false);
-        if (BigNumbers.gt(bigNumValue, max)) {
+        if (BigNumbers.gt(bigNumValue, max) || BigNumbers.lt(bigNumValue, min)) {
             return (0, true);
         }
 
+        if (BigNumbers.eq(bigNumValue, min)) {
+            return (type(int).min, false);
+        }
         int256 parsedValue = int256(uint256(bytes32(bigNumValue.val)));
         return (value.neg ? -1 * parsedValue : parsedValue, false);
     }
