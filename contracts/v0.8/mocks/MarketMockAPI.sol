@@ -23,7 +23,7 @@ import "../types/MarketTypes.sol";
 import "../types/CommonTypes.sol";
 import "./types/MockTypes.sol";
 
-import "@zondax/solidity-bignumber/src/BigNumbers.sol";
+import "vendor/solidity-BigNumber/src/BigNumbers.sol";
 
 /// @title This library is a proxy to the singleton Storage Market actor (address: f05). Calling one of its methods will result in a cross-actor call being performed. However, in this mock library, no actual call is performed.
 /// @author Zondax AG

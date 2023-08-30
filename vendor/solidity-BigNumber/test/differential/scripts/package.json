@@ -1,0 +1,21 @@
+{
+  "name": "solidity-BigNumber-differential",
+  "version": "1.0.0",
+  "description": "Scripts to perform solidity bignumber testing",
+  "main": "generate.js",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "bn.js": "^5.2.1",
+    "ethereumjs-util": "^7.1.4",
+    "rlp": "^3.0.0",
+    "typescript": "^4.8.4"
+  },
+  "scripts": {
+    "compile": "npx tsc --esModuleInterop ./*.ts",
+    "differential": "node differential.js"
+  },
+  "dependencies": {
+    "ethers": "^5.7.2"
+  }
+}

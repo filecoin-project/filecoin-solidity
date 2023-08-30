@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
-import "@zondax/solidity-bignumber/src/BigNumbers.sol";
+import "vendor/solidity-BigNumber/src/BigNumbers.sol";
 
 import "../types/CommonTypes.sol";
 import "../utils/Misc.sol";
