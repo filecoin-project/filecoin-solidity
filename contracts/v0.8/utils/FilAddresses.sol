@@ -39,16 +39,17 @@ library FilAddresses {
     /// @notice allow to get a eth address from 040a type FilAddress made above
     /// @param addr FilAddress to convert
     /// @return new eth address
-    function toEthAddress(bytes memory addr) internal pure returns (address) {
-        if (addr[0] != 0x04 || addr[1] != 0x0a || addr.length != 22) {
+    function toEthAddress(CommonTypes.FilAddress memory addr) internal pure returns (address) {
+        if (addr.data[0] != 0x04 || addr.data[1] != 0x0a || addr.data.length != 22) {
             revert InvalidAddress();
         }
-        bytes memory addrBytes = new bytes(20);
-        for (uint256 i = 0; i < 20;) {
-            addrBytes[i] = addr[i + 2];
-            unchecked {++i;}
+        bytes memory filAddress = addr.data;
+        bytes20 ethAddress;
+
+        assembly {
+            ethAddress := mload(add(filAddress, 0x22))
         }
-        bytes20 ethAddress = bytes20(addrBytes);
+
         return address(ethAddress);
     }
 
