@@ -131,45 +131,6 @@ library MarketCBOR {
         return ret;
     }
 
-    // /// @notice serialize DealProposal struct to cbor in order to pass as arguments to the market actor
-    // /// @param deal DealProposal to serialize as cbor
-    // /// @return cbor serialized data as bytes
-    // function serializeDealProposal(MarketTypes.DealProposal memory deal) internal pure returns (bytes memory) {
-    //     uint256 capacity = 0;
-
-    //     capacity += Misc.getPrefixSize(11);
-
-    //     capacity += Misc.getCidSize(deal.piece_cid.data);
-    //     capacity += Misc.getPrefixSize(deal.piece_size);
-    //     capacity += Misc.getBoolSize();
-    //     capacity += Misc.getBytesSize(deal.client.data);
-    //     capacity += Misc.getBytesSize(deal.provider.data);
-    //     capacity += Misc.getBytesSize(deal.label.data);
-    //     capacity += Misc.getChainEpochSize(deal.start_epoch);
-    //     capacity += Misc.getChainEpochSize(deal.end_epoch);
-    //     capacity += Misc.getBytesSize(deal.storage_price_per_epoch.serializeBigInt());
-    //     capacity += Misc.getBytesSize(deal.provider_collateral.serializeBigInt());
-    //     capacity += Misc.getBytesSize(deal.client_collateral.serializeBigInt());
-
-    //     CBOR.CBORBuffer memory buf = CBOR.create(capacity);
-
-    //     buf.startFixedArray(11);
-
-    //     buf.writeCid(deal.piece_cid.data);
-    //     buf.writeUInt64(deal.piece_size);
-    //     buf.writeBool(deal.verified_deal);
-    //     buf.writeBytes(deal.client.data);
-    //     buf.writeBytes(deal.provider.data);
-    //     buf.writeDealLabel(deal.label);
-    //     buf.writeChainEpoch(deal.start_epoch);
-    //     buf.writeChainEpoch(deal.end_epoch);
-    //     buf.writeBytes(deal.storage_price_per_epoch.serializeBigInt());
-    //     buf.writeBytes(deal.provider_collateral.serializeBigInt());
-    //     buf.writeBytes(deal.client_collateral.serializeBigInt());
-
-    //     return buf.data();
-    // }
-
     /// @notice serialize PublishStorageDealsParams struct to cbor in order to pass as arguments to the market actor
     /// @param params PublishStorageDealsParams to serialize as cbor
     /// @return cbor serialized data as bytes
