@@ -2,7 +2,7 @@
 
 ---
 
-Originally authored by Zondax.  Learn more at [zondax.ch](https://www.zondax.ch).
+Originally authored by Zondax. Learn more at [zondax.ch](https://www.zondax.ch).
 Protocol Labs are now the owners of this library, and will mantain it moving forward.
 
 ---
@@ -111,7 +111,7 @@ Find nice articles with rich and valuable content about different topics related
 
 ## Looking for the complete documentation? :books::books:
 
-Zondax documentation: [Let's go to docs web](https://docs.zondax.ch/fevm/filecoin-solidity) :arrow_upper_right:
+Filecoin solidity documentation: [Let's go to docs web](https://docs.filecoin.io/smart-contracts/developing-contracts/solidity-libraries/) :arrow_upper_right:
 
 ## Getting Started
 
