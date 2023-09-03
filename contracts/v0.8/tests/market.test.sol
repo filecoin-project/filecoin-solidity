@@ -26,6 +26,8 @@ import "../types/MarketTypes.sol";
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract MarketApiTest {
+
+    uint[] public publishedDealIds;
     function add_balance(CommonTypes.FilAddress memory providerOrClient, uint256 value) public payable {
         MarketAPI.addBalance(providerOrClient, value);
     }
@@ -79,6 +81,8 @@ contract MarketApiTest {
     }
 
     function publish_storage_deals(MarketTypes.PublishStorageDealsParams memory params) public returns (MarketTypes.PublishStorageDealsReturn memory) {
-        return MarketAPI.publishStorageDeals(params);
+        MarketTypes.PublishStorageDealsReturn memory publishedStorageDeals = MarketAPI.publishStorageDeals(params);
+        for(uint i = 0; i < publishedStorageDeals.ids.length; ++i) { publishedDealIds.push(publishedStorageDeals.ids[i]); }
+        return publishedStorageDeals;
     }
 }

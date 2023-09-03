@@ -16,3 +16,4 @@ vendor/solidity-BigNumber/cache/
 artifacts
 cache
 yarn.lock
+typechain-types

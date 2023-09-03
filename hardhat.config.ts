@@ -1,5 +1,6 @@
 import { HardhatUserConfig } from "hardhat/config"
 
+import "@typechain/hardhat"
 import "@openzeppelin/hardhat-upgrades"
 import "@nomicfoundation/hardhat-foundry"
 
@@ -23,7 +24,6 @@ const config: HardhatUserConfig = {
         },
         localnet: {
             url: "http://127.0.0.1:1234/rpc/v1",
-            accounts: [],
             chainId: 31415926,
             gas: 2000000000000,
         },

@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
         "lib": ["ES2021.String"]
-    }
+    },
+    "include": ["./hh-test", "./typechain-types"],
+    "files": ["./hardhat.config.ts"]
 }
