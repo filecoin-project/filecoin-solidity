@@ -25,7 +25,7 @@ contract FilAddressesTest is Test {
         assertEq(testAddress, addr);
     }
 
-    function testToEthAddressValidInvalidFirstByte() public {
+    function testToEthAddressInvalidFirstByte() public {
         CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
           abi.encodePacked(hex"030a", testAddress)
         );
@@ -34,7 +34,7 @@ contract FilAddressesTest is Test {
         FilAddresses.toEthAddress(filAddress);
     }
 
-    function testToEthAddressValidInvalidSecondByte() public {
+    function testToEthAddressInvalidSecondByte() public {
         CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
           abi.encodePacked(hex"040b", testAddress)
         );
@@ -43,7 +43,7 @@ contract FilAddressesTest is Test {
         FilAddresses.toEthAddress(filAddress);
     }
 
-    function testToEthAddressValidInvalidBytesLength() public {
+    function testToEthAddressInvalidBytesLength() public {
         CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
           abi.encodePacked(hex"040b", testAddress, hex"00")
         );
