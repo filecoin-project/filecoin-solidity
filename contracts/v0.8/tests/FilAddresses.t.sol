@@ -4,7 +4,6 @@ pragma solidity ^0.8.17;
 import {Test} from "forge-std/Test.sol";
 import {FilAddresses} from "contracts/v0.8/utils/FilAddresses.sol";
 import {CommonTypes} from "contracts/v0.8/types/CommonTypes.sol";
-import "forge-std/console.sol";
 
 contract FilAddressesTest is Test {
     error InvalidAddress();
@@ -23,8 +22,6 @@ contract FilAddressesTest is Test {
 
     function testToEthAddressValid() public {
         address addr = FilAddresses.toEthAddress(testFilAddress);
-        console.log(addr);
-        console.log(testAddress);
         assertEq(testAddress, addr);
     }
 
