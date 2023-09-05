@@ -47,16 +47,16 @@ library Errors {
     error DealExpired();
 
     function revertWith(int256 exitCode) internal pure {
-        if (exitCode == USR_ILLEGAL_ARGUMENT) revert IllegalArgument();
-        if (exitCode == USR_NOT_FOUND) revert NotFound();
-        if (exitCode == USR_FORBIDDEN) revert Forbidden();
-        if (exitCode == USR_INSUFFICIENT_FUNDS) revert UserInsufficientFunds();
-        if (exitCode == USR_ILLEGAL_STATE) revert IllegalState();
-        if (exitCode == USR_SERIALIZATION) revert Serialization();
-        if (exitCode == USR_UNHANDLED_MESSAGE) revert UnhandledMessage();
-        if (exitCode == USR_UNSPECIFIED) revert Unspecified();
-        if (exitCode == USR_ASSERTION_FAILED) revert UserAssertionFailed();
-        if (exitCode == FIRST_ACTOR_SPECIFIC_EXIT_CODE) revert DealExpired();
+        if (exitCode == USR_ILLEGAL_ARGUMENT) revert USR_ILLEGAL_ARGUMENT();
+        if (exitCode == USR_NOT_FOUND) revert USR_NOT_FOUND();
+        if (exitCode == USR_FORBIDDEN) revert USR_FORBIDDEN();
+        if (exitCode == USR_INSUFFICIENT_FUNDS) revert USR_INSUFFICIENT_FUNDS();
+        if (exitCode == USR_ILLEGAL_STATE) revert USR_ILLEGAL_STATE();
+        if (exitCode == USR_SERIALIZATION) revert USR_SERIALIZATION();
+        if (exitCode == USR_UNHANDLED_MESSAGE) revert USR_UNHANDLED_MESSAGE();
+        if (exitCode == USR_UNSPECIFIED) revert USR_UNSPECIFIED();
+        if (exitCode == USR_ASSERTION_FAILED) revert USR_ASSERTION_FAILED();
+        if (exitCode == FIRST_ACTOR_SPECIFIC_EXIT_CODE) revert DEAL_EXPIRED();
 
         revert("Unknown error code");
     }
