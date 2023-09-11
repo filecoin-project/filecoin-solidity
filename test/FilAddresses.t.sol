@@ -64,4 +64,98 @@ contract FilAddressesTest is Test {
 
         assertEq(filAddressBytes, filAddress.data);
     }
+
+    function testFuzz_fromBytesFirstByte0x00(bytes memory data) public {
+        vm.assume(data.length > 0 && data.length <= 10);
+        data[0] = 0x00;
+
+        CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
+        assertEq(data, filAddress.data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x00InvalidLength(bytes memory data) public {
+        vm.assume(data.length > 10);
+        data[0] = 0x00;
+
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x01(bytes memory data) public {
+        vm.assume(data.length == 21);
+        data[0] = 0x01;
+
+        CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
+        assertEq(data, filAddress.data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x01InvalidLength(bytes memory data) public {
+        vm.assume(data.length > 0 && data.length != 21);
+        data[0] = 0x01;
+
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x02(bytes memory data) public {
+        vm.assume(data.length == 21);
+        data[0] = 0x02;
+
+        CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
+        assertEq(data, filAddress.data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x02InvalidLength(bytes memory data) public {
+        vm.assume(data.length > 0 && data.length != 21);
+        data[0] = 0x02;
+
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x03(bytes memory data) public {
+        vm.assume(data.length == 49);
+        data[0] = 0x03;
+
+        CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
+        assertEq(data, filAddress.data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x03InvalidLength(bytes memory data) public {
+        vm.assume(data.length > 0 && data.length != 49);
+        data[0] = 0x03;
+
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x04(bytes memory data) public {
+        vm.assume(data.length > 0 && data.length <= 64);
+        data[0] = 0x04;
+
+        CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
+        assertEq(data, filAddress.data);
+    }
+
+    function testFuzz_fromBytesFirstByte0x04InvalidLength(bytes memory data) public {
+        vm.assume(data.length > 64);
+        data[0] = 0x04;
+
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(data);
+    }
+
+    function testFuzz_fromBytesFirstByteOther(bytes memory data) public {
+        vm.assume(data.length > 0 && data.length <= 256 && data[0] > 0x04);
+
+        CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
+        assertEq(data, filAddress.data);
+    }
+
+    // function testFuzz_fromBytesFirstByteOtherInvalidLength(bytes memory data) public {
+    //     vm.assume(data.length > 256 && data[0] > 0x04);
+
+    //     vm.expectRevert(InvalidAddress.selector);
+    //     FilAddresses.fromBytes(data);
+    // }
 }
