@@ -8,27 +8,38 @@ import {CommonTypes} from "contracts/v0.8/types/CommonTypes.sol";
 contract FilAddressesTest is Test {
     error InvalidAddress();
 
-    function testFuzz_toEthAddressInvalidFirstByte(address addr) public {
+    function testFuzz_toEthAddressInvalidFirstByte(
+       address addr,
+       bytes1 firstByte
+    ) public {
+        vm.assume(firstByte != hex"04");
         CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
-          abi.encodePacked(hex"030a", addr)
+          abi.encodePacked(firstByte, hex"0a", addr)
         );
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(filAddress);
     }
 
-    function testFuzz_toEthAddressInvalidSecondByte(address addr) public {
+    function testFuzz_toEthAddressInvalidSecondByte(
+        address addr,
+        bytes1 secondByte
+    ) public {
+        vm.assume(secondByte != hex"0a");
         CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
-          abi.encodePacked(hex"040b", addr)
+          abi.encodePacked(hex"04", secondByte, addr)
         );
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(filAddress);
     }
 
-    function testFuzz_toEthAddressInvalidBytesLength(address addr) public {
+    function testFuzz_toEthAddressInvalidBytesLength(
+        address addr,
+        bytes1 endByte
+    ) public {
         CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
-          abi.encodePacked(hex"040b", addr, hex"00")
+          abi.encodePacked("040b", addr, endByte)
         );
 
         vm.expectRevert(InvalidAddress.selector);
