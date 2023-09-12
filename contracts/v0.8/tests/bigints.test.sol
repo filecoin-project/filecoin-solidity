@@ -30,7 +30,7 @@ import "../utils/BigInts.sol";
 contract BigIntsTest {
     using BigInts for CommonTypes.BigInt;
 
-    function test_to_uint256() public view {
+    function to_uint256() public view {
         CommonTypes.BigInt memory value;
         uint256 converted;
         bool isOverflow;
