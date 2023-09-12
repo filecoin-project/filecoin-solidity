@@ -74,15 +74,16 @@ library BigInts {
     function toInt256(CommonTypes.BigInt memory value) internal view returns (int256, bool) {
         BigNumber memory max = BigNumbers.init(MAX_INT, false);
         BigNumber memory min = BigNumbers.init(MIN_INT, true);
-        BigNumber memory bigNumValue = BigNumbers.init(value.val, false);
+        BigNumber memory bigNumValue = BigNumbers.init(value.val, value.neg);
         if (BigNumbers.gt(bigNumValue, max) || BigNumbers.lt(bigNumValue, min)) {
             return (0, true);
         }
 
         if (BigNumbers.eq(bigNumValue, min)) {
             return (type(int).min, false);
+        } else {
+            int256 parsedValue = int256(uint256(bytes32(bigNumValue.val)));
+            return (value.neg ? -1 * parsedValue : parsedValue, false);
         }
-        int256 parsedValue = int256(uint256(bytes32(bigNumValue.val)));
-        return (value.neg ? -1 * parsedValue : parsedValue, false);
     }
 }
