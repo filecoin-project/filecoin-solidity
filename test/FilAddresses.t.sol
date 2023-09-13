@@ -167,6 +167,6 @@ contract FilAddressesTest is Test {
         // conversion to uint16 needed to get actorId in two bytes
         bytes memory actorIdBytes = abi.encodePacked(uint16(actorId));
         CommonTypes.FilAddress memory filAddress = FilAddresses.fromActorID(actorId);
-        assertEq(keccak256(filAddress.data), keccak256(actorIdBytes));
+        assertEq(filAddress.data, actorIdBytes);
     }
 }
