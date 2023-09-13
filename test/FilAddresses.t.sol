@@ -3,7 +3,9 @@ pragma solidity ^0.8.17;
 
 import {Test} from "forge-std/Test.sol";
 import {FilAddresses} from "contracts/v0.8/utils/FilAddresses.sol";
+import {FilAddressIdConverter} from "contracts/v0.8/utils/FilAddressIdConverter.sol";
 import {CommonTypes} from "contracts/v0.8/types/CommonTypes.sol";
+import "forge-std/console.sol";
 
 contract FilAddressesTest is Test {
     error InvalidAddress();
@@ -152,10 +154,19 @@ contract FilAddressesTest is Test {
         assertEq(data, filAddress.data);
     }
 
-    // function testFuzz_fromBytesFirstByteOtherInvalidLength(bytes memory data) public {
-    //     vm.assume(data.length > 256 && data[0] > 0x04);
+    function testFromBytesFirstByteOtherInvalid() public {
+        bytes memory data = new bytes(257);
+        data[0] = 0x05;
 
-    //     vm.expectRevert(InvalidAddress.selector);
-    //     FilAddresses.fromBytes(data);
-    // }
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(data);
+    }
+
+    function testFromActorId(uint64 actorId) public {
+        vm.assume(actorId > 0 && actorId < 50);
+        // conversion to uint16 needed to get actorId in two bytes
+        bytes memory actorIdBytes = abi.encodePacked(uint16(actorId));
+        CommonTypes.FilAddress memory filAddress = FilAddresses.fromActorID(actorId);
+        assertEq(keccak256(filAddress.data), keccak256(actorIdBytes));
+    }
 }
