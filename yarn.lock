@@ -792,7 +792,7 @@
     lodash "^4.17.19"
     node-fetch "^2.6.0"
 
-"@openzeppelin/hardhat-upgrades@^2.1.1":
+"@openzeppelin/hardhat-upgrades@^2.2.1":
   version "2.2.1"
   resolved "https://registry.npmjs.org/@openzeppelin/hardhat-upgrades/-/hardhat-upgrades-2.2.1.tgz"
   integrity sha512-Amlk2nhNpCfTCEovbqyarwBv4ZWmuiHHIcYfGy+FCSkkuSvQNVEJHoSl83Vgag+QhMtubdoggkYPqayxU46w1Q==
