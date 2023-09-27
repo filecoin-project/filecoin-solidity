@@ -10,39 +10,24 @@ import "forge-std/console.sol";
 contract FilAddressesTest is Test {
     error InvalidAddress();
 
-    function testFuzz_toEthAddressInvalidFirstByte(
-       address addr,
-       bytes1 firstByte
-    ) public {
+    function testFuzz_toEthAddressInvalidFirstByte(address addr, bytes1 firstByte) public {
         vm.assume(firstByte != hex"04");
-        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
-          abi.encodePacked(firstByte, hex"0a", addr)
-        );
+        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(abi.encodePacked(firstByte, hex"0a", addr));
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(filAddress);
     }
 
-    function testFuzz_toEthAddressInvalidSecondByte(
-        address addr,
-        bytes1 secondByte
-    ) public {
+    function testFuzz_toEthAddressInvalidSecondByte(address addr, bytes1 secondByte) public {
         vm.assume(secondByte != hex"0a");
-        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
-          abi.encodePacked(hex"04", secondByte, addr)
-        );
+        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(abi.encodePacked(hex"04", secondByte, addr));
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(filAddress);
     }
 
-    function testFuzz_toEthAddressInvalidBytesLength(
-        address addr,
-        bytes1 endByte
-    ) public {
-        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(
-          abi.encodePacked("040b", addr, endByte)
-        );
+    function testFuzz_toEthAddressInvalidBytesLength(address addr, bytes1 endByte) public {
+        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(abi.encodePacked("040b", addr, endByte));
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(filAddress);
@@ -147,16 +132,8 @@ contract FilAddressesTest is Test {
         FilAddresses.fromBytes(data);
     }
 
-    function testFuzz_fromBytesFirstByteOther(bytes memory data) public {
+    function testFuzz_fromBytesFirstByteOtherInvalid(bytes memory data) public {
         vm.assume(data.length > 0 && data.length <= 256 && data[0] > 0x04);
-
-        CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
-        assertEq(data, filAddress.data);
-    }
-
-    function testFromBytesFirstByteOtherInvalid() public {
-        bytes memory data = new bytes(257);
-        data[0] = 0x05;
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.fromBytes(data);
