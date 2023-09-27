@@ -2,6 +2,7 @@
     "compilerOptions": {
         "lib": ["ES2021.String"]
     },
-    "include": ["./hh-test", "./typechain-types"],
-    "files": ["./hardhat.config.ts"]
+    "include": ["./hh-test", "./typechain-types", "hardhat/upgradeable"],
+    "files": ["./hardhat.config.ts"],
+    "target": "es2015"
 }

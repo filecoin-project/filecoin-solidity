@@ -4,6 +4,9 @@ import "@typechain/hardhat"
 import "@openzeppelin/hardhat-upgrades"
 import "@nomicfoundation/hardhat-foundry"
 
+import "@nomicfoundation/hardhat-ethers"
+import "hardhat-contract-sizer"
+
 import { readFileSync } from "fs"
 
 let extractedSolcVersion: string
@@ -17,7 +20,15 @@ try {
 }
 
 const config: HardhatUserConfig = {
-    solidity: extractedSolcVersion,
+    solidity: {
+        version: extractedSolcVersion,
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 200,
+            },
+        },
+    },
     networks: {
         hardhat: {
             blockGasLimit: 1000000000000000,
@@ -25,11 +36,15 @@ const config: HardhatUserConfig = {
         localnet: {
             url: "http://127.0.0.1:1234/rpc/v1",
             chainId: 31415926,
-            gas: 2000000000000,
+            gas: 1_000_000_000,
+            blockGasLimit: 1_000_000_000,
         },
     },
     mocha: {
         timeout: 100000000,
+    },
+    paths: {
+        tests: "./hh-test",
     },
 }
 

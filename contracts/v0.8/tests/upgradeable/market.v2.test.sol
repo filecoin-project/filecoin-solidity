@@ -7,6 +7,10 @@ import "../market.test.sol";
 
 /// @notice This file is meant to serve as an example of an upgradeable contract for the market actor API.
 /// @author MVP Workshop
-contract MarketApiUpgradeableTest is MarketApiTest, Initializable {
-    function initialize() public initializer {}
+contract MarketApiUpgradeableV2Test is MarketApiTest, Initializable {
+    uint dummyVar;
+
+    function initialize() public initializer {
+        dummyVar = 13;
+    }
 }
