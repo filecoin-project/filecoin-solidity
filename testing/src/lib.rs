@@ -7,6 +7,7 @@ use fvm::gas::Gas;
 #[macro_use]
 extern crate prettytable;
 
+pub mod api_contracts;
 pub mod helpers;
 pub mod setup;
 
