@@ -2,6 +2,7 @@ use cbor_data::{CborBuilder, Encoder};
 
 pub mod account_test;
 pub mod address_test;
+pub mod bigints_test;
 pub mod market_test;
 
 
