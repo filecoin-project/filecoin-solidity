@@ -139,13 +139,7 @@ pub struct AuthenticateMessageParams {
     pub message: Vec<u8>,
 }
 
-fn cbor_encode(abi_encoded_call: Vec<u8>) -> String {
-    let full_str = hex::encode(CborBuilder::default().encode_array(|builder| {
-        builder.encode_bytes(abi_encoded_call);
-    }));
-    let encoded = full_str[2..].to_string(); 
-    return encoded;
-}
+
 
 #[test]
 fn market_tests() {
@@ -527,11 +521,7 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::publish_storage_dealsCall{params: publish_storage_deals_params}.abi_encode();
 
-    // let full_str = hex::encode(CborBuilder::default().encode_array(|builder| {
-    //     builder.encode_bytes(abi_encoded_call);
-    // }));
-
-    let temp = cbor_encode(abi_encoded_call);
+    let temp = api_contracts::cbor_encode(abi_encoded_call);
     let cbor_encoded = temp.as_str();
     let temp = cbor_encoded.replace("00044000", "00052000");
     let cbor_encoded_str = temp.as_str();
@@ -573,7 +563,7 @@ fn market_tests() {
         value: user_amount
     }.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -613,7 +603,7 @@ fn market_tests() {
         }
     }.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -637,7 +627,7 @@ fn market_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&withdrawal_token_amount.clone());
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()), 
@@ -652,7 +642,7 @@ fn market_tests() {
             data: user.to_bytes()// Address::new_id(101).to_bytes()
         }
     }.abi_encode();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -686,7 +676,7 @@ fn market_tests() {
         locked: zero_balance.clone()
     };
     let abi_encoded_call = api_contracts::market_test::GetBalanceReturn::abi_encode(&expected_balance);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     // assert_eq!(
     //     hex::encode(res.msg_receipt.return_data.bytes()), 
@@ -701,7 +691,7 @@ fn market_tests() {
     let abi_encoded_call = api_contracts::market_test::get_deal_data_commitmentCall{
         dealID: deal_id
     }.abi_encode();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -735,7 +725,7 @@ fn market_tests() {
     };
 
     let abi_encoded_call = api_contracts::market_test::GetDealDataCommitmentReturn::abi_encode(&expected_res);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
         //"58c00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000028000181e203922020b51bcc94bb0977c984c093770289dea4e83ef08c355145d412c6673e06152a09000000000000000000000000000000000000000000000000"
@@ -747,7 +737,7 @@ fn market_tests() {
     let abi_encoded_call = api_contracts::market_test::get_deal_clientCall{
         dealID: deal_id
     }.abi_encode();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -775,7 +765,7 @@ fn market_tests() {
 
     let temp: [u8; U256::BYTES] = U256::from(101).to_be_bytes();
     let abi_encoded_call = temp.to_vec();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()),
@@ -788,7 +778,7 @@ fn market_tests() {
     let abi_encoded_call = api_contracts::market_test::get_deal_providerCall{
         dealID: deal_id
     }.abi_encode();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -815,7 +805,7 @@ fn market_tests() {
 
     let temp: [u8; U256::BYTES] = U256::from(provider_id).to_be_bytes();
     let abi_encoded_call = temp.to_vec();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()),
@@ -828,7 +818,7 @@ fn market_tests() {
     let abi_encoded_call = api_contracts::market_test::get_deal_labelCall{
         dealID: deal_id
     }.abi_encode();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -854,7 +844,7 @@ fn market_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     let abi_encoded_call = api_contracts::market_test::DealLabel::abi_encode(&client_deal_params.clone().proposal.label);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
         //"58c000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000346d41584367354149673859425862466a7464427931695a6a704459417752537430656c474c463547765471756c4569693156634d000000000000000000000000"
@@ -865,7 +855,7 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::get_deal_termCall{dealID: deal_id}.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     let message = Message {
@@ -890,7 +880,7 @@ fn market_tests() {
     };
 
     let abi_encoded_call = api_contracts::market_test::GetDealTermReturn::abi_encode(&expected_res);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let res = executor
         .execute_message(message, ApplyKind::Explicit, 100)
@@ -905,7 +895,7 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::get_deal_total_priceCall{dealID: deal_id}.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     let message = Message {
@@ -938,7 +928,7 @@ fn market_tests() {
         neg: false
     };
     let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&total_price);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
@@ -950,7 +940,7 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::get_deal_client_collateralCall{dealID: deal_id}.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     let message = Message {
@@ -977,7 +967,7 @@ fn market_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&client_deal_params.clone().proposal.client_collateral);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
         //"58a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007038d7ea4c6800000000000000000000000000000000000000000000000000000"
@@ -988,7 +978,7 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::get_deal_provider_collateralCall{dealID: deal_id}.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     let message = Message {
@@ -1015,7 +1005,7 @@ fn market_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&client_deal_params.clone().proposal.provider_collateral);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
@@ -1027,7 +1017,7 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::get_deal_verifiedCall{dealID: deal_id}.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     let message = Message {
@@ -1055,7 +1045,7 @@ fn market_tests() {
 
     let temp: [u8; U256::BYTES] = U256::from(0).to_be_bytes();
     let abi_encoded_call = temp.to_vec();
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     assert_eq!(
@@ -1068,7 +1058,7 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::get_deal_activationCall{dealID: deal_id}.abi_encode();
 
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     let message = Message {
@@ -1099,7 +1089,7 @@ fn market_tests() {
         terminated: 0_i64
     };
     let abi_encoded_call = api_contracts::market_test::GetDealActivationReturn::abi_encode(&expected_res);
-    let cbor_encoded = cbor_encode(abi_encoded_call);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
