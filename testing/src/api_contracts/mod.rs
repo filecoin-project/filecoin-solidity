@@ -4,6 +4,7 @@ pub mod account_test;
 pub mod address_test;
 pub mod bigints_test;
 pub mod cbor_decode_test;
+pub mod datacap_test;
 pub mod market_test;
 
 
