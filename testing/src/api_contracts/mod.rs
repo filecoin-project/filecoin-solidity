@@ -7,6 +7,7 @@ pub mod cbor_decode_test;
 pub mod datacap_test;
 pub mod deserialize_params_test;
 pub mod market_cbor_test;
+pub mod miner_test;
 pub mod market_test;
 
 
