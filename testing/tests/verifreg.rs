@@ -14,9 +14,11 @@ use fvm_shared::bigint::bigint_ser;
 use fvm_shared::message::Message;
 use fvm_shared::sector::StoragePower;
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
+use alloy_primitives::{fixed_bytes, address, Address as Alloy_Address, U256};
+use alloy_sol_types::{SolCall, SolType, sol_data};
 
+use testing::{setup, api_contracts};
 use testing::helpers;
-use testing::setup;
 use testing::GasResult;
 use testing::parse_gas;
 
@@ -155,13 +157,33 @@ fn verifreg_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     println!("Calling `add_verified_client`");
+
+    let abi_encoded_call = api_contracts::verifreg_test::add_verified_clientCall{
+        params: api_contracts::verifreg_test::AddVerifiedClientParams{
+            addr: api_contracts::verifreg_test::FilAddress{
+                data: _verified_client.1.to_bytes()
+            },
+            allowance: api_contracts::verifreg_test::BigInt{
+                val: fixed_bytes!("100000").to_vec(),
+                neg: false
+            }
+        }
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+    
+    dbg!(cbor_encoded.as_str());
+
     let message = Message {
             from: sender.1,
             to: Address::new_id(exec_return.actor_id),
             gas_limit: 1000000000,
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 1,
-            params: RawBytes::new(hex::decode("5901441FEBC7BF0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000A00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001501DCE5B7F69E73494891556A350F8CC357614916D500000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000031000000000000000000000000000000000000000000000000000000000000000").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "5901441FEBC7BF0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000A00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001501DCE5B7F69E73494891556A350F8CC357614916D500000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000031000000000000000000000000000000000000000000000000000000000000000"
+                cbor_encoded.as_str()
+            ).unwrap()),
             ..Message::default()
         };
 
@@ -174,6 +196,17 @@ fn verifreg_tests() {
 
     println!("Calling `get_claims`");
 
+    let abi_encoded_call = api_contracts::verifreg_test::get_claimsCall{
+        params: api_contracts::verifreg_test::GetClaimsParams{
+            provider: 0xc9_u64,
+            claim_ids: vec![0_u64, 1]
+        }
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    dbg!(cbor_encoded.as_str());
+
     let message = Message {
             from: sender.1,
             to: Address::new_id(exec_return.actor_id),
@@ -181,7 +214,10 @@ fn verifreg_tests() {
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 2,
             //  get_claims params [201, [0,1]]
-            params: RawBytes::new(hex::decode("58C4DBCB98AB000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000C90000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "58C4DBCB98AB000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000C90000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+                cbor_encoded.as_bytes()
+            ).unwrap()),
             ..Message::default()
         };
 
@@ -194,6 +230,28 @@ fn verifreg_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     println!("Calling `extend_claim_term`");
+
+    //NOTE: the upcoming `message` contains hardcoded hex string which corresponds to a
+    //      wrong method call (`remove_expired_claims`) and not `extend_claim_term`.
+    //      To not alter the flow of the test at this time, the `message` was not modified.
+    //      The flow of the test will need to be revised and the `CODE` section provides an useful snippet.
+    //
+    //CODE:
+    //
+    // let abi_encoded_call = api_contracts::verifreg_test::extend_claim_termsCall{
+    //     params: api_contracts::verifreg_test::ExtendClaimTermsParams{
+    //         terms: vec![
+    //             api_contracts::verifreg_test::ClaimTerm{
+    //                 provider: 0xc9_u64,
+    //                 claim_id: 1_u64,
+    //                 term_max: 100000_i64
+    //             }
+    //         ]
+    //     }
+    // }.abi_encode();
+    //
+    // let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
             from: sender.1,
             to: Address::new_id(exec_return.actor_id),
@@ -213,6 +271,17 @@ fn verifreg_tests() {
 
     println!("Calling `remove_expired_allocations`");
 
+    let abi_encoded_call = api_contracts::verifreg_test::remove_expired_allocationsCall{
+        params: api_contracts::verifreg_test::RemoveExpiredAllocationsParams{
+            client: 0x65_u64,
+            allocation_ids: vec![]
+        }
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    dbg!(cbor_encoded.as_str());
+
     let message = Message {
             from: sender.1,
             to: Address::new_id(exec_return.actor_id),
@@ -220,7 +289,10 @@ fn verifreg_tests() {
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 4,
             //  remove_expired_allocations params [actorId(101), []] empty list which means remove all
-            params: RawBytes::new(hex::decode("5884DF5527250000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006500000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "5884DF5527250000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006500000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000"
+                cbor_encoded.as_str()
+            ).unwrap()),
             ..Message::default()
         };
 
@@ -235,13 +307,28 @@ fn verifreg_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     println!("Calling `remove_expired_claims`");
+
+    let abi_encoded_call = api_contracts::verifreg_test::remove_expired_claimsCall{
+        params: api_contracts::verifreg_test::RemoveExpiredClaimsParams{
+            provider: 0x66_u64,
+            claim_ids: vec![0_u64, 1]
+        }
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    dbg!(cbor_encoded.as_str());
+
     let message = Message {
             from: sender.1,
             to: Address::new_id(exec_return.actor_id),
             gas_limit: 1000000000,
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 5,
-            params: RawBytes::new(hex::decode("58C4D8308B8C000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000660000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "58C4D8308B8C000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000660000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
+                cbor_encoded.as_str()
+            ).unwrap()),
             ..Message::default()
         };
 

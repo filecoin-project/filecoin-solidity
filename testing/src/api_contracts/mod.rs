@@ -12,6 +12,7 @@ pub mod miner_test;
 pub mod power_test;
 pub mod precompiles_test;
 pub mod send_test;
+pub mod verifreg_test;
 
 pub fn cbor_encode(abi_encoded_call: Vec<u8>) -> String {
   let full_str = hex::encode(CborBuilder::default().encode_array(|builder| {
