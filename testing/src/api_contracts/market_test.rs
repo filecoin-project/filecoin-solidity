@@ -69,6 +69,7 @@ sol!{
     }
 
     struct PublishStorageDealsParams {
+        
         ClientDealProposal[] deals;
     }
 

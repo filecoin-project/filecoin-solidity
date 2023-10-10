@@ -14,7 +14,7 @@ use fvm_shared::econ::TokenAmount;
 use fvm_shared::message::Message;
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
 use alloy_sol_types::{SolCall, sol_data, SolType};
-use alloy_primitives::{fixed_bytes, I256, U256, keccak256};
+use alloy_primitives::{fixed_bytes};
 
 use testing::{setup, helpers, api_contracts};
 use testing::GasResult;
