@@ -6,7 +6,7 @@ import * as utils from "../utils"
 import { MarketApiUpgradeableTest, MarketHelper } from "../../typechain-types"
 import { MarketTypes, CommonTypes } from "../../typechain-types/tests/market.test.sol/MarketApiTest"
 
-describe("Market contract - UUPS Proxy Upgrade", function () {
+describe("Market contract - Beacon Proxy Upgrade", function () {
     it("Should publish a deal", async function () {
         const provider = new ethers.providers.JsonRpcProvider((network.config as any).url)
 
@@ -136,6 +136,10 @@ describe("Market contract - UUPS Proxy Upgrade", function () {
             dealTerm: { start: deal.proposal.start_epoch, end: deal.proposal.end_epoch },
             dealClientCollateral: deal.proposal.client_collateral,
             dealProviderCollateral: deal.proposal.provider_collateral,
+            dealTotalPrice: {
+                val: utils.hexToBytes((deal.proposal.end_epoch - deal.proposal.start_epoch).toString(16)),
+                neg: false,
+            },
         }
 
         //Actual values
@@ -175,13 +179,16 @@ describe("Market contract - UUPS Proxy Upgrade", function () {
             expect(actual.dealCommitment.data).to.eq(expected.dealCommitment.data)
             expect(actual.dealCommitment.size.eq(ethers.BigNumber.from(expected.dealCommitment.size))).to.eq(true)
 
-            //TODO: uncomment and fix value formats
-            // expect(actual.dealClient.data).to.eq(expected.dealClient.data)
-            // expect(actual.dealProvider).to.eq(expected.dealProvider)
-            // expect(actual.dealTerm.start).to.eq(expected.dealTerm.start)
-            // expect(actual.dealTerm.end).to.eq(expected.dealTerm.end)
-            // expect(actual.dealClientCollateral).to.eq(expected.dealClientCollateral)
-            // expect(actual.dealProviderCollateral).to.eq(expected.dealProviderCollateral)
+            expect(actual.dealTerm.start.eq(ethers.BigNumber.from(expected.dealTerm.start))).to.eq(true)
+            expect(actual.dealTerm.end.eq(ethers.BigNumber.from(expected.dealTerm.end).sub(ethers.BigNumber.from(expected.dealTerm.start)))).to.eq(true)
+
+            expect(actual.dealClientCollateral.val).to.eq("0x" + Buffer.from(expected.dealClientCollateral.val).toString("hex"))
+            expect(actual.dealClientCollateral.neg).to.eq(expected.dealClientCollateral.neg)
+
+            expect(actual.dealProviderCollateral.val).to.eq("0x" + Buffer.from(expected.dealProviderCollateral.val).toString("hex"))
+            expect(actual.dealProviderCollateral.neg).to.eq(expected.dealProviderCollateral.neg)
+
+            expect(actual.dealTotalPrice.neg).to.eq(expected.dealTotalPrice.neg)
         }
 
         const actual = await getActualValues({ dealNumber: 0 })

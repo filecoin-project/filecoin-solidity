@@ -178,9 +178,6 @@ describe("Market contract - Transparent Proxy Upgrade", function () {
             expect(actual.dealCommitment.data).to.eq(expected.dealCommitment.data)
             expect(actual.dealCommitment.size.eq(ethers.BigNumber.from(expected.dealCommitment.size))).to.eq(true)
 
-            //TODO: uncomment and fix all value formats
-            // expect(actual.dealClient.data).to.eq(expected.dealClient.data)
-            // expect(actual.dealProvider).to.eq(expected.dealProvider)
             expect(actual.dealTerm.start.eq(ethers.BigNumber.from(expected.dealTerm.start))).to.eq(true)
             expect(actual.dealTerm.end.eq(ethers.BigNumber.from(expected.dealTerm.end).sub(ethers.BigNumber.from(expected.dealTerm.start)))).to.eq(true)
 
@@ -190,7 +187,6 @@ describe("Market contract - Transparent Proxy Upgrade", function () {
             expect(actual.dealProviderCollateral.val).to.eq("0x" + Buffer.from(expected.dealProviderCollateral.val).toString("hex"))
             expect(actual.dealProviderCollateral.neg).to.eq(expected.dealProviderCollateral.neg)
 
-            // expect(actual.dealTotalPrice.val).to.eq("0x" + Buffer.from(expected.dealTotalPrice.val).toString("hex"))
             expect(actual.dealTotalPrice.neg).to.eq(expected.dealTotalPrice.neg)
         }
 

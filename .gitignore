@@ -17,3 +17,5 @@ artifacts
 cache
 yarn.lock
 typechain-types
+
+.openzeppelin/
