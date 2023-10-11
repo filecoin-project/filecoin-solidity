@@ -35,11 +35,11 @@ fvm_actor_utils = { version = "4.0.0" }
 frc46_token = { version = "4.0.0" }
 frc42_dispatch = { version = "3.0.1-alpha.1" }
 
-alloy-sol-types = "0.4.0"
-alloy-primitives = "0.4.0"
-alloy-json-abi = "0.4.0"
-alloy-dyn-abi = "0.4.0"
-alloy-sol-macro = { version = "0.4.0", features = ["json"] }
+alloy-sol-types = "0.4.2"
+alloy-primitives = "0.4.2"
+alloy-json-abi = "0.4.2"
+alloy-dyn-abi = "0.4.2"
+alloy-sol-macro = { version = "0.4.2", features = ["json"] }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 
 cbor-data = "0.8.15"
