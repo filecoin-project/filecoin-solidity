@@ -281,8 +281,8 @@ fn miner_tests() {
     gas_result.push(("get_beneficiary".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let expected_beneficiary = api_contracts::miner_test::GetBeneficiaryReturn{
-        active: api_contracts::miner_test::ActiveBeneficiary{
+    let expected_beneficiary = (
+        api_contracts::miner_test::ActiveBeneficiary{
             beneficiary: api_contracts::miner_test::FilAddress{
                 data: vec![0_u8, 0x67]
             },
@@ -298,7 +298,7 @@ fn miner_tests() {
                 expiration: 0_i64
             }
         },
-        proposed: api_contracts::miner_test::PendingBeneficiaryChange{
+        api_contracts::miner_test::PendingBeneficiaryChange{
             new_beneficiary: api_contracts::miner_test::FilAddress{
                 data: fixed_bytes!("").to_vec(),
             },
@@ -310,11 +310,19 @@ fn miner_tests() {
             approved_by_beneficiary: false,
             approved_by_nominee: false
         }
-    };
+    );
 
-    let abi_encoded_call = api_contracts::miner_test::GetBeneficiaryReturn::abi_encode(&expected_beneficiary);
-    let temp = api_contracts::cbor_encode(abi_encoded_call);
-    let cbor_encoded = temp.as_str();
+    let tmp = api_contracts::miner_test::GetBeneficiaryReturnCall{
+        values: expected_beneficiary
+    }.abi_encode();
+
+    let abi_encoded_call = vec![vec![0_u8, 0, 0, 0], tmp[8..].to_vec()].concat();
+
+    let temp = api_contracts::cbor_encode(abi_encoded_call.clone());
+
+    dbg!(temp);
+    let temp2 =  api_contracts::cbor_encode(abi_encoded_call.clone());
+    let cbor_encoded = temp2.as_str();
     let temp = cbor_encoded.replace("00018000", "00020000");
     let cbor_encoded_str = temp.as_str();
 

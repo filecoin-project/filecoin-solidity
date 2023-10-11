@@ -864,11 +864,6 @@ fn datacap_tests() {
 
     println!("Calling `revoke_allowance`");
 
-    let amount = api_contracts::datacap_test::BigInt{
-        val: fixed_bytes!("3635C9ADC5DEA00000").to_vec(),
-        neg: false
-    }; 
-
     let abi_encoded_call = api_contracts::datacap_test::revoke_allowanceCall{
         operator: api_contracts::datacap_test::FilAddress{
             data: sender[0].1.to_bytes()

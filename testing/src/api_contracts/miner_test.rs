@@ -30,10 +30,6 @@ sol!{
         ChainEpoch new_expiration;
     }
 
-    struct GetBeneficiaryReturn {
-        ActiveBeneficiary active;
-        PendingBeneficiaryChange proposed;
-    }
 
     struct ChangeWorkerAddressParams {
         FilAddress new_worker;
@@ -72,6 +68,8 @@ sol!{
         bool approved_by_nominee;
     }
 
+    function GetBeneficiaryReturn ((ActiveBeneficiary, PendingBeneficiaryChange) memory values) public view{}
+
     function get_owner(FilActorId target) public returns (GetOwnerReturn memory) {}
 
     function change_owner_address(FilActorId target, FilAddress memory addr) public {}
@@ -86,7 +84,7 @@ sol!{
 
     function change_beneficiary(FilActorId target, ChangeBeneficiaryParams memory params) public {}
 
-    function get_beneficiary(FilActorId target) public returns (GetBeneficiaryReturn memory) {}
+    function get_beneficiary(FilActorId target) public returns ((ActiveBeneficiary, PendingBeneficiaryChange) memory) {}
 
     function change_worker_address(FilActorId target, ChangeWorkerAddressParams memory params) public {}
 

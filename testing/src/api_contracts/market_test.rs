@@ -63,15 +63,6 @@ sol!{
         BigInt client_collateral;
     }
 
-    struct ClientDealProposal {
-        DealProposal proposal;
-        bytes client_signature;
-    }
-
-    struct PublishStorageDealsParams {
-        
-        ClientDealProposal[] deals;
-    }
 
     struct PublishStorageDealsReturn {
         uint64[] ids;
@@ -132,6 +123,5 @@ sol!{
     function get_deal_activation(uint64 dealID) public returns (GetDealActivationReturn memory) {
     }
 
-    function publish_storage_deals(PublishStorageDealsParams memory params) public returns (PublishStorageDealsReturn memory) {}
-
+    function publish_storage_deals(((DealProposal, bytes)[],) memory params) public returns (PublishStorageDealsReturn memory) {}
 }

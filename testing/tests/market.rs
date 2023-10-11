@@ -486,40 +486,37 @@ fn market_tests() {
         neg: false
     };
 
-    let client_deal_params = api_contracts::market_test::ClientDealProposal{
-        proposal: api_contracts::market_test::DealProposal {
-            piece_cid: api_contracts::market_test::Cid {
-                data: piece_cid.to_bytes()
-            },
-            piece_size: piece_size,
-            verified_deal: verified_deal,
-            client: api_contracts::market_test::FilAddress{
-                data: client.to_bytes()
-            },
-            provider: api_contracts::market_test::FilAddress{
-                data: provider.to_bytes()
-            },
-            label: api_contracts::market_test::DealLabel{
-                data: label.as_bytes().to_vec(),
-                isString: true
-            },
-            start_epoch: i64::from(start_epoch),
-            end_epoch: i64::from(end_epoch),
-            storage_price_per_epoch: api_contracts::market_test::BigInt{
-                val: storage_price_per_epoch.to_be_bytes().to_vec(),
-                neg: false
-            },
-            provider_collateral: provider_collateral_bigint,
-            client_collateral: client_collateral_bigint
+    let proposal = api_contracts::market_test::DealProposal {
+        piece_cid: api_contracts::market_test::Cid {
+            data: piece_cid.to_bytes()
         },
-        client_signature: client_signature
+        piece_size: piece_size,
+        verified_deal: verified_deal,
+        client: api_contracts::market_test::FilAddress{
+            data: client.to_bytes()
+        },
+        provider: api_contracts::market_test::FilAddress{
+            data: provider.to_bytes()
+        },
+        label: api_contracts::market_test::DealLabel{
+            data: label.as_bytes().to_vec(),
+            isString: true
+        },
+        start_epoch: i64::from(start_epoch),
+        end_epoch: i64::from(end_epoch),
+        storage_price_per_epoch: api_contracts::market_test::BigInt{
+            val: storage_price_per_epoch.to_be_bytes().to_vec(),
+            neg: false
+        },
+        provider_collateral: provider_collateral_bigint,
+        client_collateral: client_collateral_bigint
     };
 
-    let publish_storage_deals_params = api_contracts::market_test::PublishStorageDealsParams {
-        deals: vec![client_deal_params.clone()]
-    };
+    let client_deal_params = (proposal.clone(), client_signature);
 
-    let abi_encoded_call = api_contracts::market_test::publish_storage_dealsCall{params: publish_storage_deals_params}.abi_encode();
+    let abi_encoded_call = api_contracts::market_test::publish_storage_dealsCall{
+        params: (vec![client_deal_params.clone()],)
+    }.abi_encode();
 
     let temp = api_contracts::cbor_encode(abi_encoded_call);
     let cbor_encoded = temp.as_str();
@@ -639,10 +636,12 @@ fn market_tests() {
 
     let abi_encoded_call = api_contracts::market_test::get_balanceCall{
         addr: api_contracts::market_test::FilAddress{
-            data: user.to_bytes()// Address::new_id(101).to_bytes()
+            data: Address::new_id(101).to_bytes()
         }
     }.abi_encode();
     let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    dbg!(cbor_encoded.as_str());
 
     let message = Message {
         from: sender[0].1,
@@ -652,6 +651,7 @@ fn market_tests() {
         sequence: 5,
         params: RawBytes::new(
             hex::decode(
+                //5884C961F5430000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020065000000000000000000000000000000000000000000000000000000000000
                 cbor_encoded.as_str()
             )
             .unwrap(),
@@ -667,22 +667,25 @@ fn market_tests() {
     gas_result.push(("get_balance".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let zero_balance = api_contracts::market_test::BigInt{
-        val: fixed_bytes!("").to_vec(),
-        neg: false
-    };
     let expected_balance = api_contracts::market_test::GetBalanceReturn{
-        balance: zero_balance.clone(),
-        locked: zero_balance.clone()
+        balance: api_contracts::market_test::BigInt{
+            val: fixed_bytes!("056bc75e2d63100000").to_vec(),
+            neg: false
+        },
+        locked: api_contracts::market_test::BigInt{
+            val: fixed_bytes!("07f3556c02eb7800").to_vec(),
+            neg: false
+        }
     };
+    
     let abi_encoded_call = api_contracts::market_test::GetBalanceReturn::abi_encode(&expected_balance);
     let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
-    // assert_eq!(
-    //     hex::encode(res.msg_receipt.return_data.bytes()), 
-    //      // "5901600000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009056bc75e2d63100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000807f3556c02eb7800000000000000000000000000000000000000000000000000"
-    //     cbor_encoded.as_str()
-    // );
+    assert_eq!(
+        hex::encode(res.msg_receipt.return_data.bytes()), 
+         // "5901600000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009056bc75e2d63100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000807f3556c02eb7800000000000000000000000000000000000000000000000000"
+        cbor_encoded.as_str()
+    );
 
     println!("Calling `get_deal_data_commitment`");
 
@@ -843,7 +846,7 @@ fn market_tests() {
     gas_result.push(("get_deal_label".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let abi_encoded_call = api_contracts::market_test::DealLabel::abi_encode(&client_deal_params.clone().proposal.label);
+    let abi_encoded_call = api_contracts::market_test::DealLabel::abi_encode(&proposal.label);
     let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
@@ -875,8 +878,8 @@ fn market_tests() {
     };
 
     let expected_res = api_contracts::market_test::GetDealTermReturn {
-        start: client_deal_params.proposal.start_epoch,
-        end: client_deal_params.proposal.end_epoch - client_deal_params.proposal.start_epoch
+        start: proposal.start_epoch,
+        end: proposal.end_epoch - proposal.start_epoch
     };
 
     let abi_encoded_call = api_contracts::market_test::GetDealTermReturn::abi_encode(&expected_res);
@@ -921,7 +924,7 @@ fn market_tests() {
     gas_result.push(("get_deal_total_price".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let deal_duration = client_deal_params.proposal.end_epoch - client_deal_params.proposal.start_epoch;
+    let deal_duration = proposal.end_epoch - proposal.start_epoch;
     let deal_price = deal_duration * storage_price_per_epoch;
     let total_price = api_contracts::market_test::BigInt{
         val: deal_price.to_be_bytes().to_vec().into_iter().skip_while(|&x| x == 0).collect(),
@@ -966,7 +969,7 @@ fn market_tests() {
     gas_result.push(("get_deal_client_collateral".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&client_deal_params.clone().proposal.client_collateral);
+    let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&proposal.client_collateral);
     let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), 
@@ -1004,7 +1007,7 @@ fn market_tests() {
     gas_result.push(("get_deal_provider_collateral".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&client_deal_params.clone().proposal.provider_collateral);
+    let abi_encoded_call = api_contracts::market_test::BigInt::abi_encode(&proposal.provider_collateral);
     let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
 
@@ -1059,7 +1062,6 @@ fn market_tests() {
     let abi_encoded_call = api_contracts::market_test::get_deal_activationCall{dealID: deal_id}.abi_encode();
 
     let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
-
 
     let message = Message {
         from: sender[0].1,
