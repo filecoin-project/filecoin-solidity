@@ -1,6 +1,7 @@
 import { execSync } from "child_process"
 import { newActorAddress, newDelegatedEthAddress, newFromString } from "@glif/filecoin-address"
 import { MarketTypes } from "../typechain-types/tests/market.test.sol/MarketApiTest"
+import { ethers } from "hardhat"
 
 const CID = require("cids")
 
@@ -68,6 +69,11 @@ export const DEAL_INFO = [
 
 export const generateDealParams = (clientFilAddress: string, providerFilAddress: string) => {
     //TODO: randomize some parameters
+
+    const start_epoch = BigInt(10000)
+    const end_epoch = BigInt(10000 + (545150 - 25245))
+    const storage_price_per_epoch = BigInt(1)
+
     const deal: MarketTypes.ClientDealProposalStruct = {
         proposal: {
             piece_cid: {
@@ -85,10 +91,10 @@ export const generateDealParams = (clientFilAddress: string, providerFilAddress:
                 data: utf8Encode(DEAL_INFO[dealID].label),
                 isString: true,
             },
-            start_epoch: BigInt(10000),
-            end_epoch: BigInt(10000 + (545150 - 25245)),
+            start_epoch,
+            end_epoch,
             storage_price_per_epoch: {
-                val: hexToBytes((1).toString(16)),
+                val: hexToBytes(storage_price_per_epoch.toString(16)),
                 neg: false,
             },
             provider_collateral: {
@@ -97,6 +103,14 @@ export const generateDealParams = (clientFilAddress: string, providerFilAddress:
             },
             client_collateral: {
                 val: hexToBytes((1_000_000).toString(16)),
+                neg: false,
+            },
+            total_price: {
+                val: hexToBytes(
+                    ethers.BigNumber.from((end_epoch - start_epoch) * storage_price_per_epoch)
+                        .toHexString()
+                        .slice(2)
+                ),
                 neg: false,
             },
         },

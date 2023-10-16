@@ -136,10 +136,7 @@ describe("Market contract - UUPS Proxy Upgrade", function () {
             dealTerm: { start: deal.proposal.start_epoch, end: deal.proposal.end_epoch },
             dealClientCollateral: deal.proposal.client_collateral,
             dealProviderCollateral: deal.proposal.provider_collateral,
-            dealTotalPrice: {
-                val: utils.hexToBytes((deal.proposal.end_epoch - deal.proposal.start_epoch).toString(16)),
-                neg: false,
-            },
+            dealTotalPrice: deal.proposal.total_price,
         }
 
         //Actual values
@@ -185,9 +182,12 @@ describe("Market contract - UUPS Proxy Upgrade", function () {
             expect(actual.dealClientCollateral.val).to.eq("0x" + Buffer.from(expected.dealClientCollateral.val).toString("hex"))
             expect(actual.dealClientCollateral.neg).to.eq(expected.dealClientCollateral.neg)
 
+            expect(actual.dealProvider.data).to.eq("0x" + Buffer.from(expected.dealProvider.data).toString("hex"))
+
             expect(actual.dealProviderCollateral.val).to.eq("0x" + Buffer.from(expected.dealProviderCollateral.val).toString("hex"))
             expect(actual.dealProviderCollateral.neg).to.eq(expected.dealProviderCollateral.neg)
 
+            expect(actual.dealTotalPrice.val).to.eq("0x" + Buffer.from(expected.dealTotalPrice.val).toString("hex"))
             expect(actual.dealTotalPrice.neg).to.eq(expected.dealTotalPrice.neg)
         }
 

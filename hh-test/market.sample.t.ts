@@ -124,8 +124,6 @@ async function main() {
 
     //Second way to compare the values (jointly)
     expect(actualDealCommitment).to.eql(Object.values(expectedDealCommitment))
-
-    //TODO: check all other properties (expected vs actual) as well
 }
 
 main().catch((error) => {
