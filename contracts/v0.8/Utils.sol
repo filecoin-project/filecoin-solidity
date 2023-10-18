@@ -61,7 +61,7 @@ library Utils {
     function universalReceiverHook(CommonTypes.FilActorId target, CommonTypes.UniversalReceiverParams memory params) internal returns (bytes memory) {
         bytes memory raw_request = params.serializeUniversalReceiverParams();
 
-        bytes memory result = Actor.callByID(target, CommonTypes.UniversalReceiverHookMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(target, CommonTypes.UniversalReceiverHookMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
 
         return result;
     }

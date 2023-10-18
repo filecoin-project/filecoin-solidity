@@ -39,7 +39,12 @@ library AccountAPI {
     function authenticateMessage(CommonTypes.FilActorId target, AccountTypes.AuthenticateMessageParams memory params) internal view {
         bytes memory raw_request = params.serializeAuthenticateMessageParams();
 
-        bytes memory data = Actor.callNonSingletonByIDReadOnly(target, AccountTypes.AuthenticateMessageMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory data) = Actor.callNonSingletonByIDReadOnly(
+            target,
+            AccountTypes.AuthenticateMessageMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
         require(data.deserializeBool());
     }
 }

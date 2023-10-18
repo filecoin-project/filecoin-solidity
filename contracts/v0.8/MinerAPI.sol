@@ -43,7 +43,7 @@ library MinerAPI {
     function getOwner(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetOwnerReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetOwnerMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetOwnerMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeGetOwnerReturn();
     }
@@ -55,7 +55,14 @@ library MinerAPI {
     function changeOwnerAddress(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) internal {
         bytes memory raw_request = addr.serializeAddress();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeOwnerAddressMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeOwnerAddressMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -67,7 +74,12 @@ library MinerAPI {
     function isControllingAddress(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) internal view returns (bool) {
         bytes memory raw_request = addr.serializeAddress();
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.IsControllingAddressMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(
+            target,
+            MinerTypes.IsControllingAddressMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
         return result.deserializeBool();
     }
@@ -78,7 +90,7 @@ library MinerAPI {
     function getSectorSize(CommonTypes.FilActorId target) internal view returns (uint64) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetSectorSizeMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetSectorSizeMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeUint64();
     }
@@ -90,7 +102,12 @@ library MinerAPI {
     function getAvailableBalance(CommonTypes.FilActorId target) internal view returns (CommonTypes.BigInt memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetAvailableBalanceMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(
+            target,
+            MinerTypes.GetAvailableBalanceMethodNum,
+            Misc.NONE_CODEC,
+            raw_request
+        );
 
         return result.deserializeBytesBigInt();
     }
@@ -100,7 +117,7 @@ library MinerAPI {
     function getVestingFunds(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetVestingFundsReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetVestingFundsMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetVestingFundsMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeGetVestingFundsReturn();
     }
@@ -112,7 +129,14 @@ library MinerAPI {
     function changeBeneficiary(CommonTypes.FilActorId target, MinerTypes.ChangeBeneficiaryParams memory params) internal {
         bytes memory raw_request = params.serializeChangeBeneficiaryParams();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeBeneficiaryMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeBeneficiaryMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -124,7 +148,7 @@ library MinerAPI {
     function getBeneficiary(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetBeneficiaryReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetBeneficiaryMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetBeneficiaryMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeGetBeneficiaryReturn();
     }
@@ -133,7 +157,14 @@ library MinerAPI {
     function changeWorkerAddress(CommonTypes.FilActorId target, MinerTypes.ChangeWorkerAddressParams memory params) internal {
         bytes memory raw_request = params.serializeChangeWorkerAddressParams();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeWorkerAddressMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeWorkerAddressMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -143,7 +174,7 @@ library MinerAPI {
     function changePeerId(CommonTypes.FilActorId target, CommonTypes.FilAddress memory newId) internal {
         bytes memory raw_request = newId.serializeArrayFilAddress();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangePeerIDMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(target, MinerTypes.ChangePeerIDMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -153,7 +184,14 @@ library MinerAPI {
     function changeMultiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) internal {
         bytes memory raw_request = params.serializeChangeMultiaddrsParams();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeMultiaddrsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeMultiaddrsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -163,7 +201,7 @@ library MinerAPI {
     function repayDebt(CommonTypes.FilActorId target) internal {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.RepayDebtMethodNum, Misc.NONE_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(target, MinerTypes.RepayDebtMethodNum, Misc.NONE_CODEC, raw_request, 0, false);
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -173,7 +211,14 @@ library MinerAPI {
     function confirmChangeWorkerAddress(CommonTypes.FilActorId target) internal {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ConfirmChangeWorkerAddressMethodNum, Misc.NONE_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ConfirmChangeWorkerAddressMethodNum,
+            Misc.NONE_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -183,7 +228,7 @@ library MinerAPI {
     function getPeerId(CommonTypes.FilActorId target) internal view returns (CommonTypes.FilAddress memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetPeerIDMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetPeerIDMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeArrayFilAddress();
     }
@@ -192,7 +237,7 @@ library MinerAPI {
     function getMultiaddresses(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetMultiaddrsReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetMultiaddrsMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetMultiaddrsMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeGetMultiaddrsReturn();
     }
@@ -202,7 +247,14 @@ library MinerAPI {
     function withdrawBalance(CommonTypes.FilActorId target, CommonTypes.BigInt memory amount) internal returns (CommonTypes.BigInt memory) {
         bytes memory raw_request = amount.serializeArrayBigInt();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.WithdrawBalanceMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.WithdrawBalanceMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
         return result.deserializeBytesBigInt();
     }

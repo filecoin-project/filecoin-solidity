@@ -40,7 +40,14 @@ library PowerAPI {
     function createMiner(PowerTypes.CreateMinerParams memory params, uint256 value) internal returns (PowerTypes.CreateMinerReturn memory) {
         bytes memory raw_request = params.serializeCreateMinerParams();
 
-        bytes memory result = Actor.callByID(PowerTypes.ActorID, PowerTypes.CreateMinerMethodNum, Misc.CBOR_CODEC, raw_request, value, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            PowerTypes.ActorID,
+            PowerTypes.CreateMinerMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            value,
+            false
+        );
 
         return result.deserializeCreateMinerReturn();
     }
@@ -49,7 +56,7 @@ library PowerAPI {
     function minerCount() internal view returns (uint64) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callByIDReadOnly(PowerTypes.ActorID, PowerTypes.MinerCountMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(PowerTypes.ActorID, PowerTypes.MinerCountMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeUint64();
     }
@@ -58,7 +65,12 @@ library PowerAPI {
     function minerConsensusCount() internal view returns (int64) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callByIDReadOnly(PowerTypes.ActorID, PowerTypes.MinerConsensusCountMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            PowerTypes.ActorID,
+            PowerTypes.MinerConsensusCountMethodNum,
+            Misc.NONE_CODEC,
+            raw_request
+        );
 
         return result.deserializeInt64();
     }
@@ -67,7 +79,7 @@ library PowerAPI {
     function networkRawPower() internal view returns (CommonTypes.BigInt memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callByIDReadOnly(PowerTypes.ActorID, PowerTypes.NetworkRawPowerMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(PowerTypes.ActorID, PowerTypes.NetworkRawPowerMethodNum, Misc.NONE_CODEC, raw_request);
 
         return result.deserializeBytesBigInt();
     }
@@ -77,7 +89,7 @@ library PowerAPI {
     function minerRawPower(uint64 minerID) internal view returns (PowerTypes.MinerRawPowerReturn memory) {
         bytes memory raw_request = minerID.serialize();
 
-        bytes memory result = Actor.callByIDReadOnly(PowerTypes.ActorID, PowerTypes.MinerRawPowerMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(PowerTypes.ActorID, PowerTypes.MinerRawPowerMethodNum, Misc.CBOR_CODEC, raw_request);
 
         return result.deserializeMinerRawPowerReturn();
     }

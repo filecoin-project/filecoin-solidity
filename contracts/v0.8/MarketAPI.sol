@@ -36,143 +36,266 @@ library MarketAPI {
     using FilecoinCBOR for *;
 
     /// @notice Deposits the received value into the balance held in escrow.
-    function addBalance(CommonTypes.FilAddress memory providerOrClient, uint256 value) internal {
+    function addBalance(CommonTypes.FilAddress memory providerOrClient, uint256 value) internal returns (int256, bytes memory) {
         bytes memory raw_request = providerOrClient.serializeAddress();
 
-        bytes memory data = Actor.callByID(MarketTypes.ActorID, MarketTypes.AddBalanceMethodNum, Misc.CBOR_CODEC, raw_request, value, false);
+        (int256 exit_code, bytes memory data) = Actor.callByID(
+            MarketTypes.ActorID,
+            MarketTypes.AddBalanceMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            value,
+            false
+        );
         if (data.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return (exit_code, data);
     }
 
     /// @notice Attempt to withdraw the specified amount from the balance held in escrow.
     /// @notice If less than the specified amount is available, yields the entire available balance.
-    function withdrawBalance(MarketTypes.WithdrawBalanceParams memory params) internal returns (CommonTypes.BigInt memory) {
+    function withdrawBalance(MarketTypes.WithdrawBalanceParams memory params) internal returns (int256, CommonTypes.BigInt memory) {
         bytes memory raw_request = params.serializeWithdrawBalanceParams();
 
-        bytes memory result = Actor.callByID(MarketTypes.ActorID, MarketTypes.WithdrawBalanceMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            MarketTypes.ActorID,
+            MarketTypes.WithdrawBalanceMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
-        return result.deserializeBytesBigInt();
+        if (exit_code == 0) {
+            return (0, result.deserializeBytesBigInt());
+        }
+
+        CommonTypes.BigInt memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice Return the escrow balance and locked amount for an address.
     /// @return the escrow balance and locked amount for an address.
-    function getBalance(CommonTypes.FilAddress memory addr) internal view returns (MarketTypes.GetBalanceReturn memory) {
+    function getBalance(CommonTypes.FilAddress memory addr) internal view returns (int256, MarketTypes.GetBalanceReturn memory) {
         bytes memory raw_request = addr.serializeAddress();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetBalanceMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetBalanceMethodNum, Misc.CBOR_CODEC, raw_request);
 
-        return result.deserializeGetBalanceReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeGetBalanceReturn());
+        }
+
+        MarketTypes.GetBalanceReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice This will be available after the deal is published (whether or not is is activated) and up until some undefined period after it is terminated.
     /// @return the data commitment and size of a deal proposal.
-    function getDealDataCommitment(uint64 dealID) internal view returns (MarketTypes.GetDealDataCommitmentReturn memory) {
+    function getDealDataCommitment(uint64 dealID) internal view returns (int256, MarketTypes.GetDealDataCommitmentReturn memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealDataCommitmentMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            MarketTypes.ActorID,
+            MarketTypes.GetDealDataCommitmentMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeGetDealDataCommitmentReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeGetDealDataCommitmentReturn());
+        }
+
+        MarketTypes.GetDealDataCommitmentReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice get the client of the deal proposal.
     /// @return the client of a deal proposal.
-    function getDealClient(uint64 dealID) internal view returns (uint64) {
+    function getDealClient(uint64 dealID) internal view returns (int256, uint64) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealClientMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealClientMethodNum, Misc.CBOR_CODEC, raw_request);
 
-        return result.deserializeUint64();
+        if (exit_code == 0) {
+            return (0, result.deserializeUint64());
+        }
+
+        uint64 empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice get the provider of a deal proposal.
     /// @return the provider of a deal proposal.
-    function getDealProvider(uint64 dealID) internal view returns (uint64) {
+    function getDealProvider(uint64 dealID) internal view returns (int256, uint64) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealProviderMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            MarketTypes.ActorID,
+            MarketTypes.GetDealProviderMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeUint64();
+        if (exit_code == 0) {
+            return (0, result.deserializeUint64());
+        }
+
+        uint64 empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice Get the label of a deal proposal.
     /// @return the label of a deal proposal.
-    function getDealLabel(uint64 dealID) internal view returns (CommonTypes.DealLabel memory) {
+    function getDealLabel(uint64 dealID) internal view returns (int256, CommonTypes.DealLabel memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealLabelMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealLabelMethodNum, Misc.CBOR_CODEC, raw_request);
 
-        return result.deserializeDealLabel();
+        if (exit_code == 0) {
+            return (0, result.deserializeDealLabel());
+        }
+
+        CommonTypes.DealLabel memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice Get the start epoch and duration(in epochs) of a deal proposal.
     /// @return the start epoch and duration (in epochs) of a deal proposal.
-    function getDealTerm(uint64 dealID) internal view returns (MarketTypes.GetDealTermReturn memory) {
+    function getDealTerm(uint64 dealID) internal view returns (int256, MarketTypes.GetDealTermReturn memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealTermMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealTermMethodNum, Misc.CBOR_CODEC, raw_request);
 
-        return result.deserializeGetDealTermReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeGetDealTermReturn());
+        }
+
+        MarketTypes.GetDealTermReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice get the total price that will be paid from the client to the provider for this deal.
     /// @return the per-epoch price of a deal proposal.
-    function getDealTotalPrice(uint64 dealID) internal view returns (CommonTypes.BigInt memory) {
+    function getDealTotalPrice(uint64 dealID) internal view returns (int256, CommonTypes.BigInt memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealTotalPriceMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            MarketTypes.ActorID,
+            MarketTypes.GetDealTotalPriceMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeBytesBigInt();
+        if (exit_code == 0) {
+            return (0, result.deserializeBytesBigInt());
+        }
+
+        CommonTypes.BigInt memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice get the client collateral requirement for a deal proposal.
     /// @return the client collateral requirement for a deal proposal.
-    function getDealClientCollateral(uint64 dealID) internal view returns (CommonTypes.BigInt memory) {
+    function getDealClientCollateral(uint64 dealID) internal view returns (int256, CommonTypes.BigInt memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealClientCollateralMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            MarketTypes.ActorID,
+            MarketTypes.GetDealClientCollateralMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeBytesBigInt();
+        if (exit_code == 0) {
+            return (0, result.deserializeBytesBigInt());
+        }
+
+        CommonTypes.BigInt memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice get the provide collateral requirement for a deal proposal.
     /// @return the provider collateral requirement for a deal proposal.
-    function getDealProviderCollateral(uint64 dealID) internal view returns (CommonTypes.BigInt memory) {
+    function getDealProviderCollateral(uint64 dealID) internal view returns (int256, CommonTypes.BigInt memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealProviderCollateralMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            MarketTypes.ActorID,
+            MarketTypes.GetDealProviderCollateralMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeBytesBigInt();
+        if (exit_code == 0) {
+            return (0, result.deserializeBytesBigInt());
+        }
+
+        CommonTypes.BigInt memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice get the verified flag for a deal proposal.
     /// @notice Note that the source of truth for verified allocations and claims is the verified registry actor.
     /// @return the verified flag for a deal proposal.
-    function getDealVerified(uint64 dealID) internal view returns (bool) {
+    function getDealVerified(uint64 dealID) internal view returns (int256, bool) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealVerifiedMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            MarketTypes.ActorID,
+            MarketTypes.GetDealVerifiedMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeBool();
+        if (exit_code == 0) {
+            return (0, result.deserializeBool());
+        }
+
+        bool empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice Fetches activation state for a deal.
     /// @notice This will be available from when the proposal is published until an undefined period after the deal finishes (either normally or by termination).
     /// @return USR_NOT_FOUND if the deal doesn't exist (yet), or EX_DEAL_EXPIRED if the deal has been removed from state.
-    function getDealActivation(uint64 dealID) internal view returns (MarketTypes.GetDealActivationReturn memory) {
+    function getDealActivation(uint64 dealID) internal view returns (int256, MarketTypes.GetDealActivationReturn memory) {
         bytes memory raw_request = dealID.serializeDealID();
 
-        bytes memory result = Actor.callByIDReadOnly(MarketTypes.ActorID, MarketTypes.GetDealActivationMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(
+            MarketTypes.ActorID,
+            MarketTypes.GetDealActivationMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeGetDealActivationReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeGetDealActivationReturn());
+        }
+
+        MarketTypes.GetDealActivationReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice Publish a new set of storage deals (not yet included in a sector).
-    function publishStorageDeals(MarketTypes.PublishStorageDealsParams memory params) internal returns (MarketTypes.PublishStorageDealsReturn memory) {
+    function publishStorageDeals(MarketTypes.PublishStorageDealsParams memory params) internal returns (int256, MarketTypes.PublishStorageDealsReturn memory) {
         bytes memory raw_request = params.serializePublishStorageDealsParams();
 
-        bytes memory result = Actor.callByID(MarketTypes.ActorID, MarketTypes.PublishStorageDealsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            MarketTypes.ActorID,
+            MarketTypes.PublishStorageDealsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
-        return result.deserializePublishStorageDealsReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializePublishStorageDealsReturn());
+        }
+
+        MarketTypes.PublishStorageDealsReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 }

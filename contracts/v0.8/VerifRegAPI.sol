@@ -35,7 +35,7 @@ library VerifRegAPI {
     function getClaims(VerifRegTypes.GetClaimsParams memory params) internal view returns (VerifRegTypes.GetClaimsReturn memory) {
         bytes memory raw_request = params.serializeGetClaimsParams();
 
-        bytes memory result = Actor.callByIDReadOnly(VerifRegTypes.ActorID, VerifRegTypes.GetClaimsMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(VerifRegTypes.ActorID, VerifRegTypes.GetClaimsMethodNum, Misc.CBOR_CODEC, raw_request);
 
         return result.deserializeGetClaimsReturn();
     }
@@ -44,7 +44,14 @@ library VerifRegAPI {
     function addVerifiedClient(VerifRegTypes.AddVerifiedClientParams memory params) internal {
         bytes memory raw_request = params.serializeAddVerifiedClientParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.AddVerifiedClientMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.AddVerifiedClientMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
@@ -56,7 +63,14 @@ library VerifRegAPI {
     ) internal returns (VerifRegTypes.RemoveExpiredAllocationsReturn memory) {
         bytes memory raw_request = params.serializeRemoveExpiredAllocationsParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.RemoveExpiredAllocationsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.RemoveExpiredAllocationsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
         return result.deserializeRemoveExpiredAllocationsReturn();
     }
@@ -65,7 +79,14 @@ library VerifRegAPI {
     function extendClaimTerms(VerifRegTypes.ExtendClaimTermsParams memory params) internal returns (CommonTypes.BatchReturn memory) {
         bytes memory raw_request = params.serializeExtendClaimTermsParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.ExtendClaimTermsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.ExtendClaimTermsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
         return result.deserializeBatchReturn();
     }
@@ -74,7 +95,14 @@ library VerifRegAPI {
     function removeExpiredClaims(VerifRegTypes.RemoveExpiredClaimsParams memory params) internal returns (VerifRegTypes.RemoveExpiredClaimsReturn memory) {
         bytes memory raw_request = params.serializeRemoveExpiredClaimsParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.RemoveExpiredClaimsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.RemoveExpiredClaimsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
         return result.deserializeRemoveExpiredClaimsReturn();
     }
