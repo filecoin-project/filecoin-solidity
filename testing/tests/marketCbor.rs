@@ -9,8 +9,10 @@ use fvm_ipld_encoding::RawBytes;
 use fvm_shared::address::Address;
 use fvm_shared::message::Message;
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
+use alloy_primitives::{fixed_bytes};
+use alloy_sol_types::{SolCall};
 
-use testing::setup;
+use testing::{setup, api_contracts};
 
 const WASM_COMPILED_PATH: &str = "../build/v0.8/tests/MarketCBORTest.bin";
 
@@ -59,13 +61,20 @@ fn market_cbor_tests() {
 
     println!("Calling `testDealProposalSerDes`");
 
+    let abi_encoded_call = api_contracts::market_cbor_test::testDealProposalSerDesCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
             from: sender[0].1,
             to: Address::new_id(contract_actor_id),
             gas_limit: 1000000000,
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 1,
-            params: RawBytes::new(hex::decode("445945a4e4").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "445945a4e4"
+                cbor_encoded.as_str()
+            ).unwrap()),
             ..Message::default()
         };
 
