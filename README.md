@@ -2,7 +2,7 @@
 
 ---
 
-Originally authored by Zondax.  Learn more at [zondax.ch](https://www.zondax.ch).
+Originally authored by Zondax. Learn more at [zondax.ch](https://www.zondax.ch).
 Protocol Labs are now the owners of this library, and will mantain it moving forward.
 
 ---

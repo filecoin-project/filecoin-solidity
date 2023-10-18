@@ -15,7 +15,7 @@ contract MarketCBORTest {
         require(n1.neg == n2.neg);
     }
 
-    function testDealProposalSerDes() public view {
+    function testDealProposalSerDes() public pure {
         MarketTypes.DealProposal memory proposal;
         proposal.piece_cid = CommonTypes.Cid(hex"000181E2039220206B86B273FF34FCE19D6B804EFF5A3F5747ADA4EAA22F1D49C01E52DDB7875B4B");
         proposal.piece_size = 1024;
