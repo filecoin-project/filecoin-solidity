@@ -35,7 +35,7 @@ contract FilAddressesTest is Test {
         vm.expectRevert(InvalidAddress.selector);
         ethAddress = FilAddresses.toEthAddress(invalidFilAddress);
 
-        invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"040000", testAddress));
+        invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"040a00", testAddress));
 
         vm.expectRevert(InvalidAddress.selector);
         ethAddress = FilAddresses.toEthAddress(invalidFilAddress);
@@ -71,6 +71,10 @@ contract FilAddressesTest is Test {
         invalidInput = abi.encodePacked(hex"04", new bytes(64));
         vm.expectRevert(InvalidAddress.selector);
         result = FilAddresses.fromBytes(invalidInput);
+
+        invalidInput = abi.encodePacked(hex"05", new bytes(64));
+        vm.expectRevert(InvalidAddress.selector);
+        result = FilAddresses.fromBytes(invalidInput);
     }
 
     function test_validate() external pure {
@@ -90,7 +94,6 @@ contract FilAddressesTest is Test {
         assert(FilAddresses.validate(inputAddress));
     }
 
-    // FUZZING TESTS
     function test_validateWhenInputIsInvalid() external pure {
         CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"00", new bytes(10)));
         assert(!FilAddresses.validate(inputAddress));
@@ -106,8 +109,12 @@ contract FilAddressesTest is Test {
 
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"04", new bytes(64)));
         assert(!FilAddresses.validate(inputAddress));
+
+        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"05", new bytes(64)));
+        assert(!FilAddresses.validate(inputAddress));
     }
 
+    // FUZZING TESTS
     function testFuzz_toEthAddressInvalidFirstByte(address addr, bytes1 firstByte) public {
         vm.assume(firstByte != hex"04");
         CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(abi.encodePacked(firstByte, hex"0a", addr));
