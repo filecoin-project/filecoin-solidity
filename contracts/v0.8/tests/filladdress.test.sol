@@ -8,9 +8,9 @@ import {CommonTypes} from "contracts/v0.8/types/CommonTypes.sol";
 import "forge-std/console.sol";
 
 contract FilAddressesTest is Test {
-    error InvalidAddress();
-
     address testAddress = makeAddr("testaddress");
+    
+    error InvalidAddress();
 
     // UNIT TESTS
     function test_fromEthAddress() external {
