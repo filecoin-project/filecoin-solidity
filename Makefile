@@ -1,61 +1,63 @@
 
 ################ BUILD ################
+solc := "./bin/solc"
+
 build: build_api build_mock_api build_tests
 
 deps:
 	yarn install
 
 build_tests: verify_solc build_leb128_test
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/market.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/marketcbor.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/miner.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/power.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/account.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/datacap.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/verifreg.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/precompiles.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/send.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/cbor.decode.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/address.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/deserializeparams.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/tests/market.test.sol --output-dir ./build/v0.8/mocks/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/tests/miner.test.sol --output-dir ./build/v0.8/mocks/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/bigints.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/market.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/marketcbor.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/miner.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/power.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/account.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/datacap.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/verifreg.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/precompiles.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/send.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/cbor.decode.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/address.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/deserializeparams.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/tests/market.test.sol --output-dir ./build/v0.8/mocks/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/tests/miner.test.sol --output-dir ./build/v0.8/mocks/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/bigints.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
 
 build_api: verify_solc deps
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/MarketAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/MinerAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/VerifRegAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/PowerAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/DataCapAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/AccountAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/PrecompilesAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/Utils.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/SendAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/MarketAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/MinerAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/VerifRegAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/PowerAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/DataCapAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/AccountAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/PrecompilesAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/Utils.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/SendAPI.sol --output-dir ./build/v0.8 --overwrite --bin --hashes --opcodes --abi
 
 build_mock_api: verify_solc deps
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/MarketMockAPI.sol --output-dir ./build/v0.8/mocks --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/MinerMockAPI.sol --output-dir ./build/v0.8/mocks --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/MarketMockAPI.sol --output-dir ./build/v0.8/mocks --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/MinerMockAPI.sol --output-dir ./build/v0.8/mocks --overwrite --bin --hashes --opcodes --abi
 
 build_builtin_actors:
 	cd testing/builtin-actors && make bundle-mainnet
 
 build_leb128_test: verify_solc deps
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated1.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated2.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated3.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated4.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated5.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated6.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated7.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated8.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated9.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated10.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated11.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated12.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated13.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
-	 ./bin/solc --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated14.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated1.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated2.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated3.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated4.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated5.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated6.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated7.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated8.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated9.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated10.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated11.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated12.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated13.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
+	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated14.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
 
 generate_leb128_tests:
 	cd scripts/leb128 && python generate.py
@@ -170,12 +172,18 @@ security_precompiles_api:
 ################ DEPS ################
 
 verify_solc:
-	@[ ! -f  ./bin/solc --optimize ] && echo "Please install solc using 'make install_solc_linux' or 'make install_solc_mac'" || true
+	@[ ! -f  $(solc) --optimize ] && echo "Please install solc using 'make install_solc_linux' or 'make install_solc_mac'" || true
 
 install_solc_linux:
 	wget https://github.com/ethereum/solidity/releases/download/v0.8.18/solc-static-linux
 	mv solc-static-linux bin/solc
 	chmod +x bin/solc
+	wget https://github.com/ethereum/solidity/releases/download/v0.8.21/solc-static-linux
+	mv solc-static-linux bin/solc-v0.8.21
+	chmod +x bin/solc-v0.8.21
+	wget https://github.com/ethereum/solidity/releases/download/v0.8.18/solc-static-linux
+	mv solc-static-linux bin/solc-v0.8.18
+	chmod +x bin/solc-v0.8.18
 
 install_solc_win:
 	@echo "No Windows. Only Linux."
@@ -184,6 +192,12 @@ install_solc_mac:
 	wget https://github.com/ethereum/solidity/releases/download/v0.8.18/solc-macos
 	mv solc-macos bin/solc
 	chmod +x bin/solc
+	wget https://github.com/ethereum/solidity/releases/download/v0.8.21/solc-macos
+	mv solc-macos bin/solc-v0.8.21
+	chmod +x bin/solc-v0.8.21
+	wget https://github.com/ethereum/solidity/releases/download/v0.8.18/solc-macos
+	mv solc-macos bin/solc-v0.8.18
+	chmod +x bin/solc-v0.8.18
 
 install-llvm-ci:
 	echo 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main' | sudo tee /etc/apt/sources.list.d/llvm.list

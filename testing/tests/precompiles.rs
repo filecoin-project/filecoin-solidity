@@ -1,6 +1,7 @@
 use fil_actor_eam::Return;
 use fil_actor_evm::Method as EvmMethods;
 use fil_actors_runtime::EAM_ACTOR_ADDR;
+use fil_actors_runtime::cbor;
 use fvm::executor::{ApplyKind, Executor};
 use fvm_integration_tests::dummy::DummyExterns;
 use fvm_integration_tests::tester::Account;
@@ -9,9 +10,12 @@ use fvm_ipld_encoding::RawBytes;
 use fvm_shared::address::Address;
 use fvm_shared::econ::TokenAmount;
 use fvm_shared::message::Message;
+use serde::de::Expected;
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
+use alloy_primitives::{fixed_bytes, address, Address as Alloy_Address};
+use alloy_sol_types::{SolCall, SolType, sol_data};
 
-use testing::setup;
+use testing::{setup, api_contracts};
 use testing::GasResult;
 use testing::parse_gas;
 
@@ -136,13 +140,24 @@ fn precompiles_tests() {
 
     println!("Calling `resolve_address`");
 
+    let abi_encoded_call = api_contracts::precompiles_test::resolve_addressCall{
+        addr: api_contracts::precompiles_test::FilAddress{
+            data: sender[0].1.to_bytes()
+        }
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
             from: sender[0].1,
             to: Address::new_id(contract_actor_id),
             gas_limit: 1000000000,
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 1,
-            params: RawBytes::new(hex::decode("58841D5F67A4000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015011EDA43D05CA6D7D637E7065EF6B8C5DB89E5FB0C0000000000000000000000").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "58841D5F67A4000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000015011EDA43D05CA6D7D637E7065EF6B8C5DB89E5FB0C0000000000000000000000"
+                cbor_encoded.as_str()
+            ).unwrap()),
             ..Message::default()
         };
 
@@ -152,12 +167,26 @@ fn precompiles_tests() {
     let gas_used = parse_gas(res.exec_trace);
     gas_result.push(("resolve_address".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
+
+    let expected_address = 0x64_u64;
+
+    let abi_encoded_call = sol_data::Uint::<64>::abi_encode(&expected_address);
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+    
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()),
-        "58200000000000000000000000000000000000000000000000000000000000000064"
+        // "58200000000000000000000000000000000000000000000000000000000000000064"
+        cbor_encoded.as_str()
     );
 
     println!("Calling `lookup_delegated_address (empty response)`");
+
+    let abi_encoded_call = api_contracts::precompiles_test::lookup_delegated_addressCall{
+        actor_id: 0x64_u64
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -167,7 +196,8 @@ fn precompiles_tests() {
         sequence: 2,
         params: RawBytes::new(
             hex::decode(
-                "58249898B39A0000000000000000000000000000000000000000000000000000000000000064",
+                // "58249898B39A0000000000000000000000000000000000000000000000000000000000000064",
+                cbor_encoded.as_str()
             )
             .unwrap(),
         ),
@@ -184,9 +214,26 @@ fn precompiles_tests() {
         gas_used,
     ));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
-    assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), "584000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000");
+
+    let expected_delegated_addr = fixed_bytes!("");
+
+    let abi_encoded_call = sol_data::Bytes::abi_encode(&expected_delegated_addr);
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    assert_eq!(
+        hex::encode(res.msg_receipt.return_data.bytes()), 
+        // "584000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000"
+        cbor_encoded.as_str()
+    );
 
     println!("Calling `lookup_delegated_address (address found)`");
+
+    let abi_encoded_call = api_contracts::precompiles_test::lookup_delegated_addressCall{
+        actor_id: 0x190_u64
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -196,7 +243,8 @@ fn precompiles_tests() {
         sequence: 3,
         params: RawBytes::new(
             hex::decode(
-                "58249898B39A0000000000000000000000000000000000000000000000000000000000000190",
+                // "58249898B39A0000000000000000000000000000000000000000000000000000000000000190",
+                cbor_encoded.as_str()
             )
             .unwrap(),
         ),
@@ -212,9 +260,31 @@ fn precompiles_tests() {
         gas_used,
     ));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
-    assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), "586000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000016040adafea492d9c6733ae3d56b7ed1adb60692c98bc500000000000000000000");
+
+    let expected_delegated_addr = embryo_delegated_address.to_bytes();
+
+    let abi_encoded_call = sol_data::Bytes::abi_encode(&expected_delegated_addr);
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    assert_eq!(
+        hex::encode(res.msg_receipt.return_data.bytes()), 
+        // "586000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000016040adafea492d9c6733ae3d56b7ed1adb60692c98bc500000000000000000000"
+        cbor_encoded.as_str()
+    );
 
     println!("Calling `resolve_eth_address`");
+
+    let embryo_del_addr_bytes = embryo_delegated_address.to_bytes();
+    let embryo_del_addr_slice = embryo_del_addr_bytes.as_slice();
+
+    let eth_addr = Alloy_Address::from_slice( &embryo_del_addr_slice[2..]);
+
+    let abi_encoded_call = api_contracts::precompiles_test::resolve_eth_addressCall{
+        addr: eth_addr
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
             from: sender[0].1,
@@ -222,7 +292,10 @@ fn precompiles_tests() {
             gas_limit: 1000000000,
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 4,
-            params: RawBytes::new(hex::decode("5824DCA7CA03000000000000000000000000DAFEA492D9C6733AE3D56B7ED1ADB60692C98BC5").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "5824DCA7CA03000000000000000000000000DAFEA492D9C6733AE3D56B7ED1ADB60692C98BC5"
+                cbor_encoded.as_str()
+            ).unwrap()),
             ..Message::default()
         };
 
@@ -232,9 +305,17 @@ fn precompiles_tests() {
     let gas_used = parse_gas(res.exec_trace);
     gas_result.push(("resolve_eth_address".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
+
+    let expected_eth_address = 0x190_u64;
+
+    let abi_encoded_call = sol_data::Uint::<64>::abi_encode(&expected_eth_address);
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()),
-        "58200000000000000000000000000000000000000000000000000000000000000190"
+        // "58200000000000000000000000000000000000000000000000000000000000000190"
+        cbor_encoded.as_str()
     );
 
     let table = testing::create_gas_table(gas_result);

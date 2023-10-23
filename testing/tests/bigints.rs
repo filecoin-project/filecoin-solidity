@@ -10,8 +10,9 @@ use fvm_shared::address::Address;
 use fvm_shared::econ::TokenAmount;
 use fvm_shared::message::Message;
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
+use alloy_sol_types::{SolCall};
 
-use testing::setup;
+use testing::{setup, api_contracts};
 use testing::GasResult;
 
 const WASM_COMPILED_PATH: &str = "../build/v0.8/tests/BigIntsTest.bin";
@@ -61,13 +62,20 @@ fn bigints_tests() {
 
     println!("Calling `to_uint256`");
 
+    let abi_encoded_call = api_contracts::bigints_test::to_uint256Call{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(contract_actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 1,
-        params: RawBytes::new(hex::decode("44C91A35AF").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "44C91A35AF"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -80,13 +88,20 @@ fn bigints_tests() {
 
     println!("Calling `to_int256_negative`");
 
+    let abi_encoded_call = api_contracts::bigints_test::to_int256_negativeCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(contract_actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 2,
-        params: RawBytes::new(hex::decode("44A7579D7A").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "44A7579D7A"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -100,13 +115,20 @@ fn bigints_tests() {
 
     println!("Calling `to_int256_positive`");
 
+    let abi_encoded_call = api_contracts::bigints_test::to_int256_positiveCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(contract_actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 3,
-        params: RawBytes::new(hex::decode("44F807127B").unwrap()),
+        params: RawBytes::new(hex::decode(
+            //"44F807127B"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -119,13 +141,20 @@ fn bigints_tests() {
 
     println!("Calling `from_uint256`");
 
+    let abi_encoded_call = api_contracts::bigints_test::from_uint256Call{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(contract_actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 4,
-        params: RawBytes::new(hex::decode("44ED98A8D4").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "44ED98A8D4"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -137,13 +166,20 @@ fn bigints_tests() {
 
     println!("Calling `from_int256_positive`");
 
+    let abi_encoded_call = api_contracts::bigints_test::from_int256_positiveCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(contract_actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 5,
-        params: RawBytes::new(hex::decode("4491A2B353").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "4491A2B353"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -155,13 +191,20 @@ fn bigints_tests() {
 
     println!("Calling `from_int256_negative`");
 
+    let abi_encoded_call = api_contracts::bigints_test::from_int256_negativeCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(contract_actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 6,
-        params: RawBytes::new(hex::decode("44CC15D401").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "44CC15D401"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 

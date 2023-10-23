@@ -26,7 +26,7 @@ import "../types/MinerTypes.sol";
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract MinerApiTest {
-    function get_owner(CommonTypes.FilActorId target) public returns (MinerTypes.GetOwnerReturn memory) {
+    function get_owner(CommonTypes.FilActorId target) public view returns (MinerTypes.GetOwnerReturn memory) {
         return MinerAPI.getOwner(target);
     }
 
@@ -34,19 +34,19 @@ contract MinerApiTest {
         MinerAPI.changeOwnerAddress(target, addr);
     }
 
-    function is_controlling_address(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) public returns (bool) {
+    function is_controlling_address(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) public view returns (bool) {
         return MinerAPI.isControllingAddress(target, addr);
     }
 
-    function get_sector_size(CommonTypes.FilActorId target) public returns (uint64) {
+    function get_sector_size(CommonTypes.FilActorId target) public view returns (uint64) {
         return MinerAPI.getSectorSize(target);
     }
 
-    function get_available_balance(CommonTypes.FilActorId target) public returns (CommonTypes.BigInt memory) {
+    function get_available_balance(CommonTypes.FilActorId target) public view returns (CommonTypes.BigInt memory) {
         return MinerAPI.getAvailableBalance(target);
     }
 
-    function get_vesting_funds(CommonTypes.FilActorId target) public returns (MinerTypes.GetVestingFundsReturn memory) {
+    function get_vesting_funds(CommonTypes.FilActorId target) public view returns (MinerTypes.GetVestingFundsReturn memory) {
         return MinerAPI.getVestingFunds(target);
     }
 
@@ -54,7 +54,7 @@ contract MinerApiTest {
         return MinerAPI.changeBeneficiary(target, params);
     }
 
-    function get_beneficiary(CommonTypes.FilActorId target) public returns (MinerTypes.GetBeneficiaryReturn memory) {
+    function get_beneficiary(CommonTypes.FilActorId target) public view returns (MinerTypes.GetBeneficiaryReturn memory) {
         return MinerAPI.getBeneficiary(target);
     }
 
@@ -78,11 +78,11 @@ contract MinerApiTest {
         MinerAPI.confirmChangeWorkerAddress(target);
     }
 
-    function get_peer_id(CommonTypes.FilActorId target) public returns (CommonTypes.FilAddress memory) {
+    function get_peer_id(CommonTypes.FilActorId target) public view returns (CommonTypes.FilAddress memory) {
         return MinerAPI.getPeerId(target);
     }
 
-    function get_multiaddresses(CommonTypes.FilActorId target) public returns (MinerTypes.GetMultiaddrsReturn memory) {
+    function get_multiaddresses(CommonTypes.FilActorId target) public view returns (MinerTypes.GetMultiaddrsReturn memory) {
         return MinerAPI.getMultiaddresses(target);
     }
 

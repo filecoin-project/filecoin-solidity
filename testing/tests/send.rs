@@ -10,8 +10,10 @@ use fvm_shared::address::Address;
 use fvm_shared::econ::TokenAmount;
 use fvm_shared::message::Message;
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
+use alloy_primitives::{fixed_bytes, address, Address as Alloy_Address, U256};
+use alloy_sol_types::{SolCall, SolType, sol_data};
 
-use testing::setup;
+use testing::{setup, api_contracts};
 use testing::GasResult;
 use testing::parse_gas;
 
@@ -134,13 +136,23 @@ fn send_tests() {
 
     println!("Calling `send (actor id)`");
 
+    let abi_encoded_call = api_contracts::send_test::send_0Call{
+        target: 0x65_u64,
+        amount: U256::from(0xa)
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
             from: sender[0].1,
             to: Address::new_id(contract_actor_id),
             gas_limit: 1000000000,
             method_num: EvmMethods::InvokeContract as u64,
             sequence: 2,
-            params: RawBytes::new(hex::decode("58446F7EE35E0000000000000000000000000000000000000000000000000000000000000065000000000000000000000000000000000000000000000000000000000000000A").unwrap()),
+            params: RawBytes::new(hex::decode(
+                // "58446F7EE35E0000000000000000000000000000000000000000000000000000000000000065000000000000000000000000000000000000000000000000000000000000000A"
+                cbor_encoded.as_str()
+            ).unwrap()),
             ..Message::default()
         };
 
@@ -154,13 +166,25 @@ fn send_tests() {
 
     println!("Calling `send (address)`");
 
+    let abi_encoded_call = api_contracts::send_test::send_1Call{
+        target: api_contracts::send_test::FilAddress{
+            data: vec![0_u8, 0x65]
+        },
+        amount: U256::from(0xa)
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(contract_actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 3,
-        params: RawBytes::new(hex::decode("58A40E0E687C0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000A000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020065000000000000000000000000000000000000000000000000000000000000").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "58A40E0E687C0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000A000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000020065000000000000000000000000000000000000000000000000000000000000"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 

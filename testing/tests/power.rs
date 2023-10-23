@@ -20,8 +20,12 @@ use multihash::Code;
 use rand_core::OsRng;
 use serde::{Deserialize as SerdeDeserialize, Serialize as SerdeSerialize};
 
+use alloy_primitives::{fixed_bytes};
+use alloy_sol_types::{SolCall, SolType, sol_data};
+
+use testing::{setup, api_contracts};
+
 use testing::helpers::set_storagepower_actor;
-use testing::setup;
 use testing::GasResult;
 use testing::parse_gas;
 
@@ -159,13 +163,20 @@ fn power_tests() {
 
     println!("Calling `miner_count`");
 
+    let abi_encoded_call = api_contracts::power_test::miner_countCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     let message = Message {
         from: sender[0].1,
         to: Address::new_id(exec_return.actor_id),
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 2,
-        params: RawBytes::new(hex::decode("4487A8D7D6").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "4487A8D7D6"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -175,12 +186,24 @@ fn power_tests() {
     let gas_used = parse_gas(res.exec_trace);
     gas_result.push(("miner_count".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
+
+    let expected_miner_count = 1_u64;
+
+    let abi_encoded_call = sol_data::Uint::<64>::abi_encode(&expected_miner_count);
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()),
-        "58200000000000000000000000000000000000000000000000000000000000000001"
+        // "58200000000000000000000000000000000000000000000000000000000000000001"
+        cbor_encoded.as_str()
     );
 
     println!("Calling `network_raw_power`");
+
+    let abi_encoded_call = api_contracts::power_test::network_raw_powerCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -188,7 +211,10 @@ fn power_tests() {
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 3,
-        params: RawBytes::new(hex::decode("446C3D7356").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "446C3D7356"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -198,9 +224,27 @@ fn power_tests() {
     let gas_used = parse_gas(res.exec_trace);
     gas_result.push(("network_raw_power".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
-    assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), "58800000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+
+    let expected_network_raw_power = api_contracts::power_test::BigInt{
+        val: fixed_bytes!("").to_vec(),
+        neg: false
+    };
+    let abi_encoded_call = api_contracts::power_test::BigInt::abi_encode(&expected_network_raw_power);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    assert_eq!(
+        hex::encode(res.msg_receipt.return_data.bytes()), 
+        // "58800000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        cbor_encoded.as_str()
+    );
 
     println!("Calling `miner_raw_power`");
+
+    let abi_encoded_call = api_contracts::power_test::miner_raw_powerCall{
+        minerID: 0x66_u64
+    }.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -210,22 +254,42 @@ fn power_tests() {
         sequence: 4,
         params: RawBytes::new(
             hex::decode(
-                "58245D8543640000000000000000000000000000000000000000000000000000000000000066",
+                // "58245D8543640000000000000000000000000000000000000000000000000000000000000066",
+                cbor_encoded.as_str()
             )
             .unwrap(),
         ),
         ..Message::default()
     };
-
+    //
     let res = executor
         .execute_message(message, ApplyKind::Explicit, 100)
         .unwrap();
     let gas_used = parse_gas(res.exec_trace);
     gas_result.push(("miner_raw_power".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
-    assert_eq!(hex::encode(res.msg_receipt.return_data.bytes()), "58c0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+
+    let expected_miner_raw_power = api_contracts::power_test::MinerRawPowerReturn{
+        raw_byte_power: api_contracts::power_test::BigInt{
+            val: fixed_bytes!("").to_vec(),
+            neg: false
+        },
+        meets_consensus_minimum: false
+    };
+    let abi_encoded_call = api_contracts::power_test::MinerRawPowerReturn::abi_encode(&expected_miner_raw_power);
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
+    assert_eq!(
+        hex::encode(res.msg_receipt.return_data.bytes()), 
+        // "58c0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        cbor_encoded.as_str()
+    );
 
     println!("Calling `miner_consensus_count`");
+
+    let abi_encoded_call = api_contracts::power_test::miner_consensus_countCall{}.abi_encode();
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
 
     let message = Message {
         from: sender[0].1,
@@ -233,7 +297,10 @@ fn power_tests() {
         gas_limit: 1000000000,
         method_num: EvmMethods::InvokeContract as u64,
         sequence: 5,
-        params: RawBytes::new(hex::decode("44DF16B842").unwrap()),
+        params: RawBytes::new(hex::decode(
+            // "44DF16B842"
+            cbor_encoded.as_str()
+        ).unwrap()),
         ..Message::default()
     };
 
@@ -243,9 +310,17 @@ fn power_tests() {
     let gas_used = parse_gas(res.exec_trace);
     gas_result.push(("miner_consensus_count".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
+
+    let expected_miner_consensus_count = 0_u64;
+
+    let abi_encoded_call = sol_data::Uint::<64>::abi_encode(&expected_miner_consensus_count);
+
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()),
-        "58200000000000000000000000000000000000000000000000000000000000000000"
+        // "58200000000000000000000000000000000000000000000000000000000000000000"
+        cbor_encoded.as_str()
     );
 
     let table = testing::create_gas_table(gas_result);

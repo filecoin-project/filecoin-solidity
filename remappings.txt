@@ -1,3 +1,4 @@
 solidity-cborutils/contracts/=lib/solidity-cborutils/contracts/
 @ensdomains/buffer=lib/buffer
 @zondax/solidity-bignumber/=vendor/solidity-BigNumber/
+@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/

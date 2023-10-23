@@ -27,6 +27,8 @@ import "../utils/Errors.sol";
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract MarketApiTest {
+    uint[] public publishedDealIds;
+
     function add_balance(CommonTypes.FilAddress memory providerOrClient, uint256 value) public payable {
         (int256 exit_code, bytes memory result) = MarketAPI.addBalance(providerOrClient, value);
 
@@ -133,6 +135,10 @@ contract MarketApiTest {
         (int256 exit_code, MarketTypes.PublishStorageDealsReturn memory result) = MarketAPI.publishStorageDeals(params);
 
         Errors.revertOnError(exit_code);
+
+        for (uint i = 0; i < result.ids.length; ++i) {
+            publishedDealIds.push(result.ids[i]);
+        }
 
         return result;
     }
