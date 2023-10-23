@@ -20,16 +20,25 @@
 pragma solidity ^0.8.17;
 
 import "../SendAPI.sol";
+import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the send utilities, as the library by itself is not.
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract SendApiTest {
-    function send(CommonTypes.FilActorId target, uint256 amount) public {
-        return SendAPI.send(target, amount);
+    function send(CommonTypes.FilActorId target, uint256 amount) public returns (int256) {
+        int256 exit_code = SendAPI.send(target, amount);
+
+        Errors.revertOnError(exit_code);
+
+        return exit_code;
     }
 
-    function send(CommonTypes.FilAddress memory target, uint256 amount) public {
-        return SendAPI.send(target, amount);
+    function send(CommonTypes.FilAddress memory target, uint256 amount) public returns (int256) {
+        int256 exit_code = SendAPI.send(target, amount);
+
+        Errors.revertOnError(exit_code);
+
+        return exit_code;
     }
 }

@@ -29,20 +29,26 @@ library SendAPI {
     /// @notice send token to a specific actor
     /// @param target The id address (uint64) you want to send funds to
     /// @param value tokens to be transferred to the receiver
-    function send(CommonTypes.FilActorId target, uint256 value) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function send(CommonTypes.FilActorId target, uint256 value) internal returns (int256) {
         (int256 exit_code, bytes memory result) = Actor.callByID(target, 0, Misc.NONE_CODEC, new bytes(0), value, false);
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @notice send token to a specific actor
     /// @param target The address you want to send funds to
     /// @param value tokens to be transferred to the receiver
-    function send(CommonTypes.FilAddress memory target, uint256 value) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function send(CommonTypes.FilAddress memory target, uint256 value) internal returns (int256) {
         (int256 exit_code, bytes memory result) = Actor.callByAddress(target.data, 0, Misc.NONE_CODEC, new bytes(0), value, false);
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 }
