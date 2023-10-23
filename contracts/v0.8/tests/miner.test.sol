@@ -21,72 +21,123 @@ pragma solidity ^0.8.17;
 
 import "../MinerAPI.sol";
 import "../types/MinerTypes.sol";
+import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the miner actor API, as the library by itself is not.
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract MinerApiTest {
     function get_owner(CommonTypes.FilActorId target) public view returns (MinerTypes.GetOwnerReturn memory) {
-        return MinerAPI.getOwner(target);
+        (int256 exit_code, MinerTypes.GetOwnerReturn memory result) = MinerAPI.getOwner(target);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function change_owner_address(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) public {
-        MinerAPI.changeOwnerAddress(target, addr);
+        int256 exit_code = MinerAPI.changeOwnerAddress(target, addr);
+
+        Errors.revertOnError(exit_code);
     }
 
     function is_controlling_address(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) public view returns (bool) {
-        return MinerAPI.isControllingAddress(target, addr);
+        (int256 exit_code, bool result) = MinerAPI.isControllingAddress(target, addr);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_sector_size(CommonTypes.FilActorId target) public view returns (uint64) {
-        return MinerAPI.getSectorSize(target);
+        (int256 exit_code, uint64 result) = MinerAPI.getSectorSize(target);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_available_balance(CommonTypes.FilActorId target) public view returns (CommonTypes.BigInt memory) {
-        return MinerAPI.getAvailableBalance(target);
+        (int256 exit_code, CommonTypes.BigInt memory result) = MinerAPI.getAvailableBalance(target);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_vesting_funds(CommonTypes.FilActorId target) public view returns (MinerTypes.GetVestingFundsReturn memory) {
-        return MinerAPI.getVestingFunds(target);
+        (int256 exit_code, MinerTypes.GetVestingFundsReturn memory result) = MinerAPI.getVestingFunds(target);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function change_beneficiary(CommonTypes.FilActorId target, MinerTypes.ChangeBeneficiaryParams memory params) public {
-        return MinerAPI.changeBeneficiary(target, params);
+        int256 exit_code = MinerAPI.changeBeneficiary(target, params);
+
+        Errors.revertOnError(exit_code);
     }
 
     function get_beneficiary(CommonTypes.FilActorId target) public view returns (MinerTypes.GetBeneficiaryReturn memory) {
-        return MinerAPI.getBeneficiary(target);
+        (int256 exit_code, MinerTypes.GetBeneficiaryReturn memory result) = MinerAPI.getBeneficiary(target);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function change_worker_address(CommonTypes.FilActorId target, MinerTypes.ChangeWorkerAddressParams memory params) public {
-        MinerAPI.changeWorkerAddress(target, params);
+        int256 exit_code = MinerAPI.changeWorkerAddress(target, params);
+
+        Errors.revertOnError(exit_code);
     }
 
     function change_peer_id(CommonTypes.FilActorId target, CommonTypes.FilAddress memory newId) public {
-        MinerAPI.changePeerId(target, newId);
+        int256 exit_code = MinerAPI.changePeerId(target, newId);
+
+        Errors.revertOnError(exit_code);
     }
 
     function change_multiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) public {
-        MinerAPI.changeMultiaddresses(target, params);
+        int256 exit_code = MinerAPI.changeMultiaddresses(target, params);
+
+        Errors.revertOnError(exit_code);
     }
 
     function repay_debt(CommonTypes.FilActorId target) public {
-        MinerAPI.repayDebt(target);
+        int256 exit_code = MinerAPI.repayDebt(target);
+
+        Errors.revertOnError(exit_code);
     }
 
     function confirm_change_worker_address(CommonTypes.FilActorId target) public {
-        MinerAPI.confirmChangeWorkerAddress(target);
+        int256 exit_code = MinerAPI.confirmChangeWorkerAddress(target);
+
+        Errors.revertOnError(exit_code);
     }
 
     function get_peer_id(CommonTypes.FilActorId target) public view returns (CommonTypes.FilAddress memory) {
-        return MinerAPI.getPeerId(target);
+        (int256 exit_code, CommonTypes.FilAddress memory result) = MinerAPI.getPeerId(target);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_multiaddresses(CommonTypes.FilActorId target) public view returns (MinerTypes.GetMultiaddrsReturn memory) {
-        return MinerAPI.getMultiaddresses(target);
+        (int256 exit_code, MinerTypes.GetMultiaddrsReturn memory result) = MinerAPI.getMultiaddresses(target);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function withdraw_balance(CommonTypes.FilActorId target, CommonTypes.BigInt memory amount) public returns (CommonTypes.BigInt memory) {
-        return MinerAPI.withdrawBalance(target, amount);
+        (int256 exit_code, CommonTypes.BigInt memory result) = MinerAPI.withdrawBalance(target, amount);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 }
