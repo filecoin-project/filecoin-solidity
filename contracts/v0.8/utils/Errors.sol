@@ -16,7 +16,7 @@ library Errors {
     int256 constant USR_ASSERTION_FAILED = 24;
     int256 constant START_FOR_ACTOR_SPECIFIC_EXIT_CODES = 32;
 
-    function revertWithDescriptionIfExitCodeIsNotZero(int256 exit_code) internal pure {
+    function revertOnError(int256 exit_code) internal pure {
         if (exit_code == 0) return;
 
         string memory description;
@@ -24,7 +24,7 @@ library Errors {
         if (exit_code == USR_ILLEGAL_ARGUMENT) description = "USR_ILLEGAL_ARGUMENT: invalid message parameters";
         if (exit_code == USR_NOT_FOUND) description = "USR_NOT_FOUND: message referenced something that doesn't exist";
         if (exit_code == USR_FORBIDDEN) description = "USR_FORBIDDEN: operation forbidden";
-        if (exit_code == USR_INSUFFICIENT_FUNDS) description = "USR_INSUFFICIENT_FUNDS: insufficient funds for operation";
+        if (exit_code == USR_INSUFFICIENT_FUNDS) description = "USR_INSUFFICIENT_FUNDS";
         if (exit_code == USR_ILLEGAL_STATE) description = "USR_ILLEGAL_STATE: the actor is in an illegal state";
         if (exit_code == USR_SERIALIZATION) description = "USR_SERIALIZATION: actor failed to serialize or deserialize some state";
         if (exit_code == USR_UNHANDLED_MESSAGE) description = "USR_UNHANDLED_MESSAGE: actor cannot handle this message";

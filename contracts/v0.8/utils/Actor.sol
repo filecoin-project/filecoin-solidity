@@ -207,6 +207,7 @@ library Actor {
     /// @notice parse the response an actor returned
     /// @notice it will validate the return code (success) and the codec (valid one)
     /// @param raw_response raw data (bytes) the actor returned
+    /// @return exit code if an error occured, 0 otherwise
     /// @return the actual raw data (payload, in bytes) to be parsed according to the actor and method called
     function readRespData(bytes memory raw_response) internal pure returns (int256, bytes memory) {
         (int256 exit, uint64 return_codec, bytes memory return_value) = abi.decode(raw_response, (int256, uint64, bytes));

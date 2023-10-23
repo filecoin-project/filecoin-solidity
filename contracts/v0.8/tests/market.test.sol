@@ -30,13 +30,13 @@ contract MarketApiTest {
     function add_balance(CommonTypes.FilAddress memory providerOrClient, uint256 value) public payable {
         (int256 exit_code, bytes memory result) = MarketAPI.addBalance(providerOrClient, value);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
     }
 
     function withdraw_balance(MarketTypes.WithdrawBalanceParams memory params) public returns (CommonTypes.BigInt memory) {
         (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.withdrawBalance(params);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -44,7 +44,7 @@ contract MarketApiTest {
     function get_balance(CommonTypes.FilAddress memory addr) public returns (MarketTypes.GetBalanceReturn memory) {
         (int256 exit_code, MarketTypes.GetBalanceReturn memory result) = MarketAPI.getBalance(addr);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -52,7 +52,7 @@ contract MarketApiTest {
     function get_deal_data_commitment(uint64 dealID) public returns (MarketTypes.GetDealDataCommitmentReturn memory) {
         (int256 exit_code, MarketTypes.GetDealDataCommitmentReturn memory result) = MarketAPI.getDealDataCommitment(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -60,7 +60,7 @@ contract MarketApiTest {
     function get_deal_client(uint64 dealID) public returns (uint64) {
         (int256 exit_code, uint64 result) = MarketAPI.getDealClient(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -68,7 +68,7 @@ contract MarketApiTest {
     function get_deal_provider(uint64 dealID) public returns (uint64) {
         (int256 exit_code, uint64 result) = MarketAPI.getDealProvider(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -76,7 +76,7 @@ contract MarketApiTest {
     function get_deal_label(uint64 dealID) public returns (CommonTypes.DealLabel memory) {
         (int256 exit_code, CommonTypes.DealLabel memory result) = MarketAPI.getDealLabel(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -84,7 +84,7 @@ contract MarketApiTest {
     function get_deal_term(uint64 dealID) public returns (MarketTypes.GetDealTermReturn memory) {
         (int256 exit_code, MarketTypes.GetDealTermReturn memory result) = MarketAPI.getDealTerm(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -92,7 +92,7 @@ contract MarketApiTest {
     function get_deal_total_price(uint64 dealID) public returns (CommonTypes.BigInt memory) {
         (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.getDealTotalPrice(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -100,7 +100,7 @@ contract MarketApiTest {
     function get_deal_client_collateral(uint64 dealID) public returns (CommonTypes.BigInt memory) {
         (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.getDealClientCollateral(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -108,7 +108,7 @@ contract MarketApiTest {
     function get_deal_provider_collateral(uint64 dealID) public returns (CommonTypes.BigInt memory) {
         (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.getDealProviderCollateral(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -116,7 +116,7 @@ contract MarketApiTest {
     function get_deal_verified(uint64 dealID) public returns (bool) {
         (int256 exit_code, bool result) = MarketAPI.getDealVerified(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -124,7 +124,7 @@ contract MarketApiTest {
     function get_deal_activation(uint64 dealID) public returns (MarketTypes.GetDealActivationReturn memory) {
         (int256 exit_code, MarketTypes.GetDealActivationReturn memory result) = MarketAPI.getDealActivation(dealID);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
@@ -132,7 +132,7 @@ contract MarketApiTest {
     function publish_storage_deals(MarketTypes.PublishStorageDealsParams memory params) public returns (MarketTypes.PublishStorageDealsReturn memory) {
         (int256 exit_code, MarketTypes.PublishStorageDealsReturn memory result) = MarketAPI.publishStorageDeals(params);
 
-        Errors.revertWithDescriptionIfExitCodeIsNotZero(exit_code);
+        Errors.revertOnError(exit_code);
 
         return result;
     }
