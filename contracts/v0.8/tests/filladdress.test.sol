@@ -77,8 +77,13 @@ contract FilAddressesTest is Test {
         result = FilAddresses.fromBytes(invalidInput);
     }
 
-    function test_validate() external pure {
-        CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(hex"00");
+    function test_validate() external view {
+        CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(hex"0001");
+        assert(FilAddresses.validate(inputAddress));
+        
+        // failing because of the payload length
+        inputAddress = FilAddresses.fromActorID(type(uint64).max);
+        console.log(inputAddress.data.length);
         assert(FilAddresses.validate(inputAddress));
 
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"01", new bytes(20)));
