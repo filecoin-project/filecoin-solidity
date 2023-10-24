@@ -5,7 +5,6 @@ import {Test} from "forge-std/Test.sol";
 import {FilAddresses} from "contracts/v0.8/utils/FilAddresses.sol";
 import {FilAddressIdConverter} from "contracts/v0.8/utils/FilAddressIdConverter.sol";
 import {CommonTypes} from "contracts/v0.8/types/CommonTypes.sol";
-import "forge-std/console.sol";
 
 contract FilAddressesTest is Test {
     address testAddress = makeAddr("testaddress");
@@ -25,7 +24,8 @@ contract FilAddressesTest is Test {
     }
 
     function test_toEthAddressWhenInputIsInvalid() external {
-        CommonTypes.FilAddress memory invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"000a", testAddress));
+        CommonTypes.FilAddress memory invalidFilAddress =
+            CommonTypes.FilAddress(abi.encodePacked(hex"000a", testAddress));
 
         vm.expectRevert(InvalidAddress.selector);
         address ethAddress = FilAddresses.toEthAddress(invalidFilAddress);
@@ -44,15 +44,40 @@ contract FilAddressesTest is Test {
     function test_fromActorID() external {
         CommonTypes.FilAddress memory result = FilAddresses.fromActorID(1000);
         assertEq(keccak256(result.data), keccak256(hex"00e807"));
+
+        result = FilAddresses.fromActorID(type(uint64).max);
+        assertEq(keccak256(result.data), keccak256(hex"00ffffffffffffffffff01"));
     }
 
     function test_fromBytes() external {
         CommonTypes.FilAddress memory result = FilAddresses.fromBytes(hex"000a");
         assertEq(keccak256(result.data), keccak256(hex"000a"));
+
+        result = FilAddresses.fromBytes(hex"00ffffffffffffffffff01");
+        assertEq(keccak256(result.data), keccak256(hex"00ffffffffffffffffff01"));
+
+        result = FilAddresses.fromBytes(hex"01fd1d0f4dfcd7e99afcb99a8326b7dc459d32c628");
+        assertEq(keccak256(result.data), keccak256(hex"01fd1d0f4dfcd7e99afcb99a8326b7dc459d32c628"));
+
+        result = FilAddresses.fromBytes(hex"02e54dea4f9bc5b47d261819826d5e1fbf8bc5503b");
+        assertEq(keccak256(result.data), keccak256(hex"02e54dea4f9bc5b47d261819826d5e1fbf8bc5503b"));
+
+        result = FilAddresses.fromBytes(
+            hex"03ad58df696e2d4e91ea86c881e938ba4ea81b395e12797b84b9cf314b9546705e839c7a99d606b247ddb4f9ac7a3414dd"
+        );
+        assertEq(
+            keccak256(result.data),
+            keccak256(
+                hex"03ad58df696e2d4e91ea86c881e938ba4ea81b395e12797b84b9cf314b9546705e839c7a99d606b247ddb4f9ac7a3414dd"
+            )
+        );
+
+        result = FilAddresses.fromBytes(hex"04eff924032365F51a36541efA24217bFc5B85bc6B");
+        assertEq(keccak256(result.data), keccak256(hex"04eff924032365F51a36541efA24217bFc5B85bc6B"));
     }
 
     function test_fromBytesWhenInputIsInvalid() external {
-        bytes memory invalidInput = abi.encodePacked(hex"00", new bytes(10));
+        bytes memory invalidInput = abi.encodePacked(hex"00", new bytes(11));
         vm.expectRevert(InvalidAddress.selector);
         CommonTypes.FilAddress memory result = FilAddresses.fromBytes(invalidInput);
 
@@ -77,13 +102,11 @@ contract FilAddressesTest is Test {
         result = FilAddresses.fromBytes(invalidInput);
     }
 
-    function test_validate() external view {
+    function test_validate() external pure {
         CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(hex"0001");
         assert(FilAddresses.validate(inputAddress));
         
-        // failing because of the payload length
         inputAddress = FilAddresses.fromActorID(type(uint64).max);
-        console.log(inputAddress.data.length);
         assert(FilAddresses.validate(inputAddress));
 
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"01", new bytes(20)));
@@ -100,7 +123,7 @@ contract FilAddressesTest is Test {
     }
 
     function test_validateWhenInputIsInvalid() external pure {
-        CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"00", new bytes(10)));
+        CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"00", new bytes(11)));
         assert(!FilAddresses.validate(inputAddress));
 
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"01", new bytes(19)));
@@ -137,7 +160,7 @@ contract FilAddressesTest is Test {
     }
 
     function testFuzz_toEthAddressInvalidBytesLength(address addr, bytes1 endByte) public {
-        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(abi.encodePacked("040b", addr, endByte));
+        CommonTypes.FilAddress memory filAddress = CommonTypes.FilAddress(abi.encodePacked("040a", addr, endByte));
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(filAddress);
@@ -163,7 +186,7 @@ contract FilAddressesTest is Test {
     }
 
     function testFuzz_fromBytesFirstByte0x00(bytes memory data) public {
-        vm.assume(data.length > 0 && data.length <= 10);
+        vm.assume(data.length > 0 && data.length <= 11);
         data[0] = 0x00;
 
         CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
@@ -171,7 +194,7 @@ contract FilAddressesTest is Test {
     }
 
     function testFuzz_fromBytesFirstByte0x00InvalidLength(bytes memory data) public {
-        vm.assume(data.length > 10);
+        vm.assume(data.length > 11);
         data[0] = 0x00;
 
         vm.expectRevert(InvalidAddress.selector);
@@ -249,7 +272,7 @@ contract FilAddressesTest is Test {
         FilAddresses.fromBytes(data);
     }
 
-    function testFromActorId(uint64 actorId) public {
+    function testFuzz_fromActorId(uint64 actorId) public {
         vm.assume(actorId > 0 && actorId < 50);
         // conversion to uint16 needed to get actorId in two bytes
         bytes memory actorIdBytes = abi.encodePacked(uint16(actorId));
