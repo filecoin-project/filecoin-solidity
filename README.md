@@ -69,7 +69,6 @@ You will need to copy these files to a folder inside your project. Let's name it
 import { MarketAPI } from "./libs/MarketAPI.sol";
 import { CommonTypes } from "./libs/types/CommonTypes.sol";
 import { MarketTypes } from "./libs/types/MarketTypes.sol";
-
 ```
 
 #### NPM Package
@@ -88,7 +87,6 @@ import { MarketAPI } from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.so
 import { CommonTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
 import { MarketTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
 import { BigInt } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
-
 ```
 
 ## Complementary lectures
