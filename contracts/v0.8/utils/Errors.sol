@@ -21,15 +21,15 @@ library Errors {
 
         string memory description;
 
-        if (exit_code == USR_ILLEGAL_ARGUMENT) description = "USR_ILLEGAL_ARGUMENT: invalid message parameters";
-        if (exit_code == USR_NOT_FOUND) description = "USR_NOT_FOUND: message referenced something that doesn't exist";
-        if (exit_code == USR_FORBIDDEN) description = "USR_FORBIDDEN: operation forbidden";
+        if (exit_code == USR_ILLEGAL_ARGUMENT) description = "USR_ILLEGAL_ARGUMENT";
+        if (exit_code == USR_NOT_FOUND) description = "USR_NOT_FOUND";
+        if (exit_code == USR_FORBIDDEN) description = "USR_FORBIDDEN";
         if (exit_code == USR_INSUFFICIENT_FUNDS) description = "USR_INSUFFICIENT_FUNDS";
-        if (exit_code == USR_ILLEGAL_STATE) description = "USR_ILLEGAL_STATE: the actor is in an illegal state";
-        if (exit_code == USR_SERIALIZATION) description = "USR_SERIALIZATION: actor failed to serialize or deserialize some state";
-        if (exit_code == USR_UNHANDLED_MESSAGE) description = "USR_UNHANDLED_MESSAGE: actor cannot handle this message";
-        if (exit_code == USR_UNSPECIFIED) description = "USR_UNSPECIFIED: the actor failed with an unspecified error";
-        if (exit_code == USR_ASSERTION_FAILED) description = "USR_ASSERTION_FAILED: the actor failed some user-level assertion";
+        if (exit_code == USR_ILLEGAL_STATE) description = "USR_ILLEGAL_STATE";
+        if (exit_code == USR_SERIALIZATION) description = "USR_SERIALIZATION";
+        if (exit_code == USR_UNHANDLED_MESSAGE) description = "USR_UNHANDLED_MESSAGE";
+        if (exit_code == USR_UNSPECIFIED) description = "USR_UNSPECIFIED";
+        if (exit_code == USR_ASSERTION_FAILED) description = "USR_ASSERTION_FAILED";
 
         if (exit_code > USR_ASSERTION_FAILED && exit_code < START_FOR_ACTOR_SPECIFIC_EXIT_CODES) description = "Reserved exit code";
 
