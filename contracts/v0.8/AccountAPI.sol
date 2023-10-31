@@ -36,10 +36,18 @@ library AccountAPI {
     /// @dev Errors if the authentication is invalid.
     /// @param target The account actor id you want to interact with
     /// @param params message to be authenticated
-    function authenticateMessage(CommonTypes.FilActorId target, AccountTypes.AuthenticateMessageParams memory params) internal view {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function authenticateMessage(CommonTypes.FilActorId target, AccountTypes.AuthenticateMessageParams memory params) internal view returns (int256) {
         bytes memory raw_request = params.serializeAuthenticateMessageParams();
 
-        bytes memory data = Actor.callNonSingletonByIDReadOnly(target, AccountTypes.AuthenticateMessageMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory data) = Actor.callNonSingletonByIDReadOnly(
+            target,
+            AccountTypes.AuthenticateMessageMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
         require(data.deserializeBool());
+
+        return exit_code;
     }
 }

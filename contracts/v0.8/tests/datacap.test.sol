@@ -24,57 +24,106 @@ import "../types/CommonTypes.sol";
 import "../cbor/BigIntCbor.sol";
 import "../DataCapAPI.sol";
 import "../Utils.sol";
+import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the datacap actor API, as the library by itself is not.
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract DataCapApiTest {
     function name() public view returns (string memory) {
-        return DataCapAPI.name();
+        (int256 exit_code, string memory result) = DataCapAPI.name();
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function symbol() public view returns (string memory) {
-        return DataCapAPI.symbol();
+        (int256 exit_code, string memory result) = DataCapAPI.symbol();
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function total_supply() public view returns (CommonTypes.BigInt memory) {
-        return DataCapAPI.totalSupply();
+        (int256 exit_code, CommonTypes.BigInt memory result) = DataCapAPI.totalSupply();
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function balance(CommonTypes.FilAddress memory addr) public view returns (CommonTypes.BigInt memory) {
-        return DataCapAPI.balance(addr);
+        (int256 exit_code, CommonTypes.BigInt memory result) = DataCapAPI.balance(addr);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function allowance(DataCapTypes.GetAllowanceParams memory params) public view returns (CommonTypes.BigInt memory) {
-        return DataCapAPI.allowance(params);
+        (int256 exit_code, CommonTypes.BigInt memory result) = DataCapAPI.allowance(params);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function transfer(DataCapTypes.TransferParams memory params) public returns (DataCapTypes.TransferReturn memory) {
-        return DataCapAPI.transfer(params);
+        (int256 exit_code, DataCapTypes.TransferReturn memory result) = DataCapAPI.transfer(params);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function transfer_from(DataCapTypes.TransferFromParams memory params) public returns (DataCapTypes.TransferFromReturn memory) {
-        return DataCapAPI.transferFrom(params);
+        (int256 exit_code, DataCapTypes.TransferFromReturn memory result) = DataCapAPI.transferFrom(params);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function increase_allowance(DataCapTypes.IncreaseAllowanceParams memory params) public returns (CommonTypes.BigInt memory) {
-        return DataCapAPI.increaseAllowance(params);
+        (int256 exit_code, CommonTypes.BigInt memory result) = DataCapAPI.increaseAllowance(params);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function decrease_allowance(DataCapTypes.DecreaseAllowanceParams memory params) public returns (CommonTypes.BigInt memory) {
-        return DataCapAPI.decreaseAllowance(params);
+        (int256 exit_code, CommonTypes.BigInt memory result) = DataCapAPI.decreaseAllowance(params);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function revoke_allowance(CommonTypes.FilAddress memory operator) public returns (CommonTypes.BigInt memory) {
-        return DataCapAPI.revokeAllowance(operator);
+        (int256 exit_code, CommonTypes.BigInt memory result) = DataCapAPI.revokeAllowance(operator);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function burn(CommonTypes.BigInt memory amount) public returns (CommonTypes.BigInt memory) {
-        return DataCapAPI.burn(amount);
+        (int256 exit_code, CommonTypes.BigInt memory result) = DataCapAPI.burn(amount);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function burn_from(DataCapTypes.BurnFromParams memory params) public returns (DataCapTypes.BurnFromReturn memory) {
-        return DataCapAPI.burnFrom(params);
+        (int256 exit_code, DataCapTypes.BurnFromReturn memory result) = DataCapAPI.burnFrom(params);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function handle_filecoin_method(uint64 method, uint64 codec, bytes calldata params) public pure {

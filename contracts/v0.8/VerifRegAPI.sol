@@ -32,50 +32,108 @@ library VerifRegAPI {
     using VerifRegCBOR for *;
 
     /// @notice get a list of claims corresponding to the requested claim ID for specific provider.
-    function getClaims(VerifRegTypes.GetClaimsParams memory params) internal view returns (VerifRegTypes.GetClaimsReturn memory) {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return list of claims corresponding to the requested claim ID for provider
+    function getClaims(VerifRegTypes.GetClaimsParams memory params) internal view returns (int256, VerifRegTypes.GetClaimsReturn memory) {
         bytes memory raw_request = params.serializeGetClaimsParams();
 
-        bytes memory result = Actor.callByIDReadOnly(VerifRegTypes.ActorID, VerifRegTypes.GetClaimsMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callByIDReadOnly(VerifRegTypes.ActorID, VerifRegTypes.GetClaimsMethodNum, Misc.CBOR_CODEC, raw_request);
 
-        return result.deserializeGetClaimsReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeGetClaimsReturn());
+        }
+
+        VerifRegTypes.GetClaimsReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice add a verified Client address to Filecoin Plus program.
-    function addVerifiedClient(VerifRegTypes.AddVerifiedClientParams memory params) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function addVerifiedClient(VerifRegTypes.AddVerifiedClientParams memory params) internal returns (int256) {
         bytes memory raw_request = params.serializeAddVerifiedClientParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.AddVerifiedClientMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.AddVerifiedClientMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @notice remove the expired DataCap allocations and reclaimed those DataCap token back to Client. If the allocation amount is not specified, all expired DataCap allocation will be removed.
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
     function removeExpiredAllocations(
         VerifRegTypes.RemoveExpiredAllocationsParams memory params
-    ) internal returns (VerifRegTypes.RemoveExpiredAllocationsReturn memory) {
+    ) internal returns (int256, VerifRegTypes.RemoveExpiredAllocationsReturn memory) {
         bytes memory raw_request = params.serializeRemoveExpiredAllocationsParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.RemoveExpiredAllocationsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.RemoveExpiredAllocationsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
-        return result.deserializeRemoveExpiredAllocationsReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeRemoveExpiredAllocationsReturn());
+        }
+
+        VerifRegTypes.RemoveExpiredAllocationsReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice extends the  maximum term of some claims up to the largest value they could have been originally allocated. This method can only be called by the claims' client.
-    function extendClaimTerms(VerifRegTypes.ExtendClaimTermsParams memory params) internal returns (CommonTypes.BatchReturn memory) {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function extendClaimTerms(VerifRegTypes.ExtendClaimTermsParams memory params) internal returns (int256, CommonTypes.BatchReturn memory) {
         bytes memory raw_request = params.serializeExtendClaimTermsParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.ExtendClaimTermsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.ExtendClaimTermsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
-        return result.deserializeBatchReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeBatchReturn());
+        }
+
+        CommonTypes.BatchReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @notice remove a claim with its maximum term has elapsed.
-    function removeExpiredClaims(VerifRegTypes.RemoveExpiredClaimsParams memory params) internal returns (VerifRegTypes.RemoveExpiredClaimsReturn memory) {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function removeExpiredClaims(
+        VerifRegTypes.RemoveExpiredClaimsParams memory params
+    ) internal returns (int256, VerifRegTypes.RemoveExpiredClaimsReturn memory) {
         bytes memory raw_request = params.serializeRemoveExpiredClaimsParams();
 
-        bytes memory result = Actor.callByID(VerifRegTypes.ActorID, VerifRegTypes.RemoveExpiredClaimsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callByID(
+            VerifRegTypes.ActorID,
+            VerifRegTypes.RemoveExpiredClaimsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
-        return result.deserializeRemoveExpiredClaimsReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeRemoveExpiredClaimsReturn());
+        }
+
+        VerifRegTypes.RemoveExpiredClaimsReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 }

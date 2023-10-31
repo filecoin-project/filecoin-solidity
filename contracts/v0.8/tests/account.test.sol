@@ -23,16 +23,21 @@ import "../types/AccountTypes.sol";
 import "../types/CommonTypes.sol";
 import "../AccountAPI.sol";
 import "../Utils.sol";
+import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the account actor API, as the library by itself is not.
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract AccountApiTest {
     function authenticate_message(CommonTypes.FilActorId target, AccountTypes.AuthenticateMessageParams memory params) public view {
-        AccountAPI.authenticateMessage(target, params);
+        int256 exit_code = AccountAPI.authenticateMessage(target, params);
+
+        Errors.revertOnError(exit_code);
     }
 
     function universal_receiver_hook(CommonTypes.FilActorId target, CommonTypes.UniversalReceiverParams memory params) public {
-        Utils.universalReceiverHook(target, params);
+        (int256 exit_code, bytes memory result) = Utils.universalReceiverHook(target, params);
+
+        Errors.revertOnError(exit_code);
     }
 }
