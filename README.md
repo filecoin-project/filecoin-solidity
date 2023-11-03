@@ -69,7 +69,6 @@ You will need to copy these files to a folder inside your project. Let's name it
 import { MarketAPI } from "./libs/MarketAPI.sol";
 import { CommonTypes } from "./libs/types/CommonTypes.sol";
 import { MarketTypes } from "./libs/types/MarketTypes.sol";
-
 ```
 
 #### NPM Package
@@ -88,8 +87,15 @@ import { MarketAPI } from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.so
 import { CommonTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
 import { MarketTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
 import { BigInt } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
-
 ```
+
+### Supported networks
+
+The following table contains information about the versions of filecoin network on which the `filecoin-solidity` library has been tested on.
+
+|                                              FVM version                                              |                                                         Builtin actors                                                          |        Pass        |
+| :---------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :----------------: |
+| [fvm@v3.0.0-alpha.21](https://github.com/filecoin-project/ref-fvm/releases/tag/fvm%40v3.0.0-alpha.21) | [builtin_actors@dev/20230206-pre-rc.6](https://github.com/filecoin-project/builtin-actors/releases/tag/dev%2F20230206-pre-rc.6) | :white_check_mark: |
 
 ## Complementary lectures
 
