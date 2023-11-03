@@ -24,7 +24,8 @@ pragma solidity ^0.8.17;
 /// @author Zondax AG
 library CommonTypes {
     uint constant UniversalReceiverHookMethodNum = 3726118371;
-
+    uint constant MAX_DEAL_LABEL_LENGTH = 256;
+    
     /// @param idx index for the failure in batch
     /// @param code failure code
     struct FailCode {
