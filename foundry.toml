@@ -7,7 +7,7 @@ test = 'contracts/v0.8/test'
 cache_path = 'foundry-cache'
 optimizer = true
 evm_version = 'paris'
-auto_detect_remappings = false
+
 
 [fuzz]
 runs = 200

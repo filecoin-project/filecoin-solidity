@@ -9,20 +9,22 @@ import "../types/CommonTypes.sol";
 library TypeConstructor {
     error InvalidLength();
 
-    /// @notice Converts a string to a filecoin cid common type
-    /// @param cid The CIDv1/CIDv0 cid string
-    function cidToBytes(string calldata cid) external pure returns (CommonTypes.Cid memory) {}
-
     /// @notice Converts bytes to filecoin common type DealLabel
-    /// @param data The data must be no longer than 32 bytes
-    function bytesToDealLabel(bytes calldata data) external pure returns (CommonTypes.DealLabel memory) {
-        if (data.length > 32) {
+    /// @param data The data must be no longer than 256 bytes
+    function dealLabelFromBytes(bytes memory data) internal pure returns (CommonTypes.DealLabel memory) {
+        if (data.length > 256) {
             revert InvalidLength();
         }
         return CommonTypes.DealLabel(data, false);
     }
 
     /// @notice Converts a string to filecoin common type DealLabel
-    /// @param data UTF-8 string
-    function stringToDealLabel(string calldata data) external pure returns (CommonTypes.DealLabel memory) {}
+    /// @param data UTF-8 string, must be no longer than 256 bytes when encoded
+    function dealLabelFromString(string memory data) internal pure returns (CommonTypes.DealLabel memory) {
+        bytes memory dataBytes = bytes(data);
+        if (dataBytes.length > 256) {
+            revert InvalidLength();
+        }
+        return CommonTypes.DealLabel(dataBytes, true);
+    }
 }
