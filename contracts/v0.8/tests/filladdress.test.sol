@@ -8,7 +8,7 @@ import {CommonTypes} from "contracts/v0.8/types/CommonTypes.sol";
 
 contract FilAddressesTest is Test {
     address testAddress = makeAddr("testaddress");
-    
+
     error InvalidAddress();
 
     // UNIT TESTS
@@ -23,22 +23,28 @@ contract FilAddressesTest is Test {
         assertEq(testAddress, ethAddress);
     }
 
-    function test_toEthAddressWhenInputIsInvalid() external {
+    function test_toEthAddressInvalidFirstByte() external {
         CommonTypes.FilAddress memory invalidFilAddress =
             CommonTypes.FilAddress(abi.encodePacked(hex"000a", testAddress));
 
         vm.expectRevert(InvalidAddress.selector);
-        address ethAddress = FilAddresses.toEthAddress(invalidFilAddress);
+        FilAddresses.toEthAddress(invalidFilAddress);
+    }
 
-        invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"0400", testAddress));
-
-        vm.expectRevert(InvalidAddress.selector);
-        ethAddress = FilAddresses.toEthAddress(invalidFilAddress);
-
-        invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"040a00", testAddress));
+    function test_toEthAddressInvalidSecondByte() external {
+        CommonTypes.FilAddress memory invalidFilAddress =
+            CommonTypes.FilAddress(abi.encodePacked(hex"0400", testAddress));
 
         vm.expectRevert(InvalidAddress.selector);
-        ethAddress = FilAddresses.toEthAddress(invalidFilAddress);
+        FilAddresses.toEthAddress(invalidFilAddress);
+    }
+
+    function test_toEthAddressInvalidLength() external {
+        CommonTypes.FilAddress memory invalidFilAddress =
+            CommonTypes.FilAddress(abi.encodePacked(hex"040a", testAddress, hex"00"));
+
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.toEthAddress(invalidFilAddress);
     }
 
     function test_fromActorID() external {
@@ -72,40 +78,62 @@ contract FilAddressesTest is Test {
             )
         );
 
-        result = FilAddresses.fromBytes(hex"04eff924032365F51a36541efA24217bFc5B85bc6B");
-        assertEq(keccak256(result.data), keccak256(hex"04eff924032365F51a36541efA24217bFc5B85bc6B"));
+        result = FilAddresses.fromBytes(hex"040a71C7656EC7ab88b098defB751B7401B5f6d8976F");
+        assertEq(keccak256(result.data), keccak256(hex"040a71C7656EC7ab88b098defB751B7401B5f6d8976F"));
     }
 
-    function test_fromBytesWhenInputIsInvalid() external {
+    function test_fromBytesFirstByte0x00InvalidInputLengthShort() external {
+        bytes memory invalidInput = hex"00";
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(invalidInput);
+    }
+
+    function test_fromBytesFirstByte0x00InvalidInputLengthLong() external {
         bytes memory invalidInput = abi.encodePacked(hex"00", new bytes(11));
         vm.expectRevert(InvalidAddress.selector);
-        CommonTypes.FilAddress memory result = FilAddresses.fromBytes(invalidInput);
+        FilAddresses.fromBytes(invalidInput);
+    }
 
-        invalidInput = abi.encodePacked(hex"01", new bytes(21));
+    function test_fromBytesFirstByte0x01InvalidInput() external {
+        bytes memory invalidInput = abi.encodePacked(hex"01", new bytes(21));
         vm.expectRevert(InvalidAddress.selector);
-        result = FilAddresses.fromBytes(invalidInput);
+        FilAddresses.fromBytes(invalidInput);
+    }
 
-        invalidInput = abi.encodePacked(hex"02", new bytes(21));
+    function test_fromBytesFirstByte0x02InvalidInput() external {
+        bytes memory invalidInput = abi.encodePacked(hex"02", new bytes(21));
         vm.expectRevert(InvalidAddress.selector);
-        result = FilAddresses.fromBytes(invalidInput);
+        FilAddresses.fromBytes(invalidInput);
+    }
 
-        invalidInput = abi.encodePacked(hex"03", new bytes(49));
+    function test_fromBytesFirstByte0x03InvalidInput() external {
+        bytes memory invalidInput = abi.encodePacked(hex"03", new bytes(49));
         vm.expectRevert(InvalidAddress.selector);
-        result = FilAddresses.fromBytes(invalidInput);
+        FilAddresses.fromBytes(invalidInput);
+    }
 
-        invalidInput = abi.encodePacked(hex"04", new bytes(64));
+    function test_fromBytesFirstByte0x04InvalidInputLength() external {
+        bytes memory invalidInput = abi.encodePacked(hex"040a", new bytes(21));
         vm.expectRevert(InvalidAddress.selector);
-        result = FilAddresses.fromBytes(invalidInput);
+        FilAddresses.fromBytes(invalidInput);
+    }
 
-        invalidInput = abi.encodePacked(hex"05", new bytes(64));
+    function test_fromBytesFirstByte0x04InvalidInputSecondByte() external {
+        bytes memory invalidInput = abi.encodePacked(hex"0400", new bytes(20));
         vm.expectRevert(InvalidAddress.selector);
-        result = FilAddresses.fromBytes(invalidInput);
+        FilAddresses.fromBytes(invalidInput);
+    }
+
+    function test_fromBytesInvalidFirstByte() external {
+        bytes memory invalidInput = abi.encodePacked(hex"05", new bytes(10));
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(invalidInput);
     }
 
     function test_validate() external pure {
         CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(hex"0001");
         assert(FilAddresses.validate(inputAddress));
-        
+
         inputAddress = FilAddresses.fromActorID(type(uint64).max);
         assert(FilAddresses.validate(inputAddress));
 
@@ -118,12 +146,15 @@ contract FilAddressesTest is Test {
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"03", new bytes(48)));
         assert(FilAddresses.validate(inputAddress));
 
-        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"04", new bytes(63)));
+        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"040a", new bytes(20)));
         assert(FilAddresses.validate(inputAddress));
     }
 
-    function test_validateWhenInputIsInvalid() external pure {
+    function test_validateInvalidInput() external pure {
         CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"00", new bytes(11)));
+        assert(!FilAddresses.validate(inputAddress));
+
+        inputAddress = CommonTypes.FilAddress(hex"00");
         assert(!FilAddresses.validate(inputAddress));
 
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"01", new bytes(19)));
@@ -135,7 +166,10 @@ contract FilAddressesTest is Test {
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"03", new bytes(47)));
         assert(!FilAddresses.validate(inputAddress));
 
-        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"04", new bytes(64)));
+        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"040a", new bytes(21)));
+        assert(!FilAddresses.validate(inputAddress));
+
+        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"0400", new bytes(20)));
         assert(!FilAddresses.validate(inputAddress));
 
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"05", new bytes(64)));
@@ -186,7 +220,7 @@ contract FilAddressesTest is Test {
     }
 
     function testFuzz_fromBytesFirstByte0x00(bytes memory data) public {
-        vm.assume(data.length > 0 && data.length <= 11);
+        vm.assume(data.length > 1 && data.length <= 11);
         data[0] = 0x00;
 
         CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
@@ -194,7 +228,7 @@ contract FilAddressesTest is Test {
     }
 
     function testFuzz_fromBytesFirstByte0x00InvalidLength(bytes memory data) public {
-        vm.assume(data.length > 11);
+        vm.assume(data.length > 11 || data.length == 1);
         data[0] = 0x00;
 
         vm.expectRevert(InvalidAddress.selector);
@@ -250,23 +284,37 @@ contract FilAddressesTest is Test {
     }
 
     function testFuzz_fromBytesFirstByte0x04(bytes memory data) public {
-        vm.assume(data.length > 0 && data.length <= 64);
+        vm.assume(data.length == 22);
         data[0] = 0x04;
+        data[1] = 0x0a;
 
         CommonTypes.FilAddress memory filAddress = FilAddresses.fromBytes(data);
         assertEq(data, filAddress.data);
     }
 
-    function testFuzz_fromBytesFirstByte0x04InvalidLength(bytes memory data) public {
-        vm.assume(data.length > 64);
+    function testFuzz_fromBytesFirstByte0x04InvalidSecondByte(bytes memory data, bytes1 secondByte) public {
+        vm.assume(data.length == 22 && secondByte != hex"0a");
         data[0] = 0x04;
+        data[1] = secondByte;
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.fromBytes(data);
     }
 
-    function testFuzz_fromBytesFirstByteOtherInvalid(bytes memory data) public {
-        vm.assume(data.length > 0 && data.length <= 256 && data[0] > 0x04);
+    function testFuzz_fromBytesFirstByte0x04InvalidLength(bytes memory data) public {
+        vm.assume(data.length > 1 && data.length != 22);
+        data[0] = 0x04;
+        data[1] = 0x0a;
+
+        vm.expectRevert(InvalidAddress.selector);
+        FilAddresses.fromBytes(data);
+    }
+
+    function testFuzz_fromBytesInvalidFirstByte(bytes memory data) public {
+        vm.assume(
+            ((data.length > 1 && data.length <= 11) || data.length == 21 || data.length == 22 || data.length == 49)
+                && data[0] > 0x04
+        );
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.fromBytes(data);
