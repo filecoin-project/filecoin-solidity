@@ -21,68 +21,125 @@ pragma solidity ^0.8.17;
 
 import "../MarketAPI.sol";
 import "../types/MarketTypes.sol";
+import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the market actor API, as the library by itself is not.
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract MarketApiTest {
-
     uint[] public publishedDealIds;
+
     function add_balance(CommonTypes.FilAddress memory providerOrClient, uint256 value) public payable {
-        MarketAPI.addBalance(providerOrClient, value);
+        (int256 exit_code, bytes memory result) = MarketAPI.addBalance(providerOrClient, value);
+
+        Errors.revertOnError(exit_code);
     }
 
     function withdraw_balance(MarketTypes.WithdrawBalanceParams memory params) public returns (CommonTypes.BigInt memory) {
-        return MarketAPI.withdrawBalance(params);
+        (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.withdrawBalance(params);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_balance(CommonTypes.FilAddress memory addr) public view returns (MarketTypes.GetBalanceReturn memory) {
-        return MarketAPI.getBalance(addr);
+        (int256 exit_code, MarketTypes.GetBalanceReturn memory result) = MarketAPI.getBalance(addr);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_data_commitment(uint64 dealID) public view returns (MarketTypes.GetDealDataCommitmentReturn memory) {
-        return MarketAPI.getDealDataCommitment(dealID);
+        (int256 exit_code, MarketTypes.GetDealDataCommitmentReturn memory result) = MarketAPI.getDealDataCommitment(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_client(uint64 dealID) public view returns (uint64) {
-        return MarketAPI.getDealClient(dealID);
+        (int256 exit_code, uint64 result) = MarketAPI.getDealClient(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_provider(uint64 dealID) public view returns (uint64) {
-        return MarketAPI.getDealProvider(dealID);
+        (int256 exit_code, uint64 result) = MarketAPI.getDealProvider(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_label(uint64 dealID) public view returns (CommonTypes.DealLabel memory) {
-        return MarketAPI.getDealLabel(dealID);
+        (int256 exit_code, CommonTypes.DealLabel memory result) = MarketAPI.getDealLabel(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_term(uint64 dealID) public view returns (MarketTypes.GetDealTermReturn memory) {
-        return MarketAPI.getDealTerm(dealID);
+        (int256 exit_code, MarketTypes.GetDealTermReturn memory result) = MarketAPI.getDealTerm(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_total_price(uint64 dealID) public view returns (CommonTypes.BigInt memory) {
-        return MarketAPI.getDealTotalPrice(dealID);
+        (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.getDealTotalPrice(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_client_collateral(uint64 dealID) public view returns (CommonTypes.BigInt memory) {
-        return MarketAPI.getDealClientCollateral(dealID);
+        (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.getDealClientCollateral(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_provider_collateral(uint64 dealID) public view returns (CommonTypes.BigInt memory) {
-        return MarketAPI.getDealProviderCollateral(dealID);
+        (int256 exit_code, CommonTypes.BigInt memory result) = MarketAPI.getDealProviderCollateral(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_verified(uint64 dealID) public view returns (bool) {
-        return MarketAPI.getDealVerified(dealID);
+        (int256 exit_code, bool result) = MarketAPI.getDealVerified(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function get_deal_activation(uint64 dealID) public view returns (MarketTypes.GetDealActivationReturn memory) {
-        return MarketAPI.getDealActivation(dealID);
+        (int256 exit_code, MarketTypes.GetDealActivationReturn memory result) = MarketAPI.getDealActivation(dealID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function publish_storage_deals(MarketTypes.PublishStorageDealsParams memory params) public returns (MarketTypes.PublishStorageDealsReturn memory) {
-        MarketTypes.PublishStorageDealsReturn memory publishedStorageDeals = MarketAPI.publishStorageDeals(params);
-        for(uint i = 0; i < publishedStorageDeals.ids.length; ++i) { publishedDealIds.push(publishedStorageDeals.ids[i]); }
-        return publishedStorageDeals;
+        (int256 exit_code, MarketTypes.PublishStorageDealsReturn memory result) = MarketAPI.publishStorageDeals(params);
+
+        Errors.revertOnError(exit_code);
+
+        for (uint i = 0; i < result.ids.length; ++i) {
+            publishedDealIds.push(result.ids[i]);
+        }
+
+        return result;
     }
 }

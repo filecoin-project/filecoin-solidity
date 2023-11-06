@@ -22,28 +22,49 @@ pragma solidity ^0.8.17;
 import "../types/PowerTypes.sol";
 import "../types/CommonTypes.sol";
 import "../PowerAPI.sol";
+import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the power actor API, as the library by itself is not.
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract PowerApiTest {
     function create_miner(PowerTypes.CreateMinerParams memory params, uint256 value) public payable returns (PowerTypes.CreateMinerReturn memory) {
-        return PowerAPI.createMiner(params, value);
+        (int256 exit_code, PowerTypes.CreateMinerReturn memory result) = PowerAPI.createMiner(params, value);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function miner_count() public view returns (uint64) {
-        return PowerAPI.minerCount();
+        (int256 exit_code, uint64 result) = PowerAPI.minerCount();
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function miner_consensus_count() public view returns (int64) {
-        return PowerAPI.minerConsensusCount();
+        (int256 exit_code, int64 result) = PowerAPI.minerConsensusCount();
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function network_raw_power() public view returns (CommonTypes.BigInt memory) {
-        return PowerAPI.networkRawPower();
+        (int256 exit_code, CommonTypes.BigInt memory result) = PowerAPI.networkRawPower();
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 
     function miner_raw_power(uint64 minerID) public view returns (PowerTypes.MinerRawPowerReturn memory) {
-        return PowerAPI.minerRawPower(minerID);
+        (int256 exit_code, PowerTypes.MinerRawPowerReturn memory result) = PowerAPI.minerRawPower(minerID);
+
+        Errors.revertOnError(exit_code);
+
+        return result;
     }
 }

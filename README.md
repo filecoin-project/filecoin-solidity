@@ -89,6 +89,14 @@ import { MarketTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/Mark
 import { BigInt } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
+### Supported networks
+
+The following table contains information about the versions of filecoin network on which the `filecoin-solidity` library has been tested on.
+
+|                                              FVM version                                              |                                                         Builtin actors                                                          |        Pass        |
+| :---------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :----------------: |
+| [fvm@v3.0.0-alpha.21](https://github.com/filecoin-project/ref-fvm/releases/tag/fvm%40v3.0.0-alpha.21) | [builtin_actors@dev/20230206-pre-rc.6](https://github.com/filecoin-project/builtin-actors/releases/tag/dev%2F20230206-pre-rc.6) | :white_check_mark: |
+
 ## Complementary lectures
 
 ### Introduction to Filecoin [:link:](https://docs.filecoin.io/intro/intro-to-filecoin/what-is-filecoin/)

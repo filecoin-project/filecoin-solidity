@@ -39,171 +39,299 @@ library MinerAPI {
     /// @notice Income and returned collateral are paid to this address
     /// @notice This address is also allowed to change the worker address for the miner
     /// @param target The miner actor id you want to interact with
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return the owner address of a Miner
-    function getOwner(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetOwnerReturn memory) {
+    function getOwner(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetOwnerReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetOwnerMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetOwnerMethodNum, Misc.NONE_CODEC, raw_request);
 
-        return result.deserializeGetOwnerReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeGetOwnerReturn());
+        }
+
+        MinerTypes.GetOwnerReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @param target  The miner actor id you want to interact with
     /// @param addr New owner address
     /// @notice Proposes or confirms a change of owner address.
     /// @notice If invoked by the current owner, proposes a new owner address for confirmation. If the proposed address is the current owner address, revokes any existing proposal that proposed address.
-    function changeOwnerAddress(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function changeOwnerAddress(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) internal returns (int256) {
         bytes memory raw_request = addr.serializeAddress();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeOwnerAddressMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeOwnerAddressMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @param target  The miner actor id you want to interact with
     /// @param addr The "controlling" addresses are the Owner, the Worker, and all Control Addresses.
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return Whether the provided address is "controlling".
-    function isControllingAddress(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) internal view returns (bool) {
+    function isControllingAddress(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) internal view returns (int256, bool) {
         bytes memory raw_request = addr.serializeAddress();
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.IsControllingAddressMethodNum, Misc.CBOR_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(
+            target,
+            MinerTypes.IsControllingAddressMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request
+        );
 
-        return result.deserializeBool();
+        if (exit_code == 0) {
+            return (0, result.deserializeBool());
+        }
+
+        bool empty_res;
+        return (exit_code, empty_res);
     }
 
-    /// @return the miner's sector size.
-    /// @param target The miner actor id you want to interact with
     /// @dev For more information about sector sizes, please refer to https://spec.filecoin.io/systems/filecoin_mining/sector/#section-systems.filecoin_mining.sector
-    function getSectorSize(CommonTypes.FilActorId target) internal view returns (uint64) {
+    /// @param target The miner actor id you want to interact with
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return the miner's sector size.
+    function getSectorSize(CommonTypes.FilActorId target) internal view returns (int256, uint64) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetSectorSizeMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetSectorSizeMethodNum, Misc.NONE_CODEC, raw_request);
 
-        return result.deserializeUint64();
+        if (exit_code == 0) {
+            return (0, result.deserializeUint64());
+        }
+
+        uint64 empty_res;
+        return (exit_code, empty_res);
     }
 
-    /// @param target The miner actor id you want to interact with
     /// @notice This is calculated as actor balance - (vesting funds + pre-commit deposit + initial pledge requirement + fee debt)
     /// @notice Can go negative if the miner is in IP debt.
+    /// @param target The miner actor id you want to interact with
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return the available balance of this miner.
-    function getAvailableBalance(CommonTypes.FilActorId target) internal view returns (CommonTypes.BigInt memory) {
+    function getAvailableBalance(CommonTypes.FilActorId target) internal view returns (int256, CommonTypes.BigInt memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetAvailableBalanceMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(
+            target,
+            MinerTypes.GetAvailableBalanceMethodNum,
+            Misc.NONE_CODEC,
+            raw_request
+        );
 
-        return result.deserializeBytesBigInt();
+        if (exit_code == 0) {
+            return (0, result.deserializeBytesBigInt());
+        }
+
+        CommonTypes.BigInt memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @param target The miner actor id you want to interact with
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return the funds vesting in this miner as a list of (vesting_epoch, vesting_amount) tuples.
-    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetVestingFundsReturn memory) {
+    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetVestingFundsReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetVestingFundsMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetVestingFundsMethodNum, Misc.NONE_CODEC, raw_request);
+        if (exit_code == 0) {
+            return (0, result.deserializeGetVestingFundsReturn());
+        }
 
-        return result.deserializeGetVestingFundsReturn();
+        MinerTypes.GetVestingFundsReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
-    /// @param target The miner actor id you want to interact with
     /// @notice Proposes or confirms a change of beneficiary address.
     /// @notice A proposal must be submitted by the owner, and takes effect after approval of both the proposed beneficiary and current beneficiary, if applicable, any current beneficiary that has time and quota remaining.
     /// @notice See FIP-0029, https://github.com/filecoin-project/FIPs/blob/master/FIPS/fip-0029.md
-    function changeBeneficiary(CommonTypes.FilActorId target, MinerTypes.ChangeBeneficiaryParams memory params) internal {
+    /// @param target The miner actor id you want to interact with
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function changeBeneficiary(CommonTypes.FilActorId target, MinerTypes.ChangeBeneficiaryParams memory params) internal returns (int256) {
         bytes memory raw_request = params.serializeChangeBeneficiaryParams();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeBeneficiaryMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeBeneficiaryMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
-    /// @param target The miner actor id you want to interact with
     /// @notice This method is for use by other actors (such as those acting as beneficiaries), and to abstract the state representation for clients.
     /// @notice Retrieves the currently active and proposed beneficiary information.
-    function getBeneficiary(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetBeneficiaryReturn memory) {
+    /// @param target The miner actor id you want to interact with
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function getBeneficiary(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetBeneficiaryReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetBeneficiaryMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetBeneficiaryMethodNum, Misc.NONE_CODEC, raw_request);
 
-        return result.deserializeGetBeneficiaryReturn();
+        if (exit_code == 0) {
+            return (0, result.deserializeGetBeneficiaryReturn());
+        }
+
+        MinerTypes.GetBeneficiaryReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @param target The miner actor id you want to interact with
-    function changeWorkerAddress(CommonTypes.FilActorId target, MinerTypes.ChangeWorkerAddressParams memory params) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function changeWorkerAddress(CommonTypes.FilActorId target, MinerTypes.ChangeWorkerAddressParams memory params) internal returns (int256) {
         bytes memory raw_request = params.serializeChangeWorkerAddressParams();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeWorkerAddressMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeWorkerAddressMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @param target The miner actor id you want to interact with
-    function changePeerId(CommonTypes.FilActorId target, CommonTypes.FilAddress memory newId) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function changePeerId(CommonTypes.FilActorId target, CommonTypes.FilAddress memory newId) internal returns (int256) {
         bytes memory raw_request = newId.serializeArrayFilAddress();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangePeerIDMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(target, MinerTypes.ChangePeerIDMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @param target The miner actor id you want to interact with
-    function changeMultiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function changeMultiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) internal returns (int256) {
         bytes memory raw_request = params.serializeChangeMultiaddrsParams();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ChangeMultiaddrsMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ChangeMultiaddrsMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @param target The miner actor id you want to interact with
-    function repayDebt(CommonTypes.FilActorId target) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function repayDebt(CommonTypes.FilActorId target) internal returns (int256) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.RepayDebtMethodNum, Misc.NONE_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(target, MinerTypes.RepayDebtMethodNum, Misc.NONE_CODEC, raw_request, 0, false);
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @param target The miner actor id you want to interact with
-    function confirmChangeWorkerAddress(CommonTypes.FilActorId target) internal {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    function confirmChangeWorkerAddress(CommonTypes.FilActorId target) internal returns (int256) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.ConfirmChangeWorkerAddressMethodNum, Misc.NONE_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.ConfirmChangeWorkerAddressMethodNum,
+            Misc.NONE_CODEC,
+            raw_request,
+            0,
+            false
+        );
         if (result.length != 0) {
             revert Actor.InvalidResponseLength();
         }
+
+        return exit_code;
     }
 
     /// @param target The miner actor id you want to interact with
-    function getPeerId(CommonTypes.FilActorId target) internal view returns (CommonTypes.FilAddress memory) {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return peer id for `target`
+    function getPeerId(CommonTypes.FilActorId target) internal view returns (int256, CommonTypes.FilAddress memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetPeerIDMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetPeerIDMethodNum, Misc.NONE_CODEC, raw_request);
 
-        return result.deserializeArrayFilAddress();
+        if (exit_code == 0) {
+            return (0, result.deserializeArrayFilAddress());
+        }
+
+        CommonTypes.FilAddress memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @param target The miner actor id you want to interact with
-    function getMultiaddresses(CommonTypes.FilActorId target) internal view returns (MinerTypes.GetMultiaddrsReturn memory) {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return multiaddresses for `target`
+    function getMultiaddresses(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetMultiaddrsReturn memory) {
         bytes memory raw_request = new bytes(0);
 
-        bytes memory result = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetMultiaddrsMethodNum, Misc.NONE_CODEC, raw_request);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetMultiaddrsMethodNum, Misc.NONE_CODEC, raw_request);
+        if (exit_code == 0) {
+            return (0, result.deserializeGetMultiaddrsReturn());
+        }
 
-        return result.deserializeGetMultiaddrsReturn();
+        MinerTypes.GetMultiaddrsReturn memory empty_res;
+        return (exit_code, empty_res);
     }
 
     /// @param target The miner actor id you want to interact with
     /// @param amount the amount you want to withdraw
-    function withdrawBalance(CommonTypes.FilActorId target, CommonTypes.BigInt memory amount) internal returns (CommonTypes.BigInt memory) {
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return new balance for `target`
+    function withdrawBalance(CommonTypes.FilActorId target, CommonTypes.BigInt memory amount) internal returns (int256, CommonTypes.BigInt memory) {
         bytes memory raw_request = amount.serializeArrayBigInt();
 
-        bytes memory result = Actor.callNonSingletonByID(target, MinerTypes.WithdrawBalanceMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
+        (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
+            target,
+            MinerTypes.WithdrawBalanceMethodNum,
+            Misc.CBOR_CODEC,
+            raw_request,
+            0,
+            false
+        );
 
-        return result.deserializeBytesBigInt();
+        if (exit_code == 0) {
+            return (0, result.deserializeBytesBigInt());
+        }
+
+        CommonTypes.BigInt memory empty_res;
+        return (exit_code, empty_res);
     }
 }

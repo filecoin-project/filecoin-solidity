@@ -75,7 +75,7 @@ library Actor {
         bytes memory raw_request,
         uint256 value,
         bool static_call
-    ) internal returns (bytes memory) {
+    ) internal returns (int256, bytes memory) {
         if (actor_address.length < 2) {
             revert InvalidAddress(actor_address);
         }
@@ -114,7 +114,7 @@ library Actor {
         bytes memory raw_request,
         uint256 value,
         bool static_call
-    ) internal returns (bytes memory) {
+    ) internal returns (int256, bytes memory) {
         validatePrecompileCall(CALL_ACTOR_ID, value);
 
         (bool success, bytes memory data) = address(CALL_ACTOR_ID).delegatecall(
@@ -133,9 +133,14 @@ library Actor {
     /// @param codec how the request data passed as argument is encoded
     /// @param raw_request encoded arguments to be passed in the call
     /// @return payload (in bytes) with the actual response data (without codec or response code)
-    function callByIDReadOnly(CommonTypes.FilActorId target, uint256 method_num, uint64 codec, bytes memory raw_request) internal view returns (bytes memory) {
-        function(CommonTypes.FilActorId, uint256, uint64, bytes memory, uint256, bool) internal view returns (bytes memory) callFn;
-        function(CommonTypes.FilActorId, uint256, uint64, bytes memory, uint256, bool) internal returns (bytes memory) helper = callByID;
+    function callByIDReadOnly(
+        CommonTypes.FilActorId target,
+        uint256 method_num,
+        uint64 codec,
+        bytes memory raw_request
+    ) internal view returns (int256, bytes memory) {
+        function(CommonTypes.FilActorId, uint256, uint64, bytes memory, uint256, bool) internal view returns (int256, bytes memory) callFn;
+        function(CommonTypes.FilActorId, uint256, uint64, bytes memory, uint256, bool) internal returns (int256, bytes memory) helper = callByID;
         assembly {
             callFn := helper
         }
@@ -172,7 +177,7 @@ library Actor {
         bytes memory raw_request,
         uint256 value,
         bool static_call
-    ) internal returns (bytes memory) {
+    ) internal returns (int256, bytes memory) {
         if (CommonTypes.FilActorId.unwrap(target) < 100) {
             revert InvalidActorID(target);
         }
@@ -191,7 +196,7 @@ library Actor {
         uint256 method_num,
         uint64 codec,
         bytes memory raw_request
-    ) internal view returns (bytes memory) {
+    ) internal view returns (int256, bytes memory) {
         if (CommonTypes.FilActorId.unwrap(target) < 100) {
             revert InvalidActorID(target);
         }
@@ -202,8 +207,9 @@ library Actor {
     /// @notice parse the response an actor returned
     /// @notice it will validate the return code (success) and the codec (valid one)
     /// @param raw_response raw data (bytes) the actor returned
+    /// @return exit code if an error occured, 0 otherwise
     /// @return the actual raw data (payload, in bytes) to be parsed according to the actor and method called
-    function readRespData(bytes memory raw_response) internal pure returns (bytes memory) {
+    function readRespData(bytes memory raw_response) internal pure returns (int256, bytes memory) {
         (int256 exit, uint64 return_codec, bytes memory return_value) = abi.decode(raw_response, (int256, uint64, bytes));
 
         if (return_codec == Misc.NONE_CODEC) {
@@ -218,10 +224,6 @@ library Actor {
             revert InvalidCodec(return_codec);
         }
 
-        if (exit != 0) {
-            revert ActorError(exit);
-        }
-
-        return return_value;
+        return (exit, return_value);
     }
 }
