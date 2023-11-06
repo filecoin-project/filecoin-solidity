@@ -19,4 +19,3 @@ yarn.lock
 typechain-types
 
 .openzeppelin/
-testing/Cargo.lock
