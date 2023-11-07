@@ -74,7 +74,7 @@ library FilAddresses {
     }
 
     /// @notice allow to validate if an address is valid or not
-    /// @dev we are only validating known address types. If the type is not known, the default value is false
+    /// @dev we are only validating known address types. If the type is not known, the default value is true
     /// @param addr the filecoin address to validate
     /// @return whether the address is valid or not
     function validate(CommonTypes.FilAddress memory addr) internal pure returns (bool) {
@@ -88,6 +88,6 @@ library FilAddresses {
             return addr.data.length == 22;
         }
 
-        return false;
+        return addr.data.length <= 256;
     }
 }

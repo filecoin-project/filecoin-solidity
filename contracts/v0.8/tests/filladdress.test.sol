@@ -118,18 +118,6 @@ contract FilAddressesTest is Test {
         FilAddresses.fromBytes(invalidInput);
     }
 
-    function test_fromBytesFirstByte0x04InvalidInputSecondByte() external {
-        bytes memory invalidInput = abi.encodePacked(hex"0400", new bytes(20));
-        vm.expectRevert(InvalidAddress.selector);
-        FilAddresses.fromBytes(invalidInput);
-    }
-
-    function test_fromBytesInvalidFirstByte() external {
-        bytes memory invalidInput = abi.encodePacked(hex"05", new bytes(10));
-        vm.expectRevert(InvalidAddress.selector);
-        FilAddresses.fromBytes(invalidInput);
-    }
-
     function test_validate() external pure {
         CommonTypes.FilAddress memory inputAddress = CommonTypes.FilAddress(hex"0001");
         assert(FilAddresses.validate(inputAddress));
@@ -167,12 +155,6 @@ contract FilAddressesTest is Test {
         assert(!FilAddresses.validate(inputAddress));
 
         inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"040a", new bytes(21)));
-        assert(!FilAddresses.validate(inputAddress));
-
-        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"0400", new bytes(20)));
-        assert(!FilAddresses.validate(inputAddress));
-
-        inputAddress = CommonTypes.FilAddress(abi.encodePacked(hex"05", new bytes(64)));
         assert(!FilAddresses.validate(inputAddress));
     }
 
@@ -292,29 +274,10 @@ contract FilAddressesTest is Test {
         assertEq(data, filAddress.data);
     }
 
-    function testFuzz_fromBytesFirstByte0x04InvalidSecondByte(bytes memory data, bytes1 secondByte) public {
-        vm.assume(data.length == 22 && secondByte != hex"0a");
-        data[0] = 0x04;
-        data[1] = secondByte;
-
-        vm.expectRevert(InvalidAddress.selector);
-        FilAddresses.fromBytes(data);
-    }
-
     function testFuzz_fromBytesFirstByte0x04InvalidLength(bytes memory data) public {
         vm.assume(data.length > 1 && data.length != 22);
         data[0] = 0x04;
         data[1] = 0x0a;
-
-        vm.expectRevert(InvalidAddress.selector);
-        FilAddresses.fromBytes(data);
-    }
-
-    function testFuzz_fromBytesInvalidFirstByte(bytes memory data) public {
-        vm.assume(
-            ((data.length > 1 && data.length <= 11) || data.length == 21 || data.length == 22 || data.length == 49)
-                && data[0] > 0x04
-        );
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.fromBytes(data);
