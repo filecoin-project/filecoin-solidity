@@ -8,7 +8,6 @@ cache_path = 'foundry-cache'
 optimizer = true
 evm_version = 'paris'
 
-
 [fuzz]
 runs = 200
 

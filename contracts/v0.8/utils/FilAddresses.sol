@@ -39,11 +39,17 @@ library FilAddresses {
     /// @notice allow to get a eth address from 040a type FilAddress made above
     /// @param addr FilAddress to convert
     /// @return new eth address
-    function toEthAddress(CommonTypes.FilAddress calldata addr) internal pure returns (address) {
+    function toEthAddress(CommonTypes.FilAddress memory addr) internal pure returns (address) {
         if (addr.data[0] != 0x04 || addr.data[1] != 0x0a || addr.data.length != 22) {
             revert InvalidAddress();
         }
-        bytes20 ethAddress = bytes20(bytes(addr.data)[2:]);
+        bytes memory filAddress = addr.data;
+        bytes20 ethAddress;
+
+        assembly {
+            ethAddress := mload(add(filAddress, 0x22))
+        }
+
         return address(ethAddress);
     }
 
@@ -73,13 +79,13 @@ library FilAddresses {
     /// @return whether the address is valid or not
     function validate(CommonTypes.FilAddress memory addr) internal pure returns (bool) {
         if (addr.data[0] == 0x00) {
-            return addr.data.length <= 10;
+            return (addr.data.length > 1 && addr.data.length <= 11);
         } else if (addr.data[0] == 0x01 || addr.data[0] == 0x02) {
             return addr.data.length == 21;
         } else if (addr.data[0] == 0x03) {
             return addr.data.length == 49;
-        } else if (addr.data[0] == 0x04) {
-            return addr.data.length <= 64;
+        } else if (addr.data[0] == 0x04 && addr.data[1] == 0x0a) {
+            return addr.data.length == 22;
         }
 
         return addr.data.length <= 256;
