@@ -2,7 +2,7 @@
 src = 'contracts'
 solc = '0.8.18'
 out = 'out'
-libs = ['lib', 'vendor']
+libs = ['lib', 'contracts/vendor']
 test = 'contracts/v0.8/test'
 cache_path = 'foundry-cache'
 optimizer = true
