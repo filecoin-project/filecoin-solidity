@@ -42,9 +42,10 @@ library Utils {
     /// @notice filecoin method not handled
     error MethodNotHandled(uint64);
 
-    /// @notice utility function meant to handle calls from other builtin actors. Arguments are passed as cbor serialized data (in filecoin native format)
+    /// @notice Utility function meant to handle calls from other builtin actors. Arguments are passed as cbor serialized data (in filecoin native format)
     /// @param method the filecoin method id that is being called
     /// @param params raw data (in bytes) passed as arguments to the method call
+    /// @return deserialized universal receiver params
     function handleFilecoinMethod(uint64 method, uint64 codec, bytes calldata params) internal pure returns (CommonTypes.UniversalReceiverParams memory) {
         if (method == CommonTypes.UniversalReceiverHookMethodNum) {
             if (codec != Misc.CBOR_CODEC) {
@@ -57,7 +58,10 @@ library Utils {
         }
     }
 
+    /// @notice Triggers an actor's universal receiver hook
     /// @param target The actor id you want to interact with
+    /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return hook's return data
     function universalReceiverHook(CommonTypes.FilActorId target, CommonTypes.UniversalReceiverParams memory params) internal returns (int256, bytes memory) {
         bytes memory raw_request = params.serializeUniversalReceiverParams();
 
