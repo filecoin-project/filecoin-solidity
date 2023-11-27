@@ -49,12 +49,6 @@ library MinerTypes {
         CommonTypes.FilAddress proposed;
     }
 
-    // Depracated
-    /// @param vesting_funds funds
-    // struct GetVestingFundsReturn {
-    //     VestingFunds[] vesting_funds;
-    // }
-
     /// @param new_beneficiary the new beneficiary address.
     /// @param new_quota the new quota token amount.
     /// @param new_expiration the epoch that the new quota will be expired.

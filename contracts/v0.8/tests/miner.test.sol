@@ -97,8 +97,8 @@ contract MinerApiTest {
         Errors.revertOnError(exit_code);
     }
 
-    function change_multiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) public {
-        int256 exit_code = MinerAPI.changeMultiaddresses(target, params);
+    function change_multiaddresses(CommonTypes.FilActorId target, CommonTypes.FilAddress[] memory new_multi_addrs) public {
+        int256 exit_code = MinerAPI.changeMultiaddresses(target, new_multi_addrs);
 
         Errors.revertOnError(exit_code);
     }

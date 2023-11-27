@@ -227,8 +227,8 @@ library MinerAPI {
 
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
-    function changeMultiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) internal returns (int256) {
-        bytes memory raw_request = params.serializeChangeMultiaddrsParams();
+    function changeMultiaddresses(CommonTypes.FilActorId target, CommonTypes.FilAddress[] memory new_multi_addrs) internal returns (int256) {
+        bytes memory raw_request = new_multi_addrs.serializeChangeMultiaddrsParams();
 
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
             target,

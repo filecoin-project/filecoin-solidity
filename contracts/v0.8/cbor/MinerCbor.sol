@@ -192,23 +192,23 @@ library MinerCBOR {
     }
 
     /// @notice serialize ChangeMultiaddrsParams struct to cbor in order to pass as arguments to the miner actor
-    /// @param params ChangeMultiaddrsParams to serialize as cbor
+    /// @param new_multi_addrs ChangeMultiaddrsParams to serialize as cbor
     /// @return cbor serialized data as bytes
-    function serializeChangeMultiaddrsParams(MinerTypes.ChangeMultiaddrsParams memory params) internal pure returns (bytes memory) {
+    function serializeChangeMultiaddrsParams(CommonTypes.FilAddress[] memory new_multi_addrs) internal pure returns (bytes memory) {
         uint256 capacity = 0;
 
         capacity += Misc.getPrefixSize(1);
-        capacity += Misc.getPrefixSize(uint256(params.new_multi_addrs.length));
-        for (uint64 i = 0; i < params.new_multi_addrs.length; i++) {
-            capacity += Misc.getBytesSize(params.new_multi_addrs[i].data);
+        capacity += Misc.getPrefixSize(uint256(new_multi_addrs.length));
+        for (uint64 i = 0; i < new_multi_addrs.length; i++) {
+            capacity += Misc.getBytesSize(new_multi_addrs[i].data);
         }
         CBOR.CBORBuffer memory buf = CBOR.create(capacity);
 
         buf.startFixedArray(1);
-        buf.startFixedArray(uint64(params.new_multi_addrs.length));
+        buf.startFixedArray(uint64(new_multi_addrs.length));
 
-        for (uint64 i = 0; i < params.new_multi_addrs.length; i++) {
-            buf.writeBytes(params.new_multi_addrs[i].data);
+        for (uint64 i = 0; i < new_multi_addrs.length; i++) {
+            buf.writeBytes(new_multi_addrs[i].data);
         }
 
         return buf.data();

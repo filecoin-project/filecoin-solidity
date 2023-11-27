@@ -762,13 +762,11 @@ fn miner_tests() {
 
     let abi_encoded_call = api_contracts::miner_test::change_multiaddressesCall{
         target: 0x66_u64,
-        params: api_contracts::miner_test::ChangeMultiaddrsParams{
-            new_multi_addrs: vec![
-                api_contracts::miner_test::FilAddress{
-                    data: vec![0_u8, 0x66]
-                }
-            ]
-        }
+        new_multi_addrs: vec![
+            api_contracts::miner_test::FilAddress{
+                data: vec![0_u8, 0x66]
+            }
+        ]
     }.abi_encode();
 
     let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);

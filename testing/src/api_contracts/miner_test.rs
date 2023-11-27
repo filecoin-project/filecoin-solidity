@@ -36,9 +36,7 @@ sol!{
         FilAddress[] new_control_addresses;
     }
 
-    struct ChangeMultiaddrsParams {
-        FilAddress[] new_multi_addrs;
-    }
+
 
     struct GetMultiaddrsReturn {
         FilAddress[] multi_addrs;
@@ -80,7 +78,7 @@ sol!{
 
     function get_available_balance(FilActorId target) public returns (BigInt memory) {}
 
-    function get_vesting_funds(FilActorId target) public returns (GetVestingFundsReturn memory) {}
+    function get_vesting_funds(FilActorId target) public returns (VestingFunds[] memory) {}
 
     function change_beneficiary(FilActorId target, ChangeBeneficiaryParams memory params) public {}
 
@@ -90,7 +88,7 @@ sol!{
 
     function change_peer_id(FilActorId target, FilAddress memory newId) public {}
 
-    function change_multiaddresses(FilActorId target, ChangeMultiaddrsParams memory params) public {}
+    function change_multiaddresses(FilActorId target, FilAddress[] memory new_multi_addrs) public {}
 
     function repay_debt(FilActorId target) public {}
 
