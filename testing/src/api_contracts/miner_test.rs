@@ -101,4 +101,7 @@ sol!{
     function get_multiaddresses(FilActorId target) public returns (GetMultiaddrsReturn memory) {}
 
     function withdraw_balance(FilActorId target, BigInt memory amount) public returns (BigInt memory) {}
+
+    //helpers
+    function encode_vesting_funds(VestingFunds[] vesting_funds) public {}
 }

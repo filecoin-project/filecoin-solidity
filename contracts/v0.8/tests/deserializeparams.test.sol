@@ -30,8 +30,8 @@ contract DeserializeParamsTest {
     function deserializeGetVestingFundsReturn() public pure {
         bytes memory params = hex"8181820040";
 
-        MinerTypes.GetVestingFundsReturn memory result = params.deserializeGetVestingFundsReturn();
+        MinerTypes.VestingFunds[] memory vesting_funds = params.deserializeGetVestingFundsReturn();
 
-        require(result.vesting_funds.length == 1, "result length should be 1");
+        require(vesting_funds.length == 1, "result length should be 1");
     }
 }

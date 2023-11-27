@@ -49,10 +49,11 @@ library MinerTypes {
         CommonTypes.FilAddress proposed;
     }
 
+    // Depracated
     /// @param vesting_funds funds
-    struct GetVestingFundsReturn {
-        VestingFunds[] vesting_funds;
-    }
+    // struct GetVestingFundsReturn {
+    //     VestingFunds[] vesting_funds;
+    // }
 
     /// @param new_beneficiary the new beneficiary address.
     /// @param new_quota the new quota token amount.

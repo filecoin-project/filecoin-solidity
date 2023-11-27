@@ -65,11 +65,9 @@ contract MinerApiTest {
         return result;
     }
 
-    function get_vesting_funds(CommonTypes.FilActorId target) public view returns (MinerTypes.GetVestingFundsReturn memory) {
-        (int256 exit_code, MinerTypes.GetVestingFundsReturn memory result) = MinerAPI.getVestingFunds(target);
-
+    function get_vesting_funds(CommonTypes.FilActorId target) public view returns (MinerTypes.VestingFunds[] memory) {
+        (int256 exit_code, MinerTypes.VestingFunds[] memory result) = MinerAPI.getVestingFunds(target);
         Errors.revertOnError(exit_code);
-
         return result;
     }
 

@@ -486,11 +486,8 @@ fn miner_tests() {
     gas_result.push(("get_vesting_funds".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let expected_vesting_funds = api_contracts::miner_test::GetVestingFundsReturn{
-        vesting_funds: vec![]
-    };
-    let abi_encoded_call = api_contracts::miner_test::GetVestingFundsReturn::abi_encode(&expected_vesting_funds);
-    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+    let abi_encoded_call = api_contracts::miner_test::encode_vesting_fundsCall{vesting_funds: vec![]}.abi_encode();
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call[4..].to_vec());
 
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()), 

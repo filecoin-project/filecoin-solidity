@@ -142,15 +142,13 @@ library MinerAPI {
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return the funds vesting in this miner as a list of (vesting_epoch, vesting_amount) tuples.
-    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetVestingFundsReturn memory) {
+    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.VestingFunds[] memory) {
         bytes memory raw_request = new bytes(0);
-
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetVestingFundsMethodNum, Misc.NONE_CODEC, raw_request);
         if (exit_code == 0) {
             return (0, result.deserializeGetVestingFundsReturn());
         }
-
-        MinerTypes.GetVestingFundsReturn memory empty_res;
+        MinerTypes.VestingFunds[] memory empty_res;
         return (exit_code, empty_res);
     }
 

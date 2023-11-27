@@ -138,8 +138,8 @@ library MinerCBOR {
 
     /// @notice deserialize GetVestingFundsReturn struct from cbor encoded bytes coming from a miner actor call
     /// @param rawResp cbor encoded response
-    /// @return ret new instance of GetVestingFundsReturn created based on parsed data
-    function deserializeGetVestingFundsReturn(bytes memory rawResp) internal pure returns (MinerTypes.GetVestingFundsReturn memory ret) {
+    /// @return vesting_funds new instance of GetVestingFundsReturn created based on parsed data
+    function deserializeGetVestingFundsReturn(bytes memory rawResp) internal pure returns (MinerTypes.VestingFunds[] memory vesting_funds) {
         CommonTypes.ChainEpoch epoch;
         CommonTypes.BigInt memory amount;
         bytes memory tmp;
@@ -152,7 +152,7 @@ library MinerCBOR {
         assert(len == 1);
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        ret.vesting_funds = new MinerTypes.VestingFunds[](len);
+        vesting_funds = new MinerTypes.VestingFunds[](len);
 
         for (uint i = 0; i < len; i++) {
             (leni, byteIdx) = rawResp.readFixedArray(byteIdx);
@@ -162,10 +162,8 @@ library MinerCBOR {
             (tmp, byteIdx) = rawResp.readBytes(byteIdx);
 
             amount = tmp.deserializeBigInt();
-            ret.vesting_funds[i] = MinerTypes.VestingFunds(epoch, amount);
+            vesting_funds[i] = MinerTypes.VestingFunds(epoch, amount);
         }
-
-        return ret;
     }
 
     /// @notice serialize ChangeWorkerAddressParams struct to cbor in order to pass as arguments to the miner actor
