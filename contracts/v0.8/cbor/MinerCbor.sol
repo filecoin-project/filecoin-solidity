@@ -216,8 +216,8 @@ library MinerCBOR {
 
     /// @notice deserialize GetMultiaddrsReturn struct from cbor encoded bytes coming from a miner actor call
     /// @param rawResp cbor encoded response
-    /// @return ret new instance of GetMultiaddrsReturn created based on parsed data
-    function deserializeGetMultiaddrsReturn(bytes memory rawResp) internal pure returns (MinerTypes.GetMultiaddrsReturn memory ret) {
+    /// @return multi_addrs deserialized addresses
+    function deserializeGetMultiaddrsReturn(bytes memory rawResp) internal pure returns (CommonTypes.FilAddress[] memory multi_addrs) {
         uint byteIdx = 0;
         uint len;
 
@@ -225,12 +225,12 @@ library MinerCBOR {
         assert(len == 1);
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        ret.multi_addrs = new CommonTypes.FilAddress[](len);
+        multi_addrs = new CommonTypes.FilAddress[](len);
 
         for (uint i = 0; i < len; i++) {
-            (ret.multi_addrs[i].data, byteIdx) = rawResp.readBytes(byteIdx);
+            (multi_addrs[i].data, byteIdx) = rawResp.readBytes(byteIdx);
         }
 
-        return ret;
+        return multi_addrs;
     }
 }

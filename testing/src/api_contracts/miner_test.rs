@@ -102,4 +102,6 @@ sol!{
 
     //helpers
     function encode_vesting_funds(VestingFunds[] vesting_funds) public {}
+
+    function encode_multi_addrs(FilAddress[] multi_addrs) public {}
 }

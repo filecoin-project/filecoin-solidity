@@ -72,16 +72,6 @@ library MinerTypes {
         CommonTypes.FilAddress[] new_control_addresses;
     }
 
-    /// @param new_multi_addrs the new multi-signature address.
-    struct ChangeMultiaddrsParams {
-        CommonTypes.FilAddress[] new_multi_addrs;
-    }
-
-    /// @param multi_addrs the multi-signature address.
-    struct GetMultiaddrsReturn {
-        CommonTypes.FilAddress[] multi_addrs;
-    }
-
     /// @param epoch the epoch of funds vested.
     /// @param amount the amount of funds vested.
     struct VestingFunds {

@@ -624,15 +624,14 @@ fn miner_tests() {
     gas_result.push(("get_multiaddresses".into(), gas_used));
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
-    let expected_multi_addr = api_contracts::miner_test::GetMultiaddrsReturn{
-        multi_addrs: vec![
-            api_contracts::miner_test::FilAddress{
-                data: vec![1_u8, 2, 3]
-            }
-        ]
-    };
-    let abi_encoded_call = api_contracts::miner_test::GetMultiaddrsReturn::abi_encode(&expected_multi_addr);
-    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call);
+    let expected_multi_addr = vec![
+        api_contracts::miner_test::FilAddress{
+            data: vec![1_u8, 2, 3]
+        }
+    ];
+    
+    let abi_encoded_call = api_contracts::miner_test::encode_multi_addrsCall{multi_addrs: expected_multi_addr}.abi_encode();
+    let cbor_encoded = api_contracts::cbor_encode(abi_encoded_call[4..].to_vec());
 
     assert_eq!(
         hex::encode(res.msg_receipt.return_data.bytes()), 

@@ -123,8 +123,8 @@ contract MinerApiTest {
         return result;
     }
 
-    function get_multiaddresses(CommonTypes.FilActorId target) public view returns (MinerTypes.GetMultiaddrsReturn memory) {
-        (int256 exit_code, MinerTypes.GetMultiaddrsReturn memory result) = MinerAPI.getMultiaddresses(target);
+    function get_multiaddresses(CommonTypes.FilActorId target) public view returns (CommonTypes.FilAddress[] memory) {
+        (int256 exit_code, CommonTypes.FilAddress[] memory result) = MinerAPI.getMultiaddresses(target);
 
         Errors.revertOnError(exit_code);
 
