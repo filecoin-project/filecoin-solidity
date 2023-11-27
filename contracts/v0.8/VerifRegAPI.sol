@@ -93,9 +93,8 @@ library VerifRegAPI {
 
     /// @notice extends the  maximum term of some claims up to the largest value they could have been originally allocated. This method can only be called by the claims' client.
     /// @return exit code (!= 0) if an error occured, 0 otherwise
-    function extendClaimTerms(VerifRegTypes.ExtendClaimTermsParams memory params) internal returns (int256, CommonTypes.BatchReturn memory) {
-        bytes memory raw_request = params.serializeExtendClaimTermsParams();
-
+    function extendClaimTerms(VerifRegTypes.ClaimTerm[] memory claimTerms) internal returns (int256, CommonTypes.BatchReturn memory) {
+        bytes memory raw_request = claimTerms.serializeExtendClaimTermsParams();
         (int256 exit_code, bytes memory result) = Actor.callByID(
             VerifRegTypes.ActorID,
             VerifRegTypes.ExtendClaimTermsMethodNum,
@@ -104,11 +103,9 @@ library VerifRegAPI {
             0,
             false
         );
-
         if (exit_code == 0) {
             return (0, result.deserializeBatchReturn());
         }
-
         CommonTypes.BatchReturn memory empty_res;
         return (exit_code, empty_res);
     }
