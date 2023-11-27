@@ -230,7 +230,5 @@ library MinerCBOR {
         for (uint i = 0; i < len; i++) {
             (multi_addrs[i].data, byteIdx) = rawResp.readBytes(byteIdx);
         }
-
-        return multi_addrs;
     }
 }
