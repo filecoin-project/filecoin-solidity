@@ -19,15 +19,15 @@
         "Solidity",
         "Filecoin"
     ],
-    "author":"Filecoin Project",
-    "license":"Apache-2.0",
-    "bugs":{
-       "url":"https://github.com/filecoin-project/filecoin-solidity/issues"
+    "author": "[Protocol Labs, Filecoin Core Devs]",
+    "license": "MIT OR Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/filecoin-project/filecoin-solidity/issues"
     },
-    "homepage":"https://github.com/filecoin-project/filecoin-solidity#readme",
-    "files":[
-      "contracts/",
-      "!/contracts/v0.8/tests/**/*"
+    "homepage": "https://github.com/filecoin-project/filecoin-solidity#readme",
+    "files": [
+        "contracts/",
+        "!/contracts/v0.8/tests/**/*"
     ],
     "publishConfig": {
         "access": "public"

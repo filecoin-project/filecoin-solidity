@@ -9,7 +9,7 @@ Protocol Labs are now the owners of this library, and will mantain it moving for
 
 ## Notice
 
-This is software is available under Apache 2.0 License. Use of this library implies your acceptance of these terms and conditions
+This software is dual-licensed under the [MIT License](./LICENSE-MIT) and the [Apache Software License v2](./LICENSE-APACHE) by way of the [Permissive License Stack](https://protocol.ai/blog/announcing-the-permissive-license-stack/). Use of this library implies your acceptance of these terms and conditions.
 
 Things to keep in mind, while using this library:
 
