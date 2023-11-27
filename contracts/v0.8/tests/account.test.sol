@@ -36,7 +36,7 @@ contract AccountApiTest {
     }
 
     function universal_receiver_hook(CommonTypes.FilActorId target, CommonTypes.UniversalReceiverParams memory params) public {
-        (int256 exit_code, bytes memory result) = Utils.universalReceiverHook(target, params);
+        (int256 exit_code, ) = Utils.universalReceiverHook(target, params);
 
         Errors.revertOnError(exit_code);
     }
