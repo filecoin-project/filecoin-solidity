@@ -33,14 +33,17 @@ library FilAddresses {
     /// @param addr eth address to convert
     /// @return new filecoin address
     function fromEthAddress(address addr) internal pure returns (CommonTypes.FilAddress memory) {
-        return CommonTypes.FilAddress(abi.encodePacked(hex"040a", addr));
+        return CommonTypes.FilAddress(abi.encodePacked(CommonTypes.PROTOCOL_DELEGATED, CommonTypes.EAM_ID, addr));
     }
 
     /// @notice allow to get a eth address from 040a type FilAddress made above
     /// @param addr FilAddress to convert
     /// @return new eth address
     function toEthAddress(CommonTypes.FilAddress memory addr) internal pure returns (address) {
-        if (addr.data[0] != 0x04 || addr.data[1] != 0x0a || addr.data.length != 22) {
+        if (
+            addr.data[0] != CommonTypes.PROTOCOL_DELEGATED || addr.data[1] != CommonTypes.EAM_ID
+                || addr.data.length != CommonTypes.PROTOCOL_DELEGATED_EAM_ADDRESS_LENGTH
+        ) {
             revert InvalidAddress();
         }
         bytes memory filAddress = addr.data;
@@ -58,7 +61,7 @@ library FilAddresses {
     /// @return address filecoin address
     function fromActorID(uint64 actorID) internal pure returns (CommonTypes.FilAddress memory) {
         Buffer.buffer memory result = Leb128.encodeUnsignedLeb128FromUInt64(actorID);
-        return CommonTypes.FilAddress(abi.encodePacked(hex"00", result.buf));
+        return CommonTypes.FilAddress(abi.encodePacked(CommonTypes.PROTOCOL_ID, result.buf));
     }
 
     /// @notice allow to create a Filecoin address from bytes
@@ -78,14 +81,17 @@ library FilAddresses {
     /// @param addr the filecoin address to validate
     /// @return whether the address is valid or not
     function validate(CommonTypes.FilAddress memory addr) internal pure returns (bool) {
-        if (addr.data[0] == 0x00) {
-            return (addr.data.length > 1 && addr.data.length <= 11);
-        } else if (addr.data[0] == 0x01 || addr.data[0] == 0x02) {
-            return addr.data.length == 21;
-        } else if (addr.data[0] == 0x03) {
-            return addr.data.length == 49;
-        } else if (addr.data[0] == 0x04 && addr.data[1] == 0x0a) {
-            return addr.data.length == 22;
+        if (addr.data[0] == CommonTypes.PROTOCOL_ID) {
+            return (
+                addr.data.length > CommonTypes.MIN_PROTOCOL_ID_ADDRESS_LENGTH
+                    && addr.data.length <= CommonTypes.MAX_PROTOCOL_ID_ADDRESS_LENGTH
+            );
+        } else if (addr.data[0] == CommonTypes.PROTOCOL_SECP256K1 || addr.data[0] == CommonTypes.PROTOCOL_ACTOR) {
+            return addr.data.length == CommonTypes.PROTOCOL_SECP256K1_ACTOR_ADDRESS_LENGTH;
+        } else if (addr.data[0] == CommonTypes.PROTOCOL_BLS) {
+            return addr.data.length == CommonTypes.PROTOCOL_BLS_ADDRESS_LENGTH;
+        } else if (addr.data[0] == CommonTypes.PROTOCOL_DELEGATED && addr.data[1] == CommonTypes.EAM_ID) {
+            return addr.data.length == CommonTypes.PROTOCOL_DELEGATED_EAM_ADDRESS_LENGTH;
         }
 
         return addr.data.length <= 256;
