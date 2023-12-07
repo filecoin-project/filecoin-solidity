@@ -41,7 +41,7 @@ sol!{
 
     struct GetDealTermReturn {
         ChainEpoch start;
-        ChainEpoch end;
+        ChainEpoch duration;
     }
 
     struct GetDealActivationReturn {
