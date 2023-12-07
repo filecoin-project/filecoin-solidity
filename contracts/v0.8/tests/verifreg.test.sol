@@ -52,11 +52,9 @@ contract VerifRegApiTest {
         return result;
     }
 
-    function extend_claim_terms(VerifRegTypes.ExtendClaimTermsParams memory params) public returns (CommonTypes.BatchReturn memory) {
-        (int256 exit_code, CommonTypes.BatchReturn memory result) = VerifRegAPI.extendClaimTerms(params);
-
+    function extend_claim_terms(VerifRegTypes.ClaimTerm[] memory claimTerms) public returns (CommonTypes.BatchReturn memory) {
+        (int256 exit_code, CommonTypes.BatchReturn memory result) = VerifRegAPI.extendClaimTerms(claimTerms);
         Errors.revertOnError(exit_code);
-
         return result;
     }
 

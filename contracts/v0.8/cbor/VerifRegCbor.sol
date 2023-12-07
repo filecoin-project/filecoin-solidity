@@ -194,18 +194,18 @@ library VerifRegCBOR {
     }
 
     /// @notice serialize ExtendClaimTermsParams struct to cbor in order to pass as arguments to the verified registry actor
-    /// @param params ExtendClaimTermsParams to serialize as cbor
+    /// @param terms ExtendClaimTermsParams to serialize as cbor
     /// @return cbor serialized data as bytes
-    function serializeExtendClaimTermsParams(VerifRegTypes.ExtendClaimTermsParams memory params) internal pure returns (bytes memory) {
+    function serializeExtendClaimTermsParams(VerifRegTypes.ClaimTerm[] memory terms) internal pure returns (bytes memory) {
         uint256 capacity = 0;
-        uint termsLen = params.terms.length;
+        uint termsLen = terms.length;
 
         capacity += Misc.getPrefixSize(1);
         capacity += Misc.getPrefixSize(termsLen);
         for (uint i = 0; i < termsLen; i++) {
-            capacity += Misc.getFilActorIdSize(params.terms[i].provider);
-            capacity += Misc.getFilActorIdSize(params.terms[i].claim_id);
-            capacity += Misc.getChainEpochSize(params.terms[i].term_max);
+            capacity += Misc.getFilActorIdSize(terms[i].provider);
+            capacity += Misc.getFilActorIdSize(terms[i].claim_id);
+            capacity += Misc.getChainEpochSize(terms[i].term_max);
         }
         CBOR.CBORBuffer memory buf = CBOR.create(capacity);
 
@@ -213,9 +213,9 @@ library VerifRegCBOR {
         buf.startFixedArray(uint64(termsLen));
         for (uint i = 0; i < termsLen; i++) {
             buf.startFixedArray(3);
-            buf.writeFilActorId(params.terms[i].provider);
-            buf.writeFilActorId(params.terms[i].claim_id);
-            buf.writeChainEpoch(params.terms[i].term_max);
+            buf.writeFilActorId(terms[i].provider);
+            buf.writeFilActorId(terms[i].claim_id);
+            buf.writeChainEpoch(terms[i].term_max);
         }
 
         return buf.data();

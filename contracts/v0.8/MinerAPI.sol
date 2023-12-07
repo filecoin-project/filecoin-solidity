@@ -142,15 +142,13 @@ library MinerAPI {
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return the funds vesting in this miner as a list of (vesting_epoch, vesting_amount) tuples.
-    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetVestingFundsReturn memory) {
+    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.VestingFunds[] memory) {
         bytes memory raw_request = new bytes(0);
-
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetVestingFundsMethodNum, Misc.NONE_CODEC, raw_request);
         if (exit_code == 0) {
             return (0, result.deserializeGetVestingFundsReturn());
         }
-
-        MinerTypes.GetVestingFundsReturn memory empty_res;
+        MinerTypes.VestingFunds[] memory empty_res;
         return (exit_code, empty_res);
     }
 
@@ -229,8 +227,8 @@ library MinerAPI {
 
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
-    function changeMultiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) internal returns (int256) {
-        bytes memory raw_request = params.serializeChangeMultiaddrsParams();
+    function changeMultiaddresses(CommonTypes.FilActorId target, CommonTypes.FilAddress[] memory new_multi_addrs) internal returns (int256) {
+        bytes memory raw_request = new_multi_addrs.serializeChangeMultiaddrsParams();
 
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
             target,
@@ -299,7 +297,7 @@ library MinerAPI {
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return multiaddresses for `target`
-    function getMultiaddresses(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetMultiaddrsReturn memory) {
+    function getMultiaddresses(CommonTypes.FilActorId target) internal view returns (int256, CommonTypes.FilAddress[] memory) {
         bytes memory raw_request = new bytes(0);
 
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetMultiaddrsMethodNum, Misc.NONE_CODEC, raw_request);
@@ -307,7 +305,7 @@ library MinerAPI {
             return (0, result.deserializeGetMultiaddrsReturn());
         }
 
-        MinerTypes.GetMultiaddrsReturn memory empty_res;
+        CommonTypes.FilAddress[] memory empty_res;
         return (exit_code, empty_res);
     }
 

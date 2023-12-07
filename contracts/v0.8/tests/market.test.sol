@@ -30,7 +30,7 @@ contract MarketApiTest {
     uint[] public publishedDealIds;
 
     function add_balance(CommonTypes.FilAddress memory providerOrClient, uint256 value) public payable {
-        (int256 exit_code, bytes memory result) = MarketAPI.addBalance(providerOrClient, value);
+        (int256 exit_code, ) = MarketAPI.addBalance(providerOrClient, value);
 
         Errors.revertOnError(exit_code);
     }

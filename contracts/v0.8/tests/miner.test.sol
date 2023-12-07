@@ -65,11 +65,9 @@ contract MinerApiTest {
         return result;
     }
 
-    function get_vesting_funds(CommonTypes.FilActorId target) public view returns (MinerTypes.GetVestingFundsReturn memory) {
-        (int256 exit_code, MinerTypes.GetVestingFundsReturn memory result) = MinerAPI.getVestingFunds(target);
-
+    function get_vesting_funds(CommonTypes.FilActorId target) public view returns (MinerTypes.VestingFunds[] memory) {
+        (int256 exit_code, MinerTypes.VestingFunds[] memory result) = MinerAPI.getVestingFunds(target);
         Errors.revertOnError(exit_code);
-
         return result;
     }
 
@@ -99,8 +97,8 @@ contract MinerApiTest {
         Errors.revertOnError(exit_code);
     }
 
-    function change_multiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) public {
-        int256 exit_code = MinerAPI.changeMultiaddresses(target, params);
+    function change_multiaddresses(CommonTypes.FilActorId target, CommonTypes.FilAddress[] memory new_multi_addrs) public {
+        int256 exit_code = MinerAPI.changeMultiaddresses(target, new_multi_addrs);
 
         Errors.revertOnError(exit_code);
     }
@@ -125,8 +123,8 @@ contract MinerApiTest {
         return result;
     }
 
-    function get_multiaddresses(CommonTypes.FilActorId target) public view returns (MinerTypes.GetMultiaddrsReturn memory) {
-        (int256 exit_code, MinerTypes.GetMultiaddrsReturn memory result) = MinerAPI.getMultiaddresses(target);
+    function get_multiaddresses(CommonTypes.FilActorId target) public view returns (CommonTypes.FilAddress[] memory) {
+        (int256 exit_code, CommonTypes.FilAddress[] memory result) = MinerAPI.getMultiaddresses(target);
 
         Errors.revertOnError(exit_code);
 
