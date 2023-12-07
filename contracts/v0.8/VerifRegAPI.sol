@@ -31,7 +31,7 @@ import "./utils/Misc.sol";
 library VerifRegAPI {
     using VerifRegCBOR for *;
 
-    /// @notice get a list of claims corresponding to the requested claim ID for specific provider.
+    /// @notice Returns a list of claims corresponding to the requested claim ID for specific provider.
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return list of claims corresponding to the requested claim ID for provider
     function getClaims(VerifRegTypes.GetClaimsParams memory params) internal view returns (int256, VerifRegTypes.GetClaimsReturn memory) {
@@ -47,7 +47,8 @@ library VerifRegAPI {
         return (exit_code, empty_res);
     }
 
-    /// @notice add a verified Client address to Filecoin Plus program.
+    /// @notice Adds a verified Client address to Filecoin Plus program.
+    /// @param params client's address and datacap allowance
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     function addVerifiedClient(VerifRegTypes.AddVerifiedClientParams memory params) internal returns (int256) {
         bytes memory raw_request = params.serializeAddVerifiedClientParams();
@@ -67,8 +68,10 @@ library VerifRegAPI {
         return exit_code;
     }
 
-    /// @notice remove the expired DataCap allocations and reclaimed those DataCap token back to Client. If the allocation amount is not specified, all expired DataCap allocation will be removed.
+    /// @notice Removes the expired DataCap allocations and reclaimed those DataCap token back to Client. If the allocation amount is not specified, all expired DataCap allocation will be removed.
+    /// @param params client's id and list of allocation ids
     /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return information and success results for expired allocations
     function removeExpiredAllocations(
         VerifRegTypes.RemoveExpiredAllocationsParams memory params
     ) internal returns (int256, VerifRegTypes.RemoveExpiredAllocationsReturn memory) {
@@ -91,10 +94,11 @@ library VerifRegAPI {
         return (exit_code, empty_res);
     }
 
-    /// @notice extends the  maximum term of some claims up to the largest value they could have been originally allocated. This method can only be called by the claims' client.
+    /// @notice Extends the  maximum term of some claims up to the largest value they could have been originally allocated. This method can only be called by the claims' client.
+    /// @param params list of claim terms
     /// @return exit code (!= 0) if an error occured, 0 otherwise
-    function extendClaimTerms(VerifRegTypes.ClaimTerm[] memory claimTerms) internal returns (int256, CommonTypes.BatchReturn memory) {
-        bytes memory raw_request = claimTerms.serializeExtendClaimTermsParams();
+    function extendClaimTerms(VerifRegTypes.ClaimTerm[] memory params) internal returns (int256, CommonTypes.BatchReturn memory) {
+        bytes memory raw_request = params.serializeExtendClaimTermsParams();
         (int256 exit_code, bytes memory result) = Actor.callByID(
             VerifRegTypes.ActorID,
             VerifRegTypes.ExtendClaimTermsMethodNum,
@@ -110,8 +114,10 @@ library VerifRegAPI {
         return (exit_code, empty_res);
     }
 
-    /// @notice remove a claim with its maximum term has elapsed.
+    /// @notice Removes a claim with its maximum term being expired.
+    /// @param params information about expired claims
     /// @return exit code (!= 0) if an error occured, 0 otherwise
+    /// @return list of claim ids, and corresponding results
     function removeExpiredClaims(
         VerifRegTypes.RemoveExpiredClaimsParams memory params
     ) internal returns (int256, VerifRegTypes.RemoveExpiredClaimsReturn memory) {
