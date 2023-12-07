@@ -9,7 +9,7 @@ Protocol Labs are now the owners of this library, and will mantain it moving for
 
 ## Notice
 
-This is software is available under Apache 2.0 License. Use of this library implies your acceptance of these terms and conditions
+This software is dual-licensed under the [MIT License](./LICENSE-MIT) and the [Apache Software License v2](./LICENSE-APACHE) by way of the [Permissive License Stack](https://protocol.ai/blog/announcing-the-permissive-license-stack/). Use of this library implies your acceptance of these terms and conditions.
 
 Things to keep in mind, while using this library:
 
@@ -73,20 +73,35 @@ import { MarketTypes } from "./libs/types/MarketTypes.sol";
 
 #### NPM Package
 
-A better approach to import these libs is using the NPM package created for this. [:link:](https://www.npmjs.com/package/@zondax/filecoin-solidity).
-Run on your project in order to add this package.
+A better approach to import these libs is using the NPM package created for this [:link:](https://www.npmjs.com/package/@filecoin-project/filecoin-solidity). Run on your project in order to add this package.
 
-```yarn
-yarn add @zondax/filecoin-solidity
 ```
+$ npm install @filecoin-project/filecoin-solidity
+```
+
+#### Foundry (git)
+
+> [!WARNING]
+> When installing via git, it is a common error to use the `master` branch. This is a development branch that should be avoided in favor of tagged releases. The release process involves security measures that the `master` branch does not guarantee.
+
+> [!WARNING]
+> Foundry installs the latest version initially, but subsequent `forge update` commands will use the `master` branch.
+
+```
+$ forge install filecoin-project/filecoin-solidity
+```
+
+Add `@filecoin-project/filecoin-solidity/=lib/filecoin-project/filecoin-solidity/` in `remappings.txt.` 
+
+#### Usage
 
 In your smart contract, copy and paste these lines.
 
 ```solidity
-import { MarketAPI } from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-import { CommonTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import { MarketTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
-import { BigInt } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
+import { MarketAPI } from "@filecoin-project/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
+import { CommonTypes } from "@filecoin-project/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
+import { MarketTypes } from "@filecoin-project/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
+import { BigInt } from "@filecoin-project/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
 ### Supported networks
@@ -150,7 +165,7 @@ Requirements / Steps are performed on MacOS.
 -   Clone the repo with the `--recursive` flag
 
     ```
-    git clone https://github.com/MVPWorkshop/filecoin-solidity --recursive
+    git clone https://github.com/filecoin-project/filecoin-solidity.git --recursive
     ```
 
 -   Run: `cd filecoin-solidity`
