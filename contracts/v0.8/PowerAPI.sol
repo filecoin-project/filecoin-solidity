@@ -34,8 +34,8 @@ library PowerAPI {
     using BytesCBOR for bytes;
     using PowerCBOR for *;
 
-    /// @notice create a new miner for the owner address and worker address.
-    /// @param params data required to create the miner
+    /// @notice Creates a new miner for the provided owner address and worker address.
+    /// @param params required information needed to create the miner
     /// @param value the amount of token the new miner will receive
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return newly created miner's information
@@ -59,7 +59,7 @@ library PowerAPI {
         return (exit_code, empty_res);
     }
 
-    /// @notice get the total number of miners created, regardless of whether or not they have any pledged storage.
+    /// @notice Returns the total number of miners created, regardless of whether or not they have any pledged storage.
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return total number of miners created
     function minerCount() internal view returns (int256, uint64) {
@@ -75,7 +75,7 @@ library PowerAPI {
         return (exit_code, empty_res);
     }
 
-    /// @notice get the total number of miners that have more than the consensus minimum amount of storage active.
+    /// @notice Returns the total number of miners that have more than the consensus minimum amount of storage active.
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return total number of miners that have more than the consensus minimum amount of storage active
     function minerConsensusCount() internal view returns (int256, int64) {
@@ -96,7 +96,7 @@ library PowerAPI {
         return (exit_code, empty_res);
     }
 
-    /// @notice get the total raw power of the network.
+    /// @notice Returns the total raw power of the network.
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return total raw power of the network
     function networkRawPower() internal view returns (int256, CommonTypes.BigInt memory) {
@@ -112,7 +112,7 @@ library PowerAPI {
         return (exit_code, empty_res);
     }
 
-    /// @notice get the raw power claimed by the specified miner, and whether the miner has more than the consensus minimum amount of storage active.
+    /// @notice Returns the raw power claimed by the specified miner, and whether the miner has more than the consensus minimum amount of storage active.
     /// @param minerID the miner id you want to get information from
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return raw power claimed by the specified miner

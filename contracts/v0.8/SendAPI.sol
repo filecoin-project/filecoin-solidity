@@ -26,7 +26,7 @@ import "./types/CommonTypes.sol";
 /// @title This library is helper method to send funds to some specific address. Calling one of its methods will result in a cross-actor call being performed.
 /// @author Zondax AG
 library SendAPI {
-    /// @notice send token to a specific actor
+    /// @notice Sends tokens to the specified actor
     /// @param target The id address (uint64) you want to send funds to
     /// @param value tokens to be transferred to the receiver
     /// @return exit code (!= 0) if an error occured, 0 otherwise
@@ -39,7 +39,7 @@ library SendAPI {
         return exit_code;
     }
 
-    /// @notice send token to a specific actor
+    /// @notice Sends tokens to to the specified actor
     /// @param target The address you want to send funds to
     /// @param value tokens to be transferred to the receiver
     /// @return exit code (!= 0) if an error occured, 0 otherwise

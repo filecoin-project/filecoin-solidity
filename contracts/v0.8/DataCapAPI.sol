@@ -80,6 +80,7 @@ library DataCapAPI {
     }
 
     /// @notice Return the DataCap token balance for the wallet address.
+    /// @param addr filecoin address for which to return the balance
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return DataCap token balance for the wallet address
     function balance(CommonTypes.FilAddress memory addr) internal view returns (int256, CommonTypes.BigInt memory) {
@@ -96,6 +97,7 @@ library DataCapAPI {
     }
 
     /// @notice Return the allowance between owner and operator address.
+    /// @param params `owner` address and `operator` address
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return DataCap allowance between owner and operator address
     function allowance(DataCapTypes.GetAllowanceParams memory params) internal view returns (int256, CommonTypes.BigInt memory) {
@@ -114,6 +116,7 @@ library DataCapAPI {
     /// @notice Transfers data cap tokens to an address.
     /// @notice Data cap tokens are not generally transferable.
     /// @notice Succeeds if the to or from address is the governor, otherwise always fails.
+    /// @param params `to` address, transfer `amount`, arbitary `operator_data`
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return new balances/allowances and associated receipient data
     function transfer(DataCapTypes.TransferParams memory params) internal returns (int256, DataCapTypes.TransferReturn memory) {
@@ -132,6 +135,7 @@ library DataCapAPI {
     /// @notice Transfers data cap tokens between addresses.
     /// @notice Data cap tokens are not generally transferable between addresses.
     /// @notice Succeeds if the to address is the governor, otherwise always fails.
+    /// @param params `from` address, `to` address, transfer `amount`, and arbitary `operator_data`
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return new balances/allowances and associated receipient data
     function transferFrom(DataCapTypes.TransferFromParams memory params) internal returns (int256, DataCapTypes.TransferFromReturn memory) {
@@ -155,6 +159,7 @@ library DataCapAPI {
     }
 
     /// @notice Increase the DataCap token allowance that an operator can control of the owner's balance by the requested amount.
+    /// @param params operator's address and the amount to be added to the current allowance
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return operator's new allowance for the provided owner
     function increaseAllowance(DataCapTypes.IncreaseAllowanceParams memory params) internal returns (int256, CommonTypes.BigInt memory) {
@@ -178,6 +183,7 @@ library DataCapAPI {
     }
 
     /// @notice Decrease the DataCap token allowance that an operator controls of the owner's balance by the requested amount.
+    /// @param params operator's address and the amount to be substracted from the current allowance
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return operator's new allowance for the provided owner
     function decreaseAllowance(DataCapTypes.DecreaseAllowanceParams memory params) internal returns (int256, CommonTypes.BigInt memory) {
@@ -201,6 +207,7 @@ library DataCapAPI {
     }
 
     /// @notice Revoke the DataCap token allowance from the operator and set the operator's allowance in behave of owner/caller address to 0.
+    /// @param operator address that will no longer have allowance for the owner/caller address
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return operator's new allowance for the provided owner
     function revokeAllowance(CommonTypes.FilAddress memory operator) internal returns (int256, CommonTypes.BigInt memory) {
@@ -224,6 +231,7 @@ library DataCapAPI {
     }
 
     /// @notice Burn an amount of DataCap token from the owner/caller address, decreasing total token supply.
+    /// @param amount funds to be burned
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return owner's new allowance balance
     function burn(CommonTypes.BigInt memory amount) internal returns (int256, CommonTypes.BigInt memory) {
@@ -240,8 +248,9 @@ library DataCapAPI {
     }
 
     /// @notice Burn an amount of DataCap token from the specified address (owner address), decrease the allowance of operator/caller, and decrease total token supply.
+    /// @param params Owner address and amount
     /// @return exit code (!= 0) if an error occured, 0 otherwise
-    /// @return owner's new allowance balance
+    /// @return owner's new balance and its allowance fort operator/caller
     function burnFrom(DataCapTypes.BurnFromParams memory params) internal returns (int256, DataCapTypes.BurnFromReturn memory) {
         bytes memory raw_request = params.serializeBurnFromParams();
 

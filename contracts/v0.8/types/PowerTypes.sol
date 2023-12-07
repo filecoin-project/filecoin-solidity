@@ -32,7 +32,7 @@ library PowerTypes {
     uint constant NetworkRawPowerMethodNum = 931722534;
     uint constant MinerRawPowerMethodNum = 3753401894;
 
-    /// @param ownerthe address of the owner.
+    /// @param owner the address of the owner.
     /// @param worker the address of the worker.
     /// @param window_post_proof_type the type of RegisteredPoStProof.
     /// @param peer peer ID.
