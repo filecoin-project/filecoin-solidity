@@ -24,7 +24,7 @@ import "./types/CommonTypes.sol";
 import "./cbor/VerifRegCbor.sol";
 
 import "./utils/Actor.sol";
-import "./Utils.sol";
+import "./utils/Misc.sol";
 
 /// @title This library is a proxy to a built-in VerifReg actor. Calling one of its methods will result in a cross-actor call being performed.
 /// @author Zondax AG

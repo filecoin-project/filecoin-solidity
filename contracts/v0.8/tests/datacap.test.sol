@@ -23,7 +23,7 @@ import "../types/DataCapTypes.sol";
 import "../types/CommonTypes.sol";
 import "../cbor/BigIntCbor.sol";
 import "../DataCapAPI.sol";
-import "../Utils.sol";
+import "../utils/Misc.sol";
 import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the datacap actor API, as the library by itself is not.
@@ -127,6 +127,6 @@ contract DataCapApiTest {
     }
 
     function handle_filecoin_method(uint64 method, uint64 codec, bytes calldata params) public pure {
-        Utils.handleFilecoinMethod(method, codec, params);
+        Misc.handleFilecoinMethod(method, codec, params);
     }
 }
