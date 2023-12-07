@@ -23,9 +23,38 @@ pragma solidity ^0.8.17;
 /// @title Filecoin actors' common types for Solidity.
 /// @author Zondax AG
 library CommonTypes {
-    uint constant UniversalReceiverHookMethodNum = 3726118371;
-    uint constant MAX_DEAL_LABEL_LENGTH = 256;
-    
+    /// @dev Protocol byte values
+    /// @notice These constants represent the byte value for each protocol.
+    ///         For more information see the Filecoin documentation: 
+    ///         https://docs.filecoin.io/smart-contracts/filecoin-evm-runtime/address-types
+    bytes1 constant PROTOCOL_ID = hex"00";
+    bytes1 constant PROTOCOL_SECP256K1 = hex"01";
+    bytes1 constant PROTOCOL_ACTOR = hex"02";
+    bytes1 constant PROTOCOL_BLS = hex"03";
+    bytes1 constant PROTOCOL_DELEGATED = hex"04";
+
+    /// @dev EAM actor ID
+    /// @notice This constant represents the EAM actor ID.
+    bytes1 constant EAM_ID = hex"0a";
+
+    /// @dev Protocols address lengths
+    /// @notice These constants represent the address lengths for each protocol.
+    ///         For more information see the Filecoin specification: 
+    ///         https://spec.filecoin.io/#section-appendix
+    uint256 constant MIN_PROTOCOL_ID_ADDRESS_LENGTH = 1;
+    uint256 constant MAX_PROTOCOL_ID_ADDRESS_LENGTH = 11;
+    uint256 constant PROTOCOL_SECP256K1_ACTOR_ADDRESS_LENGTH = 21; // used for both SECP256K1 and ACTOR
+    uint256 constant PROTOCOL_BLS_ADDRESS_LENGTH = 49;
+    uint256 constant PROTOCOL_DELEGATED_EAM_ADDRESS_LENGTH = 22;
+
+    /// @dev RecieverHook method number
+    /// @notice This constant represents the UniversalReceiverHook method number.
+    uint256 constant UniversalReceiverHookMethodNum = 3726118371;
+
+    /// @dev Deal label maximum length in bytes
+    /// @notice This constant represents the maximum length of a deal label in bytes.
+    uint256 constant MAX_DEAL_LABEL_LENGTH = 256;
+
     /// @param idx index for the failure in batch
     /// @param code failure code
     struct FailCode {
