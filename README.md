@@ -78,6 +78,7 @@ Better approach to import these libs is using the [NPM package](https://www.npmj
 
 ```
 $ npm install filecoin-solidity-api
+
 ```
 
 #### Foundry (git)
@@ -94,6 +95,7 @@ $ forge install filecoin-project/filecoin-solidity
 
 Add `filecoin-solidity-api=lib/filecoin-project/filecoin-solidity/` in `remappings.txt.`
 
+
 #### Usage
 
 In your smart contract, copy and paste these lines.
@@ -102,7 +104,7 @@ In your smart contract, copy and paste these lines.
 import { MarketAPI } from "filecoin-solidity-api/contracts/v0.8/MarketAPI.sol";
 import { CommonTypes } from "filecoin-solidity-api/contracts/v0.8/types/CommonTypes.sol";
 import { MarketTypes } from "filecoin-solidity-api/contracts/v0.8/types/MarketTypes.sol";
-import { BigInt } from "filecoin-solidity-api/contracts/v0.8/cbor/BigIntCbor.sol";
+import { BigIntCBOR } from "filecoin-solidity-api/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
 ## Complementary lectures
