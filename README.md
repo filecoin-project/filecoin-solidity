@@ -14,9 +14,9 @@ This software is dual-licensed under the [MIT License](./LICENSE-MIT) and the [A
 
 Things to keep in mind, while using this library:
 
--   There are implicit invariants these contracts expect to hold.
--   You should exhaustively read each contract you plan to use, top to bottom.
--   **You can easily “shoot yourself in the foot” if you’re not careful with how you use the library.**
+- There are implicit invariants these contracts expect to hold.
+- You should exhaustively read each contract you plan to use, top to bottom.
+- **You can easily “shoot yourself in the foot” if you’re not careful with how you use the library.**
 
 ---
 
@@ -74,10 +74,11 @@ import { MarketTypes } from "./libs/types/MarketTypes.sol";
 
 #### NPM Package
 
-Better approach to import these libs is using the [NPM package](https://www.npmjs.com/package/filecoin-solidity) created for this .
+Better approach to import these libs is using the [NPM package](https://www.npmjs.com/package/filecoin-solidity-api) created for this .
 
 ```
-$ npm install filecoin-solidity
+$ npm install filecoin-solidity-api
+
 ```
 
 #### Foundry (git)
@@ -89,20 +90,21 @@ $ npm install filecoin-solidity
 > Foundry installs the latest version initially, but subsequent `forge update` commands will use the `master` branch.
 
 ```
-$ forge install filecoin-solidity
+$ forge install filecoin-project/filecoin-solidity
 ```
 
-Add `filecoin-solidity/=lib/filecoin-solidity/` in `remappings.txt.`
+Add `filecoin-solidity-api=lib/filecoin-project/filecoin-solidity/` in `remappings.txt.`
+
 
 #### Usage
 
 In your smart contract, copy and paste these lines.
 
 ```solidity
-import { MarketAPI } from "filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-import { CommonTypes } from "filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import { MarketTypes } from "filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
-import { BigInt } from "filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
+import { MarketAPI } from "filecoin-solidity-api/contracts/v0.8/MarketAPI.sol";
+import { CommonTypes } from "filecoin-solidity-api/contracts/v0.8/types/CommonTypes.sol";
+import { MarketTypes } from "filecoin-solidity-api/contracts/v0.8/types/MarketTypes.sol";
+import { BigIntCBOR } from "filecoin-solidity-api/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
 ## Complementary lectures
