@@ -1,33 +1,30 @@
 # Filecoin Solidity
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GithubActions](https://github.com/Zondax/filecoin-solidity/actions/workflows/main.yaml/badge.svg)](https://github.com/Zondax/filecoin-solidity/blob/master/.github/workflows/main.yaml)
-
 ---
 
-![zondax_light](docs/assets/zondax_light.png#gh-light-mode-only)
-![zondax_dark](docs/assets/zondax_dark.png#gh-dark-mode-only)
+[Protocol Labs](https://protocol.ai/) are now the owners of this library, and will mantain it moving forward.
 
-_Please visit our website at [zondax.ch](https://www.zondax.ch)_
+Originally authored by [Zondax](https://www.zondax.ch).
 
 ---
 
 ## Notice
 
-This is software is available under Apache 2.0 License. Use of this library implies your acceptance of these terms and conditions
-This source code at this commit hash (https://github.com/Zondax/filecoin-solidity/commit/d6f20ea11b25e66b9a4fb94d0bb0d913edeb5873) was security-reviewed by Kudelski security (Not fully audited)
+This software is dual-licensed under the [MIT License](./LICENSE-MIT) and the [Apache Software License v2](./LICENSE-APACHE) by way of the [Permissive License Stack](https://protocol.ai/blog/announcing-the-permissive-license-stack/). Use of this library implies your acceptance of these terms and conditions.
 
 Things to keep in mind, while using this library:
-- There are implicit invariants these contracts expect to hold.
-- You should exhaustively read each contract you plan to use, top to bottom.
-- **You can easily “shoot yourself in the foot” if you’re not careful with how you use the library.**
+
+-   There are implicit invariants these contracts expect to hold.
+-   You should exhaustively read each contract you plan to use, top to bottom.
+-   **You can easily “shoot yourself in the foot” if you’re not careful with how you use the library.**
 
 ---
 
 ## Disclaimer :warning:
 
-The libraries have been developed under the following set of assumptions. Take a look at them [here :link:](https://docs.zondax.ch/fevm/filecoin-solidity/introduction/assumptions)
+The libraries have been developed under the following set of assumptions.
 
+Take a look at them [here](https://docs.zondax.ch/fevm/filecoin-solidity/introduction/assumptions).
 
 ---
 
@@ -73,26 +70,39 @@ You will need to copy these files to a folder inside your project. Let's name it
 import { MarketAPI } from "./libs/MarketAPI.sol";
 import { CommonTypes } from "./libs/types/CommonTypes.sol";
 import { MarketTypes } from "./libs/types/MarketTypes.sol";
-
 ```
 
 #### NPM Package
 
-A better approach to import these libs is using the NPM package created for this. [:link:](https://www.npmjs.com/package/@zondax/filecoin-solidity).
-Run on your project in order to add this package.
+Better approach to import these libs is using the [NPM package](https://www.npmjs.com/package/filecoin-solidity) created for this .
 
-```yarn
-yarn add @zondax/filecoin-solidity
 ```
+$ npm install filecoin-solidity
+```
+
+#### Foundry (git)
+
+> [!WARNING]
+> When installing via git, it is a common error to use the `master` branch. This is a development branch that should be avoided in favor of tagged releases. The release process involves security measures that the `master` branch does not guarantee.
+
+> [!WARNING]
+> Foundry installs the latest version initially, but subsequent `forge update` commands will use the `master` branch.
+
+```
+$ forge install filecoin-solidity
+```
+
+Add `filecoin-solidity/=lib/filecoin-solidity/` in `remappings.txt.`
+
+#### Usage
 
 In your smart contract, copy and paste these lines.
 
 ```solidity
-import { MarketAPI } from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-import { CommonTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import { MarketTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
-import { BigInt } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
-
+import { MarketAPI } from "filecoin-solidity/contracts/v0.8/MarketAPI.sol";
+import { CommonTypes } from "filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
+import { MarketTypes } from "filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
+import { BigInt } from "filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
 ## Complementary lectures
@@ -113,13 +123,10 @@ If you’re starting totally new, we got you! Here’s a 101 conceptual read on 
 
 Find nice articles with rich and valuable content about different topics related to Filecoin network.
 
-## Looking for a JS library to interact with Filecoin? :wrench::hammer:
-
-We have been working hard to create a complete library that covers every aspect you may need in order to interact with 
-the Filecoin blockchain. [Let's go to library](https://www.npmjs.com/package/@zondax/izari-filecoin) :arrow_upper_right:
-
 ## Looking for the complete documentation? :books::books:
 
-We have built this beautiful website for you!
-[Let's go to docs web](https://docs.zondax.ch/fevm/filecoin-solidity) :arrow_upper_right:
- 
+Filecoin solidity documentation: [Let's go to docs web](https://docs.filecoin.io/smart-contracts/developing-contracts/solidity-libraries/) :arrow_upper_right:
+
+---
+
+_**Information for `filecoin-solidity` lib developers is contained in [./lib-dev](./lib-dev)**_
