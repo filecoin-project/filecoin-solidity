@@ -83,11 +83,6 @@ library VerifRegTypes {
         CommonTypes.BatchReturn results;
     }
 
-    /// @param terms list of claim terms to extend
-    struct ExtendClaimTermsParams {
-        ClaimTerm[] terms;
-    }
-
     /// @param provider the provider address which storing the data.
     /// @param claim_id claim ID.
     /// @param term_max the max chain epoch to extend.

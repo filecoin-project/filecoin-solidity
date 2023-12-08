@@ -110,7 +110,7 @@ library MarketCBOR {
         assert(len == 2);
 
         (ret.start, byteIdx) = rawResp.readChainEpoch(byteIdx);
-        (ret.end, byteIdx) = rawResp.readChainEpoch(byteIdx);
+        (ret.duration, byteIdx) = rawResp.readChainEpoch(byteIdx);
 
         return ret;
     }

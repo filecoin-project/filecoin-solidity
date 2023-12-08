@@ -54,10 +54,10 @@ library MinerAPI {
         return (exit_code, empty_res);
     }
 
-    /// @param target  The miner actor id you want to interact with
-    /// @param addr New owner address
     /// @notice Proposes or confirms a change of owner address.
     /// @notice If invoked by the current owner, proposes a new owner address for confirmation. If the proposed address is the current owner address, revokes any existing proposal that proposed address.
+    /// @param target  The miner actor id you want to interact with
+    /// @param addr New owner address
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     function changeOwnerAddress(CommonTypes.FilActorId target, CommonTypes.FilAddress memory addr) internal returns (int256) {
         bytes memory raw_request = addr.serializeAddress();
@@ -77,6 +77,7 @@ library MinerAPI {
         return exit_code;
     }
 
+    /// @notice Returns information whether an address is miner's controlling address
     /// @param target  The miner actor id you want to interact with
     /// @param addr The "controlling" addresses are the Owner, the Worker, and all Control Addresses.
     /// @return exit code (!= 0) if an error occured, 0 otherwise
@@ -139,18 +140,17 @@ library MinerAPI {
         return (exit_code, empty_res);
     }
 
+    /// @notice Returns specified miner's vesting funds
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return the funds vesting in this miner as a list of (vesting_epoch, vesting_amount) tuples.
-    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetVestingFundsReturn memory) {
+    function getVestingFunds(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.VestingFunds[] memory) {
         bytes memory raw_request = new bytes(0);
-
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetVestingFundsMethodNum, Misc.NONE_CODEC, raw_request);
         if (exit_code == 0) {
             return (0, result.deserializeGetVestingFundsReturn());
         }
-
-        MinerTypes.GetVestingFundsReturn memory empty_res;
+        MinerTypes.VestingFunds[] memory empty_res;
         return (exit_code, empty_res);
     }
 
@@ -194,6 +194,7 @@ library MinerAPI {
         return (exit_code, empty_res);
     }
 
+    /// @notice Change's a miner's worker address
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     function changeWorkerAddress(CommonTypes.FilActorId target, MinerTypes.ChangeWorkerAddressParams memory params) internal returns (int256) {
@@ -214,6 +215,7 @@ library MinerAPI {
         return exit_code;
     }
 
+    /// @notice Change's a miner's peer id
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     function changePeerId(CommonTypes.FilActorId target, CommonTypes.FilAddress memory newId) internal returns (int256) {
@@ -227,10 +229,11 @@ library MinerAPI {
         return exit_code;
     }
 
+    /// @notice Changes multiaddresses associated with a miner
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
-    function changeMultiaddresses(CommonTypes.FilActorId target, MinerTypes.ChangeMultiaddrsParams memory params) internal returns (int256) {
-        bytes memory raw_request = params.serializeChangeMultiaddrsParams();
+    function changeMultiaddresses(CommonTypes.FilActorId target, CommonTypes.FilAddress[] memory new_multi_addrs) internal returns (int256) {
+        bytes memory raw_request = new_multi_addrs.serializeChangeMultiaddrsParams();
 
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByID(
             target,
@@ -247,6 +250,7 @@ library MinerAPI {
         return exit_code;
     }
 
+    /// @notice Repays miner's debt
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     function repayDebt(CommonTypes.FilActorId target) internal returns (int256) {
@@ -260,6 +264,7 @@ library MinerAPI {
         return exit_code;
     }
 
+    /// @notice Changing a miner's worker address is a two step process
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     function confirmChangeWorkerAddress(CommonTypes.FilActorId target) internal returns (int256) {
@@ -280,6 +285,7 @@ library MinerAPI {
         return exit_code;
     }
 
+    /// @notice Returns miner's peer id
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return peer id for `target`
@@ -296,10 +302,11 @@ library MinerAPI {
         return (exit_code, empty_res);
     }
 
+    /// @notice Returns miner's multiaddresses
     /// @param target The miner actor id you want to interact with
     /// @return exit code (!= 0) if an error occured, 0 otherwise
     /// @return multiaddresses for `target`
-    function getMultiaddresses(CommonTypes.FilActorId target) internal view returns (int256, MinerTypes.GetMultiaddrsReturn memory) {
+    function getMultiaddresses(CommonTypes.FilActorId target) internal view returns (int256, CommonTypes.FilAddress[] memory) {
         bytes memory raw_request = new bytes(0);
 
         (int256 exit_code, bytes memory result) = Actor.callNonSingletonByIDReadOnly(target, MinerTypes.GetMultiaddrsMethodNum, Misc.NONE_CODEC, raw_request);
@@ -307,10 +314,11 @@ library MinerAPI {
             return (0, result.deserializeGetMultiaddrsReturn());
         }
 
-        MinerTypes.GetMultiaddrsReturn memory empty_res;
+        CommonTypes.FilAddress[] memory empty_res;
         return (exit_code, empty_res);
     }
 
+    /// @notice Withdraws balance for a specified miner
     /// @param target The miner actor id you want to interact with
     /// @param amount the amount you want to withdraw
     /// @return exit code (!= 0) if an error occured, 0 otherwise

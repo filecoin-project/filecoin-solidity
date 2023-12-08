@@ -2,14 +2,15 @@
 
 ---
 
-Originally authored by Zondax. Learn more at [zondax.ch](https://www.zondax.ch).
-Protocol Labs are now the owners of this library, and will mantain it moving forward.
+[Protocol Labs](https://protocol.ai/) are now the owners of this library, and will mantain it moving forward.
+
+Originally authored by [Zondax](https://www.zondax.ch).
 
 ---
 
 ## Notice
 
-This is software is available under Apache 2.0 License. Use of this library implies your acceptance of these terms and conditions
+This software is dual-licensed under the [MIT License](./LICENSE-MIT) and the [Apache Software License v2](./LICENSE-APACHE) by way of the [Permissive License Stack](https://protocol.ai/blog/announcing-the-permissive-license-stack/). Use of this library implies your acceptance of these terms and conditions.
 
 Things to keep in mind, while using this library:
 
@@ -73,29 +74,36 @@ import { MarketTypes } from "./libs/types/MarketTypes.sol";
 
 #### NPM Package
 
-A better approach to import these libs is using the NPM package created for this. [:link:](https://www.npmjs.com/package/@zondax/filecoin-solidity).
-Run on your project in order to add this package.
+Better approach to import these libs is using the [NPM package](https://www.npmjs.com/package/filecoin-solidity) created for this .
 
-```yarn
-yarn add @zondax/filecoin-solidity
 ```
+$ npm install filecoin-solidity
+```
+
+#### Foundry (git)
+
+> [!WARNING]
+> When installing via git, it is a common error to use the `master` branch. This is a development branch that should be avoided in favor of tagged releases. The release process involves security measures that the `master` branch does not guarantee.
+
+> [!WARNING]
+> Foundry installs the latest version initially, but subsequent `forge update` commands will use the `master` branch.
+
+```
+$ forge install filecoin-solidity
+```
+
+Add `filecoin-solidity/=lib/filecoin-solidity/` in `remappings.txt.`
+
+#### Usage
 
 In your smart contract, copy and paste these lines.
 
 ```solidity
-import { MarketAPI } from "@zondax/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-import { CommonTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import { MarketTypes } from "@zondax/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
-import { BigInt } from "@zondax/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
+import { MarketAPI } from "filecoin-solidity/contracts/v0.8/MarketAPI.sol";
+import { CommonTypes } from "filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
+import { MarketTypes } from "filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
+import { BigInt } from "filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
-
-### Supported networks
-
-The following table contains information about the versions of filecoin network on which the `filecoin-solidity` library has been tested on.
-
-|                                              FVM version                                              |                                                         Builtin actors                                                          |        Pass        |
-| :---------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :----------------: |
-| [fvm@v3.0.0-alpha.21](https://github.com/filecoin-project/ref-fvm/releases/tag/fvm%40v3.0.0-alpha.21) | [builtin_actors@dev/20230206-pre-rc.6](https://github.com/filecoin-project/builtin-actors/releases/tag/dev%2F20230206-pre-rc.6) | :white_check_mark: |
 
 ## Complementary lectures
 
@@ -119,59 +127,6 @@ Find nice articles with rich and valuable content about different topics related
 
 Filecoin solidity documentation: [Let's go to docs web](https://docs.filecoin.io/smart-contracts/developing-contracts/solidity-libraries/) :arrow_upper_right:
 
-## Getting Started
+---
 
-Requirements / Steps are performed on MacOS.
-
-### Requirements:
-
--   **Foundry** [[Official Docs]](https://book.getfoundry.sh/getting-started/installation):
-
-    `curl -L https://foundry.paradigm.xyz | bash`
-
--   **Rust** [[Official Docs]](https://doc.rust-lang.org/book/ch01-01-installation.html):
-
-    `curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh`
-
--   **Yarn**[[Official Docs]](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable):
-
-    `npm install --global yarn`
-
--   **CMake** [[Official Docs]](https://cmake.org/download/):
-
-    -   [MacOS] Install GUI: [v3.7.0](https://github.com/Kitware/CMake/releases/download/v3.27.0/cmake-3.27.0-macos-universal.dmg)
-    -   Add it to the Application folder
-    -   Open terminal and run:
-
-        ` sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install`
-
-### Setup process:
-
--   Clone the repo with the `--recursive` flag
-
-    ```
-    git clone https://github.com/MVPWorkshop/filecoin-solidity --recursive
-    ```
-
--   Run: `cd filecoin-solidity`
--   Install Solc:
-
-    -   MacOS:
-        `make install_solc_mac`
-    -   Linux:
-        `make install_solc_linux`
-
--   Run: `make`
-
-### Workflow
-
--   Compiling / testing contracts:
-
-    `forge <build/test>`
-
--   Running all of the integration tests:
-
-    `make test_integration`
-
--   Running individual integration tests:
-    -   see [Makefile](./Makefile) for a complete list
+_**Information for `filecoin-solidity` lib developers is contained in [./lib-dev](./lib-dev)**_
