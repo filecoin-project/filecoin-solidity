@@ -1,6 +1,6 @@
 {
-    "name": "@zondax/filecoin-solidity",
-    "version": "0.0.0",
+    "name": "filecoin-solidity",
+    "version": "1.0.1",
     "description": "Filecoin EVM Solidity APIs",
     "main": "",
     "directories": {
@@ -11,7 +11,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Zondax/filecoin-solidity.git"
+        "url": "git+https://github.com/filecoin-project/filecoin-solidity.git"
     },
     "keywords": [
         "FEVM",
@@ -19,14 +19,15 @@
         "Solidity",
         "Filecoin"
     ],
-    "author": "Zondax AG <hello@zondax.ch>",
-    "license": "Apache-2.0",
+    "author": "[Protocol Labs, Filecoin Core Devs]",
+    "license": "MIT OR Apache-2.0",
     "bugs": {
-        "url": "https://github.com/Zondax/filecoin-solidity/issues"
+        "url": "https://github.com/filecoin-project/filecoin-solidity/issues"
     },
-    "homepage": "https://github.com/Zondax/filecoin-solidity#readme",
+    "homepage": "https://github.com/filecoin-project/filecoin-solidity#readme",
     "files": [
-        "contracts"
+        "contracts/",
+        "!/contracts/v0.8/tests/**/*"
     ],
     "publishConfig": {
         "access": "public"
