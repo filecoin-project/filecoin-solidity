@@ -54,3 +54,11 @@ Requirements / Steps are performed on MacOS.
 
 -   Running individual integration tests:
     -   see [Makefile](./Makefile) for a complete list
+
+### Supported networks
+
+The following table contains information about the versions of filecoin network on which the `filecoin-solidity` library has been tested on.
+
+|                                              FVM version                                              |                                                         Builtin actors                                                          |        Pass        |
+| :---------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :----------------: |
+| [fvm@v3.0.0-alpha.21](https://github.com/filecoin-project/ref-fvm/releases/tag/fvm%40v3.0.0-alpha.21) | [builtin_actors@dev/20230206-pre-rc.6](https://github.com/filecoin-project/builtin-actors/releases/tag/dev%2F20230206-pre-rc.6) | :white_check_mark: |

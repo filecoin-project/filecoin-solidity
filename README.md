@@ -2,8 +2,9 @@
 
 ---
 
-Originally authored by Zondax. Learn more at [zondax.ch](https://www.zondax.ch).
-Protocol Labs are now the owners of this library, and will mantain it moving forward.
+[Protocol Labs](https://protocol.ai/) are now the owners of this library, and will mantain it moving forward.
+
+Originally authored by [Zondax](https://www.zondax.ch).
 
 ---
 
@@ -73,7 +74,7 @@ import { MarketTypes } from "./libs/types/MarketTypes.sol";
 
 #### NPM Package
 
-A better approach to import these libs is using the NPM package created for this [:link:](https://www.npmjs.com/package/@filecoin-project/filecoin-solidity). Run on your project in order to add this package.
+Better approach to import these libs is using the [NPM package](https://www.npmjs.com/package/@filecoin-project/filecoin-solidity) created for this .
 
 ```
 $ npm install @filecoin-project/filecoin-solidity
@@ -104,14 +105,6 @@ import { MarketTypes } from "@filecoin-project/filecoin-solidity/contracts/v0.8/
 import { BigInt } from "@filecoin-project/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
-### Supported networks
-
-The following table contains information about the versions of filecoin network on which the `filecoin-solidity` library has been tested on.
-
-|                                              FVM version                                              |                                                         Builtin actors                                                          |        Pass        |
-| :---------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------: | :----------------: |
-| [fvm@v3.0.0-alpha.21](https://github.com/filecoin-project/ref-fvm/releases/tag/fvm%40v3.0.0-alpha.21) | [builtin_actors@dev/20230206-pre-rc.6](https://github.com/filecoin-project/builtin-actors/releases/tag/dev%2F20230206-pre-rc.6) | :white_check_mark: |
-
 ## Complementary lectures
 
 ### Introduction to Filecoin [:link:](https://docs.filecoin.io/intro/intro-to-filecoin/what-is-filecoin/)
@@ -134,4 +127,6 @@ Find nice articles with rich and valuable content about different topics related
 
 Filecoin solidity documentation: [Let's go to docs web](https://docs.filecoin.io/smart-contracts/developing-contracts/solidity-libraries/) :arrow_upper_right:
 
-_**Information for filecoin-solidity lib developers contained in [./lib-dev](./lib-dev)**_
+---
+
+_**Information for `filecoin-solidity` lib developers is contained in [./lib-dev](./lib-dev)**_
