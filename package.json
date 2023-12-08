@@ -1,5 +1,5 @@
 {
-    "name": "@filecoin-project/filecoin-solidity",
+    "name": "filecoin-solidity",
     "version": "1.0.0",
     "description": "Filecoin EVM Solidity APIs",
     "main": "",

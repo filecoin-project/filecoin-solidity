@@ -74,10 +74,10 @@ import { MarketTypes } from "./libs/types/MarketTypes.sol";
 
 #### NPM Package
 
-Better approach to import these libs is using the [NPM package](https://www.npmjs.com/package/@filecoin-project/filecoin-solidity) created for this .
+Better approach to import these libs is using the [NPM package](https://www.npmjs.com/package/filecoin-solidity) created for this .
 
 ```
-$ npm install @filecoin-project/filecoin-solidity
+$ npm install filecoin-solidity
 ```
 
 #### Foundry (git)
@@ -89,20 +89,20 @@ $ npm install @filecoin-project/filecoin-solidity
 > Foundry installs the latest version initially, but subsequent `forge update` commands will use the `master` branch.
 
 ```
-$ forge install filecoin-project/filecoin-solidity
+$ forge install filecoin-solidity
 ```
 
-Add `@filecoin-project/filecoin-solidity/=lib/filecoin-project/filecoin-solidity/` in `remappings.txt.`
+Add `filecoin-solidity/=lib/filecoin-solidity/` in `remappings.txt.`
 
 #### Usage
 
 In your smart contract, copy and paste these lines.
 
 ```solidity
-import { MarketAPI } from "@filecoin-project/filecoin-solidity/contracts/v0.8/MarketAPI.sol";
-import { CommonTypes } from "@filecoin-project/filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
-import { MarketTypes } from "@filecoin-project/filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
-import { BigInt } from "@filecoin-project/filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
+import { MarketAPI } from "filecoin-solidity/contracts/v0.8/MarketAPI.sol";
+import { CommonTypes } from "filecoin-solidity/contracts/v0.8/types/CommonTypes.sol";
+import { MarketTypes } from "filecoin-solidity/contracts/v0.8/types/MarketTypes.sol";
+import { BigInt } from "filecoin-solidity/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
 ## Complementary lectures
