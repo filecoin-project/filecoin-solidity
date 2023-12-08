@@ -138,8 +138,8 @@ library MinerCBOR {
 
     /// @notice deserialize GetVestingFundsReturn struct from cbor encoded bytes coming from a miner actor call
     /// @param rawResp cbor encoded response
-    /// @return ret new instance of GetVestingFundsReturn created based on parsed data
-    function deserializeGetVestingFundsReturn(bytes memory rawResp) internal pure returns (MinerTypes.GetVestingFundsReturn memory ret) {
+    /// @return vesting_funds new instance of GetVestingFundsReturn created based on parsed data
+    function deserializeGetVestingFundsReturn(bytes memory rawResp) internal pure returns (MinerTypes.VestingFunds[] memory vesting_funds) {
         CommonTypes.ChainEpoch epoch;
         CommonTypes.BigInt memory amount;
         bytes memory tmp;
@@ -152,7 +152,7 @@ library MinerCBOR {
         assert(len == 1);
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        ret.vesting_funds = new MinerTypes.VestingFunds[](len);
+        vesting_funds = new MinerTypes.VestingFunds[](len);
 
         for (uint i = 0; i < len; i++) {
             (leni, byteIdx) = rawResp.readFixedArray(byteIdx);
@@ -162,10 +162,8 @@ library MinerCBOR {
             (tmp, byteIdx) = rawResp.readBytes(byteIdx);
 
             amount = tmp.deserializeBigInt();
-            ret.vesting_funds[i] = MinerTypes.VestingFunds(epoch, amount);
+            vesting_funds[i] = MinerTypes.VestingFunds(epoch, amount);
         }
-
-        return ret;
     }
 
     /// @notice serialize ChangeWorkerAddressParams struct to cbor in order to pass as arguments to the miner actor
@@ -194,23 +192,23 @@ library MinerCBOR {
     }
 
     /// @notice serialize ChangeMultiaddrsParams struct to cbor in order to pass as arguments to the miner actor
-    /// @param params ChangeMultiaddrsParams to serialize as cbor
+    /// @param new_multi_addrs ChangeMultiaddrsParams to serialize as cbor
     /// @return cbor serialized data as bytes
-    function serializeChangeMultiaddrsParams(MinerTypes.ChangeMultiaddrsParams memory params) internal pure returns (bytes memory) {
+    function serializeChangeMultiaddrsParams(CommonTypes.FilAddress[] memory new_multi_addrs) internal pure returns (bytes memory) {
         uint256 capacity = 0;
 
         capacity += Misc.getPrefixSize(1);
-        capacity += Misc.getPrefixSize(uint256(params.new_multi_addrs.length));
-        for (uint64 i = 0; i < params.new_multi_addrs.length; i++) {
-            capacity += Misc.getBytesSize(params.new_multi_addrs[i].data);
+        capacity += Misc.getPrefixSize(uint256(new_multi_addrs.length));
+        for (uint64 i = 0; i < new_multi_addrs.length; i++) {
+            capacity += Misc.getBytesSize(new_multi_addrs[i].data);
         }
         CBOR.CBORBuffer memory buf = CBOR.create(capacity);
 
         buf.startFixedArray(1);
-        buf.startFixedArray(uint64(params.new_multi_addrs.length));
+        buf.startFixedArray(uint64(new_multi_addrs.length));
 
-        for (uint64 i = 0; i < params.new_multi_addrs.length; i++) {
-            buf.writeBytes(params.new_multi_addrs[i].data);
+        for (uint64 i = 0; i < new_multi_addrs.length; i++) {
+            buf.writeBytes(new_multi_addrs[i].data);
         }
 
         return buf.data();
@@ -218,8 +216,8 @@ library MinerCBOR {
 
     /// @notice deserialize GetMultiaddrsReturn struct from cbor encoded bytes coming from a miner actor call
     /// @param rawResp cbor encoded response
-    /// @return ret new instance of GetMultiaddrsReturn created based on parsed data
-    function deserializeGetMultiaddrsReturn(bytes memory rawResp) internal pure returns (MinerTypes.GetMultiaddrsReturn memory ret) {
+    /// @return multi_addrs deserialized addresses
+    function deserializeGetMultiaddrsReturn(bytes memory rawResp) internal pure returns (CommonTypes.FilAddress[] memory multi_addrs) {
         uint byteIdx = 0;
         uint len;
 
@@ -227,12 +225,10 @@ library MinerCBOR {
         assert(len == 1);
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        ret.multi_addrs = new CommonTypes.FilAddress[](len);
+        multi_addrs = new CommonTypes.FilAddress[](len);
 
         for (uint i = 0; i < len; i++) {
-            (ret.multi_addrs[i].data, byteIdx) = rawResp.readBytes(byteIdx);
+            (multi_addrs[i].data, byteIdx) = rawResp.readBytes(byteIdx);
         }
-
-        return ret;
     }
 }

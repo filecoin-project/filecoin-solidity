@@ -879,7 +879,7 @@ fn market_tests() {
 
     let expected_res = api_contracts::market_test::GetDealTermReturn {
         start: proposal.start_epoch,
-        end: proposal.end_epoch - proposal.start_epoch
+        duration: proposal.end_epoch - proposal.start_epoch
     };
 
     let abi_encoded_call = api_contracts::market_test::GetDealTermReturn::abi_encode(&expected_res);

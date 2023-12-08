@@ -49,11 +49,6 @@ library MinerTypes {
         CommonTypes.FilAddress proposed;
     }
 
-    /// @param vesting_funds funds
-    struct GetVestingFundsReturn {
-        VestingFunds[] vesting_funds;
-    }
-
     /// @param new_beneficiary the new beneficiary address.
     /// @param new_quota the new quota token amount.
     /// @param new_expiration the epoch that the new quota will be expired.
@@ -75,16 +70,6 @@ library MinerTypes {
     struct ChangeWorkerAddressParams {
         CommonTypes.FilAddress new_worker;
         CommonTypes.FilAddress[] new_control_addresses;
-    }
-
-    /// @param new_multi_addrs the new multi-signature address.
-    struct ChangeMultiaddrsParams {
-        CommonTypes.FilAddress[] new_multi_addrs;
-    }
-
-    /// @param multi_addrs the multi-signature address.
-    struct GetMultiaddrsReturn {
-        CommonTypes.FilAddress[] multi_addrs;
     }
 
     /// @param epoch the epoch of funds vested.

@@ -63,10 +63,10 @@ library MarketTypes {
     }
 
     /// @param start the chain epoch to start the deal.
-    /// @param endthe chain epoch to end the deal.
+    /// @param duration the duration of the deal.
     struct GetDealTermReturn {
         CommonTypes.ChainEpoch start;
-        CommonTypes.ChainEpoch end;
+        CommonTypes.ChainEpoch duration;
     }
 
     /// @param activated Epoch at which the deal was activated, or -1.
