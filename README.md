@@ -78,7 +78,6 @@ Better approach to import these libs is using the [NPM package](https://www.npmj
 
 ```
 $ npm install filecoin-solidity-api
-
 ```
 
 #### Foundry (git)
