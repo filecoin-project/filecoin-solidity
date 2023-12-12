@@ -69,7 +69,7 @@ If you're functions directly take `BigNumber`s as arguments, it is required to f
 
 ## Crypto
 
-The library `src/utils/Crypto.sol` contains some common algorithms that can be used with this `BigNumber` library. Is also shows some example usage.
+The library `src/utils/Crypto.sol` contains some common algorithms that can be used with this `BigNumber` library. It also shows some example usage.
 
 ## Development
 
@@ -89,7 +89,7 @@ $ forge test --mc BigNumbersTest
 
 ## Differential Testing
 
-Similar to [Murky](https://github.com/dmfxyz/murky/), this project makes use of Foundry's differential and fuzz testing capibilities.
+Similar to [Murky](https://github.com/dmfxyz/murky/), this project makes use of Foundry's differential and fuzz testing capabilities.
 
 Differential testing is used to compare solidity-BigNumber's implementation to reference implementations in other languages. This directory contains the scripts needed to support this testing, as well as the differential tests themselves.
 
