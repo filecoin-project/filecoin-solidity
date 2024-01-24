@@ -19,7 +19,7 @@ pub fn setup_tester() -> (Tester<MemoryBlockstore, DummyExterns>, Manifest) {
     let manifest = Manifest::load(&bs, &manifest_data_cid, manifest_version).unwrap();
 
     let tester =
-        Tester::new(NetworkVersion::V18, StateTreeVersion::V5, bundle_root, bs).unwrap();
+        Tester::new(NetworkVersion::V21, StateTreeVersion::V5, bundle_root, bs).unwrap();
 
     return (tester, manifest)
 }

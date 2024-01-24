@@ -26,10 +26,8 @@ pub fn set_datacap_actor(state_tree: &mut StateTree<impl Blockstore>, datacap_co
         delegated_address: None,
     };
 
-    state_tree
-        .set_actor(DATA_CAP_ACTOR, datacap_actor_state)
-        .map_err(anyhow::Error::from)
-        .context("datacap actor".to_owned())
+    return Ok(state_tree
+        .set_actor(DATA_CAP_ACTOR, datacap_actor_state));
 }
 
 pub fn set_storagepower_actor(
@@ -50,10 +48,8 @@ pub fn set_storagepower_actor(
         delegated_address: None,
     };
 
-    state_tree
-        .set_actor(STORAGE_POWER_ACTOR, storagepower_actor_state)
-        .map_err(anyhow::Error::from)
-        .context("storagepower actor".to_owned())
+    return Ok(state_tree
+        .set_actor(STORAGE_POWER_ACTOR, storagepower_actor_state));
 }
 
 pub fn set_storagemarket_actor(state_tree: &mut StateTree<impl Blockstore>, storagemarket_code_cid: Cid,) -> Result<()> {
@@ -70,10 +66,8 @@ pub fn set_storagemarket_actor(state_tree: &mut StateTree<impl Blockstore>, stor
         delegated_address: None,
     };
 
-    state_tree
-        .set_actor(STORAGE_MARKET_ACTOR, storagemarket_actor_state)
-        .map_err(anyhow::Error::from)
-        .context("storagemarket actor".to_owned())
+    return Ok(state_tree
+        .set_actor(STORAGE_MARKET_ACTOR, storagemarket_actor_state));
 }
 
 pub fn set_verifiedregistry_actor(state_tree: &mut StateTree<impl Blockstore>, verifiedregistry_code_cid: Cid,) -> Result<()> {
@@ -90,10 +84,8 @@ pub fn set_verifiedregistry_actor(state_tree: &mut StateTree<impl Blockstore>, v
         delegated_address: None,
     };
 
-    state_tree
-        .set_actor(VERIFIED_REGISTRY_ACTOR, verifiedregistry_actor_state)
-        .map_err(anyhow::Error::from)
-        .context("verifiedregistry actor".to_owned())
+    return Ok(state_tree
+        .set_actor(VERIFIED_REGISTRY_ACTOR, verifiedregistry_actor_state));
 }
 
 pub fn set_reward_actor(state_tree: &mut StateTree<impl Blockstore>, reward_code_cid: Cid,) -> Result<()> {
@@ -112,8 +104,6 @@ pub fn set_reward_actor(state_tree: &mut StateTree<impl Blockstore>, reward_code
         delegated_address: None,
     };
 
-    state_tree
-        .set_actor(REWARD_ACTOR_ID, reward_actor_state)
-        .map_err(anyhow::Error::from)
-        .context("reward actor".to_owned())
+    return Ok(state_tree
+        .set_actor(REWARD_ACTOR_ID, reward_actor_state));
 }
