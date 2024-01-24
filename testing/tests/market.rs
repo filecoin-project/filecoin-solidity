@@ -197,7 +197,7 @@ fn market_tests() {
         delegated_address: Some(client),
     };
 
-    state_tree.set_actor(assigned_addr, actor_state).unwrap();
+    state_tree.set_actor(assigned_addr, actor_state);
 
     let bls_private_key_provider = bls_signatures::PrivateKey::generate(&mut OsRng);
     let worker = Address::new_bls(&bls_private_key_provider.public_key().as_bytes()).unwrap();
@@ -219,7 +219,7 @@ fn market_tests() {
         delegated_address: Some(worker),
     };
 
-    state_tree.set_actor(assigned_addr, actor_state).unwrap();
+    state_tree.set_actor(assigned_addr, actor_state);
 
     // Create embryo address to deploy the contract on it (assign some FILs to it)
     let tmp = hex::decode("DAFEA492D9c6733ae3d56b7Ed1ADB60692c98Bc5").unwrap();
@@ -293,7 +293,7 @@ fn market_tests() {
     let constructor_params = CreateMinerParams {
         owner: sender[0].1,
         worker,
-        window_post_proof_type: fvm_shared::sector::RegisteredPoStProof::StackedDRGWindow32GiBV1,
+        window_post_proof_type: fvm_shared::sector::RegisteredPoStProof::StackedDRGWindow32GiBV1P1,
         peer: vec![1, 2, 3],
         multiaddrs: vec![BytesDe(vec![1, 2, 3])],
     };

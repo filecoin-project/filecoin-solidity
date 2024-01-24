@@ -77,7 +77,7 @@ fn account_tests() {
         delegated_address: Some(worker),
     };
 
-    state_tree.set_actor(assigned_addr, actor_state).unwrap();
+    state_tree.set_actor(assigned_addr, actor_state);
 
     // Instantiate machine
     tester.instantiate_machine(DummyExterns).unwrap();
