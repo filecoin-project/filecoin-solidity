@@ -39,7 +39,7 @@ build_mock_api: verify_solc deps
 	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/MinerMockAPI.sol --output-dir ./build/v0.8/mocks --overwrite --bin --hashes --opcodes --abi
 
 build_builtin_actors:
-	cd testing/builtin-actors && make bundle-mainnet
+	echo "Git submodule:builtin_actors was removed."
 
 build_leb128_test: verify_solc deps
 	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
