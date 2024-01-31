@@ -38,9 +38,6 @@ build_mock_api: verify_solc deps
 	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/MarketMockAPI.sol --output-dir ./build/v0.8/mocks --overwrite --bin --hashes --opcodes --abi
 	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/mocks/MinerMockAPI.sol --output-dir ./build/v0.8/mocks --overwrite --bin --hashes --opcodes --abi
 
-build_builtin_actors:
-	echo "Git submodule:builtin_actors was removed."
-
 build_leb128_test: verify_solc deps
 	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
 	 $(solc) --optimize solidity-cborutils=${PWD}/node_modules/solidity-cborutils/ @ensdomains=${PWD}/node_modules/@ensdomains/ contracts/v0.8/tests/leb128.generated1.test.sol --output-dir ./build/v0.8/tests --overwrite --bin --hashes --opcodes --abi
@@ -88,50 +85,50 @@ test_miner_cbor_serialization:
 test_market_cbor_serialization:
 	cd hardhat && yarn hardhat withdraw_balance --providerorclient 0xaaaa12 --tokenamount 12222 --contractaddress $(CONTRACT_ADDRESS)
 
-test_integration: build build_builtin_actors
+test_integration: build
 	cd testing && cargo test
 
-test_miner_integration: build build_builtin_actors
+test_miner_integration: build
 	cd testing && cargo test miner_test -- --nocapture
 
-test_market_integration: build build_builtin_actors
+test_market_integration: build
 	cd testing && cargo test market_test -- --nocapture
 
-test_power_integration: build build_builtin_actors
+test_power_integration: build
 	cd testing && cargo test power_test -- --nocapture
 
-test_verifreg_integration: build build_builtin_actors
+test_verifreg_integration: build
 	cd testing && cargo test verifreg_test -- --nocapture
 
-test_datacap_integration: build build_builtin_actors
+test_datacap_integration: build
 	cd testing && cargo test datacap_test -- --nocapture
 
-test_account_integration: build build_builtin_actors
+test_account_integration: build
 	cd testing && cargo test account_test -- --nocapture
 
-test_precompiles_integration: build build_builtin_actors
+test_precompiles_integration: build
 	cd testing && cargo test precompiles_test -- --nocapture
 
-test_send_integration: build build_builtin_actors
+test_send_integration: build
 	cd testing && cargo test send_test -- --nocapture
 
 test_frc0042:
 	cd testing  && cargo run --example methodnum
 
-test_cbor_decode: build build_builtin_actors
+test_cbor_decode: build
 	cd testing && cargo test cbor_decode_test -- --nocapture
 	cd testing && cargo test market_cbor_tests -- --nocapture
 
-test_bigints: build build_builtin_actors
+test_bigints: build
 	cd testing && cargo test bigints_test -- --nocapture
 
-test_leb128: build build_builtin_actors
+test_leb128: build
 	cd testing && cargo test leb128 -- --nocapture
 
-test_deserialize: build build_builtin_actors
+test_deserialize: build
 	cd testing && cargo test deserialize_params_tests -- --nocapture
 
-test_address: build build_builtin_actors
+test_address: build
 	cd testing && cargo test address -- --nocapture
 
 ################ TESTS SECURITY ################
