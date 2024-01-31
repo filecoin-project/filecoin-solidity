@@ -11,6 +11,8 @@ fvm_ipld_blockstore = "0.2.0"
 fvm_integration_tests = "4.0.0"
 fvm_ipld_encoding = "0.4.0" 
 fvm_shared = "4.0.0"
+# actors_v12_runtime = { package = "fil_actors_runtime", git = "https://github.com/filecoin-project/builtin-actors", branch = "master" }
+actors-v12 = { package = "fil_builtin_actors_bundle", git = "https://github.com/filecoin-project/builtin-actors", branch = "master" }
 
 hex = "0.4.3"
 anyhow = "1.0.47"
