@@ -21,11 +21,3 @@ pub fn cbor_encode(abi_encoded_call: Vec<u8>) -> String {
   let encoded = full_str[2..].to_string(); 
   return encoded;
 }
-
-pub fn cbor_encode_u8(abi_encoded_call: Vec<u8>) -> Vec<u8> {
-  let full_str = hex::encode(CborBuilder::default().encode_array(|builder| {
-      builder.encode_bytes(abi_encoded_call);
-  }));
-  let encoded = full_str.to_string(); 
-  return hex::decode(encoded).unwrap();
-}
