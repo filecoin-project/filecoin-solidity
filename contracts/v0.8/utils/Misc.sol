@@ -26,8 +26,6 @@ import "../cbor/AccountCbor.sol";
 import "../cbor/BytesCbor.sol";
 import "../cbor/FilecoinCbor.sol";
 
-import "../utils/Actor.sol";
-
 /// @title Library containing miscellaneous functions used on the project
 /// @author Zondax AG
 library Misc {
@@ -107,29 +105,5 @@ library Misc {
 
     function getBoolSize() internal pure returns (uint256) {
         return getPrefixSize(1);
-    }
-
-    /// @notice utility function meant to handle calls from other builtin actors. Arguments are passed as cbor serialized data (in filecoin native format)
-    /// @param method the filecoin method id that is being called
-    /// @param params raw data (in bytes) passed as arguments to the method call
-    function handleFilecoinMethod(uint64 method, uint64 codec, bytes calldata params) internal pure returns (CommonTypes.UniversalReceiverParams memory) {
-        if (method == CommonTypes.UniversalReceiverHookMethodNum) {
-            if (codec != Misc.CBOR_CODEC) {
-                revert InvalidCodec(codec);
-            }
-
-            return params.deserializeUniversalReceiverParams();
-        } else {
-            revert MethodNotHandled(method);
-        }
-    }
-
-    /// @param target The actor id you want to interact with
-    function universalReceiverHook(CommonTypes.FilActorId target, CommonTypes.UniversalReceiverParams memory params) internal returns (int256, bytes memory) {
-        bytes memory raw_request = params.serializeUniversalReceiverParams();
-
-        (int256 exit_code, bytes memory result) = Actor.callByID(target, CommonTypes.UniversalReceiverHookMethodNum, Misc.CBOR_CODEC, raw_request, 0, false);
-
-        return (exit_code, result);
     }
 }

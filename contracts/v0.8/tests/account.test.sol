@@ -22,7 +22,7 @@ pragma solidity ^0.8.17;
 import "../types/AccountTypes.sol";
 import "../types/CommonTypes.sol";
 import "../AccountAPI.sol";
-import "../utils/Misc.sol";
+import "../utils/UtilsHandlers.sol";
 import "../utils/Errors.sol";
 
 /// @notice This file is meant to serve as a deployable contract of the account actor API, as the library by itself is not.
@@ -36,7 +36,7 @@ contract AccountApiTest {
     }
 
     function universal_receiver_hook(CommonTypes.FilActorId target, CommonTypes.UniversalReceiverParams memory params) public {
-        (int256 exit_code, bytes memory result) = Misc.universalReceiverHook(target, params);
+        (int256 exit_code, bytes memory result) = UtilsHandlers.universalReceiverHook(target, params);
 
         Errors.revertOnError(exit_code);
     }
