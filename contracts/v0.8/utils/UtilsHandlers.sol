@@ -19,11 +19,7 @@
 pragma solidity ^0.8.17;
 
 import "../types/CommonTypes.sol";
-import "../types/AccountTypes.sol";
-import "../types/DataCapTypes.sol";
 
-import "../cbor/AccountCbor.sol";
-import "../cbor/BytesCbor.sol";
 import "../cbor/FilecoinCbor.sol";
 
 import "../utils/Actor.sol";
@@ -31,9 +27,7 @@ import "../utils/Actor.sol";
 /// @title Library containing common handler functions used in the project
 /// @author Zondax AG
 library UtilsHandlers {
-    using AccountCBOR for *;
     using FilecoinCBOR for *;
-    using BytesCBOR for bytes;
 
     /// @notice the codec received is not valid
     error InvalidCodec(uint64);
