@@ -23,10 +23,6 @@ import "../types/CommonTypes.sol";
 /// @title Library containing miscellaneous functions used on the project
 /// @author Zondax AG
 library Misc {
-    // using AccountCBOR for *;
-    // using FilecoinCBOR for *;
-    // using BytesCBOR for bytes;
-
     /// @notice the codec received is not valid
     error InvalidCodec(uint64);
 
