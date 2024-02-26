@@ -88,7 +88,7 @@ fn power_tests() {
         delegated_address: Some(worker),
     };
 
-    state_tree.set_actor(assigned_addr, actor_state).unwrap();
+    state_tree.set_actor(assigned_addr, actor_state);
 
     // Instantiate machine
     tester.instantiate_machine(DummyExterns).unwrap();
@@ -117,7 +117,7 @@ fn power_tests() {
     let constructor_params = CreateMinerParams {
         owner: sender[0].1,
         worker,
-        window_post_proof_type: fvm_shared::sector::RegisteredPoStProof::StackedDRGWindow32GiBV1,
+        window_post_proof_type: fvm_shared::sector::RegisteredPoStProof::StackedDRGWindow32GiBV1P1,
         peer: vec![1, 2, 3],
         multiaddrs: vec![BytesDe(vec![1, 2, 3])],
     };

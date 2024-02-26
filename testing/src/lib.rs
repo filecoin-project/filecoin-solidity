@@ -54,5 +54,5 @@ pub fn parse_gas(exec_trace: ExecutionTrace) -> i64 {
         }
     }
 
-    return gas_usage.round_down();
+    return gas_usage.round_down() as i64;
 }
