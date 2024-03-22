@@ -69,6 +69,7 @@ library VerifRegCBOR {
     function deserializeGetClaimsReturn(bytes memory rawResp) internal pure returns (VerifRegTypes.GetClaimsReturn memory ret) {
         uint byteIdx = 0;
         uint len;
+        uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         assert(len == 2);
@@ -82,8 +83,8 @@ library VerifRegCBOR {
         ret.batch_info.fail_codes = new CommonTypes.FailCode[](len);
 
         for (uint i = 0; i < len; i++) {
-            (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(len == 2);
+            (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
+            assert(ilen == 2);
 
             (ret.batch_info.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.batch_info.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
@@ -93,8 +94,8 @@ library VerifRegCBOR {
         ret.claims = new VerifRegTypes.Claim[](len);
 
         for (uint i = 0; i < len; i++) {
-            (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(len == 8);
+            (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
+            assert(ilen == 8);
 
             (ret.claims[i].provider, byteIdx) = rawResp.readFilActorId(byteIdx);
             (ret.claims[i].client, byteIdx) = rawResp.readFilActorId(byteIdx);
@@ -159,6 +160,7 @@ library VerifRegCBOR {
     function deserializeRemoveExpiredAllocationsReturn(bytes memory rawResp) internal pure returns (VerifRegTypes.RemoveExpiredAllocationsReturn memory ret) {
         uint byteIdx = 0;
         uint len;
+        uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         assert(len == 3);
@@ -179,8 +181,8 @@ library VerifRegCBOR {
         ret.results.fail_codes = new CommonTypes.FailCode[](len);
 
         for (uint i = 0; i < len; i++) {
-            (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(len == 2);
+            (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
+            assert(ilen == 2);
 
             (ret.results.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.results.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
@@ -227,6 +229,7 @@ library VerifRegCBOR {
     function deserializeBatchReturn(bytes memory rawResp) internal pure returns (CommonTypes.BatchReturn memory ret) {
         uint byteIdx = 0;
         uint len;
+        uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         assert(len == 2);
@@ -237,8 +240,8 @@ library VerifRegCBOR {
         ret.fail_codes = new CommonTypes.FailCode[](len);
 
         for (uint i = 0; i < len; i++) {
-            (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(len == 2);
+            (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
+            assert(ilen == 2);
 
             (ret.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
@@ -278,6 +281,7 @@ library VerifRegCBOR {
     function deserializeRemoveExpiredClaimsReturn(bytes memory rawResp) internal pure returns (VerifRegTypes.RemoveExpiredClaimsReturn memory ret) {
         uint byteIdx = 0;
         uint len;
+        uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         assert(len == 2);
@@ -298,8 +302,8 @@ library VerifRegCBOR {
         ret.results.fail_codes = new CommonTypes.FailCode[](len);
 
         for (uint i = 0; i < len; i++) {
-            (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(len == 2);
+            (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
+            assert(ilen == 2);
 
             (ret.results.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.results.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
