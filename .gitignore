@@ -19,3 +19,4 @@ yarn.lock
 typechain-types
 
 .openzeppelin/
+.env
