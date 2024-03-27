@@ -6,7 +6,10 @@ import { assert } from "console"
 
 const DBG_LOG_ON = false
 
-async function main() {
+//RUN using:
+//npx hardhat --network calibnet run hh-test/verifreg_deserial.t.ts
+
+const main = async () => {
     const deployerPk = network.config.accounts[0]
 
     const provider = new ethers.providers.JsonRpcProvider(network.config.url)
@@ -50,7 +53,7 @@ async function main() {
         }
     }
 
-    console.log(`Verifreg deserialize. test completed!`)
+    console.log(`----> Verifreg deserialize. test completed!\n`)
 }
 main().catch((error) => {
     console.error(error)

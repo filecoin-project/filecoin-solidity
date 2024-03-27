@@ -9,6 +9,8 @@ import "hardhat-contract-sizer"
 
 import { readFileSync } from "fs"
 
+import "dotenv/config"
+
 let extractedSolcVersion: string
 try {
     const tomlData = readFileSync("./foundry.toml", { encoding: "utf8", flag: "r" })
@@ -38,6 +40,11 @@ const config: HardhatUserConfig = {
             chainId: 31415926,
             gas: 1_000_000_000,
             blockGasLimit: 1_000_000_000,
+        },
+        calibnet: {
+            url: "https://api.calibration.node.glif.io/rpc/v1",
+            chainId: 314159,
+            accounts: [process.env.DEPLOYER_PK],
         },
     },
     mocha: {
