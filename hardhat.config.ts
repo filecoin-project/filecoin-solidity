@@ -17,7 +17,7 @@ try {
 
     extractedSolcVersion = tomlData.split(`solc`)[1].split("=")[1].split("\n")[0].replaceAll(" ", "").replaceAll('"', "").replaceAll("'", "")
 } catch {
-    console.log({ error: "Solc version in foundry.toml not set" })
+    console.log({ error: "Solc version in foundry.toml not set (Hardhat needs to be run from projects root)" })
     process.exit(1)
 }
 
@@ -51,7 +51,7 @@ const config: HardhatUserConfig = {
         timeout: 100000000,
     },
     paths: {
-        tests: "./hh-test",
+        tests: "./hh-test/*.ts",
     },
 }
 
