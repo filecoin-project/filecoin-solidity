@@ -51,7 +51,7 @@ const config: HardhatUserConfig = {
         timeout: 100000000,
     },
     paths: {
-        tests: "./hh-test/*.ts",
+        tests: "./hh-test/localnet/e2e",
     },
 }
 

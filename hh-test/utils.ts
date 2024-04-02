@@ -1,7 +1,7 @@
 import { execSync } from "child_process"
-import { newActorAddress, newDelegatedEthAddress, newFromString } from "@glif/filecoin-address"
-import { MarketTypes } from "../typechain-types/tests/market.test.sol/MarketApiTest"
-import { ethers } from "hardhat"
+import { newDelegatedEthAddress, newFromString } from "@glif/filecoin-address"
+import { MarketTypes } from "../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
+import { ethers, network } from "hardhat"
 
 const CID = require("cids")
 
@@ -50,10 +50,11 @@ export const lotus = {
         const signatureCmdOutput = execSync(`docker exec lotus lotus wallet sign ${filAddress} ${message}`).toString()
         return signatureCmdOutput.replace("\n", "")
     },
-    sendFunds: (filAddress: string, amount: number) => {
+    sendFunds: async (filAddress: string, amount: number) => {
+        // console.log({ fcn: "sendFunds", filAddress, amount })
         return execSync(`docker exec lotus lotus send ${filAddress} ${amount}`).toString()
     },
-    createWalletBLS: () => {
+    createWalletBLS: async () => {
         return execSync(`docker exec lotus lotus wallet new bls`).toString().replace("\n", "")
     },
     findIDAddressToBytes: (filAddress: string) => {
@@ -105,19 +106,113 @@ export const generateDealParams = (clientFilAddress: string, providerFilAddress:
                 val: hexToBytes((1_000_000).toString(16)),
                 neg: false,
             },
+        },
+        client_signature: new Uint8Array(),
+    }
+
+    const dealInfo = {
+        deal,
+        dealDebug: {
             total_price: {
-                val: hexToBytes(
-                    ethers.BigNumber.from((end_epoch - start_epoch) * storage_price_per_epoch)
-                        .toHexString()
-                        .slice(2)
-                ),
+                val: hexToBytes(((end_epoch - start_epoch) * storage_price_per_epoch).toString(16).slice(2)),
                 neg: false,
             },
         },
-        client_signature: {},
     }
 
     dealID += 1
 
-    return deal
+    return dealInfo
+}
+
+export const createNetworkProvider = () => {
+    return new ethers.JsonRpcProvider((network.config as any).url)
+}
+
+export const defaultTxDelay = async () => {
+    if (network.config.chainId == 31415926) {
+        //localnet
+        await delay(60_000)
+    } else if (network.config.chainId == 314159) {
+        //calibnet
+        await delay(60_000)
+    }
+}
+
+export const generate_f410_accounts = (n: number) => {
+    //generates f410 type of accounts and attaches their convient information
+    const accounts = []
+    const provider = createNetworkProvider()
+    for (let i = 0; i < n; i += 1) {
+        const signer = ethers.Wallet.createRandom().connect(provider)
+        const filAddress = ethAddressToFilAddress(signer.address)
+        const account = {
+            eth: {
+                signer,
+                address: signer.address,
+            },
+            fil: {
+                address: filAddress,
+                byteAddress: filAddressToBytes(filAddress),
+            },
+        }
+        accounts.push(account)
+    }
+    return accounts
+}
+
+export const generate_f3_accounts = async (n: number) => {
+    //generates f3 type of accounts and attaches their convient information
+
+    const accounts = []
+    for (let i = 0; i < n; i += 1) {
+        const filAddr = await lotus.createWalletBLS()
+        const account = {
+            eth: {},
+            fil: {
+                address: filAddr,
+                byteAddress: filAddressToBytes(filAddr),
+            },
+        }
+        accounts.push(account)
+    }
+    return accounts
+}
+
+export const getStorageProvider = () => {
+    //packs default miner info into a convient format
+    const filAddr = "t01000" //default - created by lotus-miner in localnet
+
+    return {
+        eth: {},
+        fil: {
+            address: filAddr,
+            byteAddress: filAddressToBytes(filAddr),
+        },
+    }
+}
+
+export const deployContract = async (deployer: any, name: string, params?: []) => {
+    //deploys a contract and attaches all the needed info for tests
+    const ContractFactory = await ethers.getContractFactory(name, deployer.eth.signer)
+
+    let contract
+    if (params == null) contract = await ContractFactory.connect(deployer.eth.signer).deploy()
+    else contract = await ContractFactory.connect(deployer.eth.signer).deploy(...params)
+
+    await contract.waitForDeployment()
+    await defaultTxDelay()
+
+    const ethAddr = await contract.getAddress()
+    const filAddr = ethAddressToFilAddress(ethAddr)
+    return {
+        eth: {
+            contract,
+            address: ethAddr,
+        },
+        fil: {
+            address: filAddr,
+            byteAddress: filAddressToBytes(filAddr),
+        },
+    }
 }
