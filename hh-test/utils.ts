@@ -3,6 +3,8 @@ import { newDelegatedEthAddress, newFromString } from "@glif/filecoin-address"
 import { MarketTypes } from "../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
 import { ethers, network } from "hardhat"
 
+const PREFIX_CMD = "docker exec lotus"
+
 const CID = require("cids")
 
 export const hexToBytes = (hex: string) => {
@@ -44,22 +46,29 @@ export const utf8Encode = (payload: string) => {
 
 export const lotus = {
     setControlAddress: (filAddress: string) => {
-        return execSync(`docker exec lotus-miner lotus-miner actor control set --really-do-it ${filAddress}`).toString()
+        return execSync(`${PREFIX_CMD} lotus-miner actor control set --really-do-it ${filAddress}`).toString()
     },
     signMessage: (filAddress: string, message: string) => {
-        const signatureCmdOutput = execSync(`docker exec lotus lotus wallet sign ${filAddress} ${message}`).toString()
+        const signatureCmdOutput = execSync(`${PREFIX_CMD} lotus wallet sign ${filAddress} ${message}`).toString()
         return signatureCmdOutput.replace("\n", "")
     },
     sendFunds: async (filAddress: string, amount: number) => {
         // console.log({ fcn: "sendFunds", filAddress, amount })
-        return execSync(`docker exec lotus lotus send ${filAddress} ${amount}`).toString()
+        return execSync(`${PREFIX_CMD} lotus send ${filAddress} ${amount}`).toString()
     },
     createWalletBLS: async () => {
-        return execSync(`docker exec lotus lotus wallet new bls`).toString().replace("\n", "")
+        return execSync(`${PREFIX_CMD} lotus wallet new bls`).toString().replace("\n", "")
     },
     findIDAddressToBytes: (filAddress: string) => {
-        const idAddress = execSync(`docker exec lotus lotus state lookup ${filAddress}`).toString().replace("\n", "")
+        const idAddress = execSync(`${PREFIX_CMD} lotus state lookup ${filAddress}`).toString().replace("\n", "")
         return newFromString(idAddress).bytes
+    },
+    registerNotary: (filAddress: string, amount: number) => {
+        const rootKey1 = "t3vjnihhfzdy5z3p6aq4mpwqefjtikhlefqu6kmr3h6wjwavr5ibw4f4eezfklvkiwyv4fuuxwy35iu5fslfeq"
+        const rootKey2 = "t3v2x5wvxwehtmayz5cqiuxdkezcj3aogkhoq7kfukuzp5mlcgauewqlco6inwgrxr3xyz7gnzh3u2hgxjjy4q"
+        execSync(`${PREFIX_CMD} lotus-shed verifreg add-verifier ${rootKey1} ${filAddress} ${amount}`).toString().replace("\n", "")
+        //lotus msig approve  --from=t3qe7a5azkg6okbrhcgpf4tfhfwc6yn2pbtjavvg5e3oxmnjuw3gxrr55odtqddckcfswj6l7efokkmsjfq56q f080 0 t0101 f06 0 2 825501741cb597cbef736b94f5ea676b12bc77115a631e4400989680
+        //TODO:parsing from: lotus msig inspect f080
     },
 }
 
@@ -126,7 +135,9 @@ export const generateDealParams = (clientFilAddress: string, providerFilAddress:
 }
 
 export const createNetworkProvider = () => {
-    return new ethers.JsonRpcProvider((network.config as any).url)
+    const provider = new ethers.JsonRpcProvider((network.config as any).url)
+    console.log({ provider })
+    return provider
 }
 
 export const defaultTxDelay = async () => {
@@ -172,6 +183,7 @@ export const generate_f3_accounts = async (n: number) => {
             fil: {
                 address: filAddr,
                 byteAddress: filAddressToBytes(filAddr),
+                // idAddress: lotus.findIDAddressToBytes(filAddr),
             },
         }
         accounts.push(account)
@@ -188,6 +200,7 @@ export const getStorageProvider = () => {
         fil: {
             address: filAddr,
             byteAddress: filAddressToBytes(filAddr),
+            idAddress: lotus.findIDAddressToBytes(filAddr),
         },
     }
 }
@@ -213,6 +226,7 @@ export const deployContract = async (deployer: any, name: string, params?: []) =
         fil: {
             address: filAddr,
             byteAddress: filAddressToBytes(filAddr),
+            idAddress: lotus.findIDAddressToBytes(filAddr),
         },
     }
 }
