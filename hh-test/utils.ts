@@ -1,13 +1,26 @@
 import { execSync } from "child_process"
 import { newDelegatedEthAddress, newFromString } from "@glif/filecoin-address"
-import { MarketTypes } from "../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
+import { CommonTypes, MarketTypes } from "../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
 import { ethers, network } from "hardhat"
 
-const PREFIX_CMD = "docker exec lotus"
+let DEBUG_ON = false
+export const setDebugMode = (newVal) => (DEBUG_ON = newVal)
+
+const PATH_EXPORTS = `export LOTUS_PATH=~/.lotus-local-net && export LOTUS_MINER_PATH=~/.lotus-miner-local-net && \
+export LOTUS_SKIP_GENESIS_CHECK=_yes_ && export CGO_CFLAGS_ALLOW='-D__BLST_PORTABLE__' && \
+export CGO_CFLAGS='-D__BLST_PORTABLE__' `
+
+const PREFIX_CMD = `docker exec pensive_kowalevski  /bin/bash -c "${PATH_EXPORTS} && /go/lotus-local-net/`
 
 const CID = require("cids")
 
+export const paddForHex = (hex: string) => {
+    //assumes no leading `0x`
+    return hex.length % 2 == 1 ? `0${hex}` : hex
+}
+
 export const hexToBytes = (hex: string) => {
+    //assumes 0x..{even number of nibbles}...
     var bytes = []
 
     for (var c = 0; c < hex.length; c += 2) {
@@ -46,28 +59,31 @@ export const utf8Encode = (payload: string) => {
 
 export const lotus = {
     setControlAddress: (filAddress: string) => {
-        return execSync(`${PREFIX_CMD} lotus-miner actor control set --really-do-it ${filAddress}`).toString()
+        return execSync(`${PREFIX_CMD}lotus-miner actor control set --really-do-it ${filAddress}"`).toString()
     },
     signMessage: (filAddress: string, message: string) => {
-        const signatureCmdOutput = execSync(`${PREFIX_CMD} lotus wallet sign ${filAddress} ${message}`).toString()
+        const signatureCmdOutput = execSync(`${PREFIX_CMD}lotus wallet sign ${filAddress} ${message}"`).toString()
         return signatureCmdOutput.replace("\n", "")
     },
-    sendFunds: async (filAddress: string, amount: number) => {
-        // console.log({ fcn: "sendFunds", filAddress, amount })
-        return execSync(`${PREFIX_CMD} lotus send ${filAddress} ${amount}`).toString()
+    sendFunds: (filAddress: string, amount: number) => {
+        return execSync(`${PREFIX_CMD}lotus send ${filAddress} ${amount}"`).toString()
     },
-    createWalletBLS: async () => {
-        return execSync(`${PREFIX_CMD} lotus wallet new bls`).toString().replace("\n", "")
+    createWalletBLS: () => {
+        return execSync(`${PREFIX_CMD}lotus wallet new bls"`).toString().replace("\n", "")
     },
     findIDAddressToBytes: (filAddress: string) => {
-        const idAddress = execSync(`${PREFIX_CMD} lotus state lookup ${filAddress}`).toString().replace("\n", "")
-        return newFromString(idAddress).bytes
+        const idAddress = execSync(`${PREFIX_CMD}lotus state lookup ${filAddress}"`).toString().replace("\n", "")
+        const temp = paddForHex(BigInt(`${idAddress.slice(2, idAddress.length)}`).toString(16))
+        console.log({ idAddress, temp })
+        return hexToBytes("0x" + temp)
     },
     registerNotary: (filAddress: string, amount: number) => {
-        const rootKey1 = "t3vjnihhfzdy5z3p6aq4mpwqefjtikhlefqu6kmr3h6wjwavr5ibw4f4eezfklvkiwyv4fuuxwy35iu5fslfeq"
-        const rootKey2 = "t3v2x5wvxwehtmayz5cqiuxdkezcj3aogkhoq7kfukuzp5mlcgauewqlco6inwgrxr3xyz7gnzh3u2hgxjjy4q"
-        execSync(`${PREFIX_CMD} lotus-shed verifreg add-verifier ${rootKey1} ${filAddress} ${amount}`).toString().replace("\n", "")
-        //lotus msig approve  --from=t3qe7a5azkg6okbrhcgpf4tfhfwc6yn2pbtjavvg5e3oxmnjuw3gxrr55odtqddckcfswj6l7efokkmsjfq56q f080 0 t0101 f06 0 2 825501741cb597cbef736b94f5ea676b12bc77115a631e4400989680
+        const rootKey1 = "t3vxtpol2vygxep7xin2n2mr7zax3dschn27ayk4x6rn54bf4qmsxp24mcm7vzngjwysrv2g4sbkshj7yljukq"
+        // const rootKey2 = "t3v2x5wvxwehtmayz5cqiuxdkezcj3aogkhoq7kfukuzp5mlcgauewqlco6inwgrxr3xyz7gnzh3u2hgxjjy4q"
+        const cmd = `${PREFIX_CMD}lotus-shed verifreg add-verifier ${rootKey1} ${filAddress} ${amount}`
+        console.log({ registerNotary: cmd })
+        return execSync(cmd).toString().replace("\n", "")
+        //lotus msig approve  --from=t3vmxr3jfjpqckhy7zn4nmp3tqk2wla4hwbcwdqxraggehw7k3huosljt3bmhvvf5jsxozbpz6stbuyb4r57ea f080 1 t0101 f06 0 2 8256040a5a321fa1d6279aa337e34d38e97203f04a6a4db1420064
         //TODO:parsing from: lotus msig inspect f080
     },
 }
@@ -123,9 +139,11 @@ export const generateDealParams = (clientFilAddress: string, providerFilAddress:
         deal,
         dealDebug: {
             total_price: {
-                val: hexToBytes(((end_epoch - start_epoch) * storage_price_per_epoch).toString(16).slice(2)),
+                val: `0x${paddForHex(((end_epoch - start_epoch) * storage_price_per_epoch).toString(16))}`,
                 neg: false,
             },
+            start_epoch,
+            end_epoch,
         },
     }
 
@@ -136,14 +154,13 @@ export const generateDealParams = (clientFilAddress: string, providerFilAddress:
 
 export const createNetworkProvider = () => {
     const provider = new ethers.JsonRpcProvider((network.config as any).url)
-    console.log({ provider })
     return provider
 }
 
 export const defaultTxDelay = async () => {
     if (network.config.chainId == 31415926) {
         //localnet
-        await delay(60_000)
+        await delay(4_500)
     } else if (network.config.chainId == 314159) {
         //calibnet
         await delay(60_000)
@@ -172,12 +189,24 @@ export const generate_f410_accounts = (n: number) => {
     return accounts
 }
 
+export const generate_and_fund_f410_accounts = (n: number, amount: number) => {
+    //generates f410 type of accounts and funds them
+
+    const accounts = generate_f410_accounts(n)
+
+    for (const acc of accounts) {
+        lotus.sendFunds(acc.fil.address, amount)
+    }
+
+    return accounts
+}
+
 export const generate_f3_accounts = async (n: number) => {
     //generates f3 type of accounts and attaches their convient information
 
     const accounts = []
     for (let i = 0; i < n; i += 1) {
-        const filAddr = await lotus.createWalletBLS()
+        const filAddr = lotus.createWalletBLS()
         const account = {
             eth: {},
             fil: {
@@ -205,6 +234,36 @@ export const getStorageProvider = () => {
     }
 }
 
+export const performGeneralSetup = async () => {
+    //general setup present in most of the tests
+    if (DEBUG_ON) {
+        console.log(`performGeneralSetup() called`)
+    }
+    const [deployer, anyone] = generate_f410_accounts(2)
+    const [client] = await generate_f3_accounts(1)
+    const storageProvider = getStorageProvider()
+
+    if (DEBUG_ON) {
+        console.log(`Generated:`, { deployer, anyone, client, storageProvider })
+        console.log(`Funding generated wallets... (deployer, anyone and client)`)
+    }
+
+    lotus.sendFunds(deployer.fil.address, 10)
+    lotus.sendFunds(anyone.fil.address, 10)
+    lotus.sendFunds(client.fil.address, 10)
+
+    await defaultTxDelay()
+
+    //note: can happen only after funding and not in `generate_f3`
+    client.fil.idAddress = lotus.findIDAddressToBytes(client.fil.address)
+
+    if (DEBUG_ON) {
+        console.log(`Funding done.`)
+    }
+
+    return { deployer, anyone, client, storageProvider }
+}
+
 export const deployContract = async (deployer: any, name: string, params?: []) => {
     //deploys a contract and attaches all the needed info for tests
     const ContractFactory = await ethers.getContractFactory(name, deployer.eth.signer)
@@ -229,4 +288,25 @@ export const deployContract = async (deployer: any, name: string, params?: []) =
             idAddress: lotus.findIDAddressToBytes(filAddr),
         },
     }
+}
+
+export const attachToContract = async (account: any, name: string, contractAddress: string) => {
+    const ContractFactory = await ethers.getContractFactory(name, account.eth.signer)
+    const contract = ContractFactory.attach(contractAddress).connect(account.eth.signer)
+
+    return contract
+}
+
+export const idAddressToBigInt = (idAddress: Uint8Array) => {
+    const result = BigInt(bytesToHex(idAddress).replace("0x00", "0x"))
+    console.log({ idAddressToBigInt: "called", idAddress, result })
+    return result
+}
+
+export const bigIntStructWithStringFormat = (bigint: CommonTypes.BigIntStruct) => {
+    return { val: bytesToHex(bigint.val as Uint8Array), neg: bigint.neg }
+}
+
+export const bigIntToHexString = (bigint: BigInt) => {
+    return `0x${paddForHex(bigint.toString(16))}`
 }
