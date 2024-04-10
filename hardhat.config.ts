@@ -36,7 +36,7 @@ const config: HardhatUserConfig = {
             blockGasLimit: 1000000000000000,
         },
         localnet: {
-            url: "http://127.0.0.1:1235/rpc/v1",
+            url: "http://127.0.0.1:1234/rpc/v1",
             chainId: 31415926,
             gas: 1_000_000_000,
             blockGasLimit: 1_000_000_000,

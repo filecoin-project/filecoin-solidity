@@ -1,15 +1,54 @@
 import { ethers } from "hardhat"
 import { expect } from "chai"
 
-import { MarketTypes, CommonTypes } from "../../../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
+import { VerifRegTypes, CommonTypes, VerifRegApiTest } from "../../../typechain-types/contracts/v0.8/tests/verifreg.test.sol/VerifRegApiTest"
 
 import * as utils from "../../utils"
 
-describe.only("Market Test", () => {
+describe("Verifreg Test", () => {
     it("is_OK", async () => {
+        // await main()
         await main()
     })
 })
+
+const main_1 = async () => {
+    const [deployer, anyone] = utils.generate_and_fund_f410_accounts(2, 10)
+
+    await utils.defaultTxDelay()
+
+    const verifregContract: VerifRegApiTest = await utils.attachToContract(deployer, "VerifRegApiTest", "0x5A321fa1D6279aA337E34D38e97203f04A6A4DB1")
+
+    const addr: CommonTypes.FilAddressStruct = {
+        data: utils.filAddressToBytes(anyone.fil.address),
+    }
+
+    const allowance: CommonTypes.BigIntStruct = {
+        val: utils.hexToBytes("0x0a"),
+        neg: false,
+    }
+    const params: VerifRegTypes.AddVerifiedClientParamsStruct = {
+        addr,
+        allowance,
+    }
+    await verifregContract.add_verified_client(params)
+
+    await utils.defaultTxDelay()
+
+    console.log(`\n ---> Added verified Client !!! \n`)
+
+    // process.exit()
+
+    // const provider = 1333
+    // const claim_ids = [0, 1, 2, 3, 4, 5, 6]
+    // const params: VerifRegTypes.GetClaimsParamsStruct = {
+    //     provider,
+    //     claim_ids,
+    // }
+    // const res: VerifRegTypes.GetClaimsReturnStruct = await verifregContract.get_claims(params)
+
+    // console.log({ res }, res.batch_info, res.claims)
+}
 
 const main = async () => {
     console.log(`Generating accounts...`)
@@ -26,7 +65,7 @@ const main = async () => {
 
     console.log(`DEBUG: clientIdAddress: ${client.fil.address}`)
 
-    console.log(`Deploying contracts... (market and helper)`)
+    console.log(`Deploying contracts... (verifreg)`)
 
     const verifreg = await utils.deployContract(deployer, "VerifRegApiTest")
 
@@ -35,6 +74,26 @@ const main = async () => {
 
     const notaryAmount = 100
     utils.lotus.registerNotary(verifreg.fil.address, notaryAmount)
+
+    await utils.defaultTxDelay()
+
+    const addr: CommonTypes.FilAddressStruct = {
+        data: utils.filAddressToBytes(anyone.fil.address),
+    }
+
+    const allowance: CommonTypes.BigIntStruct = {
+        val: utils.hexToBytes("0x0a"),
+        neg: false,
+    }
+    const params: VerifRegTypes.AddVerifiedClientParamsStruct = {
+        addr,
+        allowance,
+    }
+    await verifreg.eth.contract.add_verified_client(params)
+
+    await utils.defaultTxDelay()
+
+    console.log(`\n ---> Added verified Client !!! \n`)
 
     process.exit()
 

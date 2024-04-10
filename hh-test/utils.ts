@@ -3,16 +3,14 @@ import { newDelegatedEthAddress, newFromString } from "@glif/filecoin-address"
 import { CommonTypes, MarketTypes } from "../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
 import { ethers, network } from "hardhat"
 
-let DEBUG_ON = false
-export const setDebugMode = (newVal) => (DEBUG_ON = newVal)
-
-const PATH_EXPORTS = `export LOTUS_PATH=~/.lotus-local-net && export LOTUS_MINER_PATH=~/.lotus-miner-local-net && \
-export LOTUS_SKIP_GENESIS_CHECK=_yes_ && export CGO_CFLAGS_ALLOW='-D__BLST_PORTABLE__' && \
-export CGO_CFLAGS='-D__BLST_PORTABLE__' `
-
-const PREFIX_CMD = `docker exec pensive_kowalevski  /bin/bash -c "${PATH_EXPORTS} && /go/lotus-local-net/`
+import "dotenv/config"
 
 const CID = require("cids")
+
+let DEBUG_ON = false
+export const setDebugMode = (newVal: boolean) => (DEBUG_ON = newVal)
+
+const PREFIX_CMD = `/bin/bash -c "/go/lotus-local-net/`
 
 export const paddForHex = (hex: string) => {
     //assumes no leading `0x`
@@ -78,13 +76,10 @@ export const lotus = {
         return hexToBytes("0x" + temp)
     },
     registerNotary: (filAddress: string, amount: number) => {
-        const rootKey1 = "t3vxtpol2vygxep7xin2n2mr7zax3dschn27ayk4x6rn54bf4qmsxp24mcm7vzngjwysrv2g4sbkshj7yljukq"
-        // const rootKey2 = "t3v2x5wvxwehtmayz5cqiuxdkezcj3aogkhoq7kfukuzp5mlcgauewqlco6inwgrxr3xyz7gnzh3u2hgxjjy4q"
+        const rootKey1 = "TODO"
         const cmd = `${PREFIX_CMD}lotus-shed verifreg add-verifier ${rootKey1} ${filAddress} ${amount}`
         console.log({ registerNotary: cmd })
         return execSync(cmd).toString().replace("\n", "")
-        //lotus msig approve  --from=t3vmxr3jfjpqckhy7zn4nmp3tqk2wla4hwbcwdqxraggehw7k3huosljt3bmhvvf5jsxozbpz6stbuyb4r57ea f080 1 t0101 f06 0 2 8256040a5a321fa1d6279aa337e34d38e97203f04a6a4db1420064
-        //TODO:parsing from: lotus msig inspect f080
     },
 }
 
@@ -158,12 +153,10 @@ export const createNetworkProvider = () => {
 }
 
 export const defaultTxDelay = async () => {
-    if (network.config.chainId == 31415926) {
-        //localnet
-        await delay(4_500)
-    } else if (network.config.chainId == 314159) {
-        //calibnet
-        await delay(60_000)
+    if (network.name === "localnet") {
+        await delay(10_000)
+    } else if (network.name === "calibnet") {
+        await delay(40_000)
     }
 }
 
@@ -248,9 +241,9 @@ export const performGeneralSetup = async () => {
         console.log(`Funding generated wallets... (deployer, anyone and client)`)
     }
 
+    lotus.sendFunds(client.fil.address, 10)
     lotus.sendFunds(deployer.fil.address, 10)
     lotus.sendFunds(anyone.fil.address, 10)
-    lotus.sendFunds(client.fil.address, 10)
 
     await defaultTxDelay()
 
@@ -264,13 +257,16 @@ export const performGeneralSetup = async () => {
     return { deployer, anyone, client, storageProvider }
 }
 
-export const deployContract = async (deployer: any, name: string, params?: []) => {
+export const deployContract = async (deployer: any, name: string, params?: { constructorParams?: [] }) => {
     //deploys a contract and attaches all the needed info for tests
-    const ContractFactory = await ethers.getContractFactory(name, deployer.eth.signer)
 
+    const ContractFactory = await ethers.getContractFactory(name, deployer.eth.signer)
+    console.log("pre-contract deploy")
     let contract
-    if (params == null) contract = await ContractFactory.connect(deployer.eth.signer).deploy()
-    else contract = await ContractFactory.connect(deployer.eth.signer).deploy(...params)
+    if (params == null || params.constructorParams == null) contract = await ContractFactory.connect(deployer.eth.signer).deploy()
+    else contract = await ContractFactory.connect(deployer.eth.signer).deploy(...params.constructorParams)
+
+    console.log("contract deployed")
 
     await contract.waitForDeployment()
     await defaultTxDelay()
