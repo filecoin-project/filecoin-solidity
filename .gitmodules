@@ -10,6 +10,3 @@
 [submodule "lib/forge-std"]
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
-[submodule "hh-test/localnet/docker-env"]
-	path = hh-test/localnet/docker-env
-	url = https://github.com/filecoin-project/filecoin-fvm-localnet
