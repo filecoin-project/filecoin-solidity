@@ -1,4 +1,4 @@
-import { execSync } from "child_process"
+import { execSync, exec } from "child_process"
 import { newDelegatedEthAddress, newFromString } from "@glif/filecoin-address"
 import { CommonTypes, MarketTypes } from "../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
 import { ethers, network } from "hardhat"
@@ -74,6 +74,21 @@ export const lotus = {
         const temp = paddForHex(BigInt(`${idAddress.slice(2, idAddress.length)}`).toString(16))
         console.log({ idAddress, temp })
         return hexToBytes("0x" + temp)
+    },
+    restart: async (params: { LOTUS_FEVM_ENABLEETHRPC: boolean }) => {
+        const cmd = `export LOTUS_FEVM_ENABLEETHRPC=${params.LOTUS_FEVM_ENABLEETHRPC} && /go/_scripts/2_restart-localnet.sh`
+        console.log({ cmd })
+
+        const cmdOutput =  exec(cmd).toString().replace("\n", "")
+
+        await delay(100_000)
+    },
+    registerVerifier: (filAddress: string, amount: number) => {
+        const rootKey1 = execSync("cat /go/lotus-local-net/verifier1.txt").toString().replace("\n", "")
+        console.log({rootKey1})
+        const cmd = `${PREFIX_CMD}lotus-shed verifreg add-verifier ${rootKey1} ${filAddress} ${amount}"`
+        console.log({ registerVerifier: cmd })
+        return execSync(cmd).toString().replace("\n", "")
     },
     registerNotary: (filAddress: string, amount: number) => {
         const rootKey1 = "TODO"

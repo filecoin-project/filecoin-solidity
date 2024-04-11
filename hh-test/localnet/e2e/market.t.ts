@@ -5,7 +5,7 @@ import { MarketTypes, CommonTypes } from "../../../typechain-types/contracts/v0.
 
 import * as utils from "../../utils"
 
-describe.only("Market Tests", () => {
+describe("Market Tests", () => {
     it("Test 1: Basic Deal Flow", async () => await test1())
     // it("Dbg", async () => await _dbg())
 })

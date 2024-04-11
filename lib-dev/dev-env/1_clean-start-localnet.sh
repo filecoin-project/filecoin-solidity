@@ -8,6 +8,8 @@ cd /go/lotus-local-net
 
 verifregRootKey1=$(./lotus-shed keyinfo new bls)
 
+echo $verifregRootKey1 > verifier1.txt
+
 ./lotus-seed pre-seal --sector-size 2KiB --num-sectors 2
 
 ./lotus-seed genesis new localnet.json
@@ -41,4 +43,4 @@ sleep 50
 
 ./lotus filplus list-notaries
 
-sleep 1000000000
+# sleep 1000000000
