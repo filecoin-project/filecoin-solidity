@@ -21,6 +21,26 @@ try {
     process.exit(1)
 }
 
+const HH_NETWORK = process.env.HH_NETWORK
+const SUPPORTED_NETWORKS =  {
+    localnet: {
+        url: "http://127.0.0.1:1234/rpc/v1",
+        chainId: 31415926,
+        gas: 1_000_000_000,
+        blockGasLimit: 1_000_000_000,
+    },
+    calibnet: {
+        url: "https://api.calibration.node.glif.io/rpc/v1",
+        chainId: 314159,
+        accounts: [process.env.DEPLOYER_PK],
+    },
+}
+
+if(HH_NETWORK === undefined || SUPPORTED_NETWORKS[HH_NETWORK] == null){
+    console.log({ error: `HH_NETWORK env var (val:${HH_NETWORK}) not supported! (Must be: ${Object.keys(SUPPORTED_NETWORKS).join(' | ')})` })
+    process.exit(1)
+}
+
 const config: HardhatUserConfig = {
     solidity: {
         version: extractedSolcVersion,
@@ -31,27 +51,13 @@ const config: HardhatUserConfig = {
             },
         },
     },
-    networks: {
-        hardhat: {
-            blockGasLimit: 1000000000000000,
-        },
-        localnet: {
-            url: "http://127.0.0.1:1234/rpc/v1",
-            chainId: 31415926,
-            gas: 1_000_000_000,
-            blockGasLimit: 1_000_000_000,
-        },
-        calibnet: {
-            url: "https://api.calibration.node.glif.io/rpc/v1",
-            chainId: 314159,
-            accounts: [process.env.DEPLOYER_PK],
-        },
-    },
+    defaultNetwork: HH_NETWORK,
+    networks:SUPPORTED_NETWORKS,
     mocha: {
         timeout: 100000000,
     },
     paths: {
-        tests: "./hh-test/localnet/e2e",
+        tests: `./hh-test/${HH_NETWORK}/e2e`,
     },
 }
 
