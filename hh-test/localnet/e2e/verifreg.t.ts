@@ -32,7 +32,7 @@ const test1 = async () => {
 
     await utils.lotus.restart({ LOTUS_FEVM_ENABLEETHRPC: true })
 
-    console.log({LOTUS_FEVM_ENABLEETHRPC: true})
+    console.log({ LOTUS_FEVM_ENABLEETHRPC: true })
 
     //add notary
 
@@ -49,70 +49,27 @@ const test1 = async () => {
         allowance,
     }
     await verifreg.eth.contract.add_verified_client(params)
-
-    // utils.lotus.registerNotary(verifreg.fil.address, 1_000_000)
-
     await utils.defaultTxDelay()
 
     console.log(`\n ---> Added verified Client !!! \n`)
 
-    // process.exit()
+    const provider = BigInt(0xc9)
+    const claim_ids = [0, 1]
+    const getClaimsParams: VerifRegTypes.GetClaimsParamsStruct = {
+        provider,
+        claim_ids,
+    }
+    const res: VerifRegTypes.GetClaimsReturnStruct = await verifreg.eth.contract.get_claims(getClaimsParams)
 
-    // const provider = 1333
-    // const claim_ids = [0, 1, 2, 3, 4, 5, 6]
-    // const params: VerifRegTypes.GetClaimsParamsStruct = {
-    //     provider,
-    //     claim_ids,
-    // }
-    // const res: VerifRegTypes.GetClaimsReturnStruct = await verifregContract.get_claims(params)
+    console.log("get_claims()", { res }, res.batch_info, res.claims)
 
-    // console.log({ res }, res.batch_info, res.claims)
-}
-
-const main = async () => {
-    console.log(`Generating accounts...`)
-    const [deployer, anyone] = utils.generate_f410_accounts(2)
-    const [client] = await utils.generate_f3_accounts(1)
-    const storageProvider = utils.getStorageProvider()
-
-    console.log(`Funding generated wallets... (deployer, anyone and client)`)
-    utils.lotus.sendFunds(deployer.fil.address, 10)
-    utils.lotus.sendFunds(anyone.fil.address, 10)
-    utils.lotus.sendFunds(client.fil.address, 10)
-
-    await utils.defaultTxDelay()
-
-    console.log(`DEBUG: clientIdAddress: ${client.fil.address}`)
-
-    console.log(`Deploying contracts... (verifreg)`)
-
-    const verifreg = await utils.deployContract(deployer, "VerifRegApiTest")
-
-    console.log(`Contracts deployed:`)
-    console.log({ verifreg })
-
-    const notaryAmount = 100
-    utils.lotus.registerNotary(verifreg.fil.address, notaryAmount)
-
-    await utils.defaultTxDelay()
-
-    const addr: CommonTypes.FilAddressStruct = {
-        data: utils.filAddressToBytes(anyone.fil.address),
+    const removeParams: VerifRegTypes.RemoveExpiredAllocationsParamsStruct = {
+        client: BigInt(0x65),
+        allocation_ids: [],
     }
 
-    const allowance: CommonTypes.BigIntStruct = {
-        val: utils.hexToBytes("0x0a"),
-        neg: false,
-    }
-    const params: VerifRegTypes.AddVerifiedClientParamsStruct = {
-        addr,
-        allowance,
-    }
-    await verifreg.eth.contract.add_verified_client(params)
-
+    await verifreg.eth.contract.remove_expired_allocations(removeParams)
     await utils.defaultTxDelay()
 
-    console.log(`\n ---> Added verified Client !!! \n`)
-
-    process.exit()
+    console.log("remove_expired_allocations finished")
 }
