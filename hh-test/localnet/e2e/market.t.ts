@@ -7,27 +7,10 @@ import * as utils from "../../utils"
 
 describe("Market Tests", () => {
     it("Test 1: Basic Deal Flow", async () => await test1())
-    // it("Dbg", async () => await _dbg())
 })
-const _dbg = async () => {
-    const address = "t3sqsp7sm7vaovx27pn5wsexsgv2jfzbgcimir7tw2u4ntape6ffldi33gdktsovvjversphc2s3tludnhu2xa"
-    const result = utils.lotus.findIDAddressToBytes(address)
-    const bigIntResult = utils.idAddressToBigInt(result)
-    console.log({ address, result, bigIntResult })
-
-    const start_epoch = BigInt(10000)
-    const end_epoch = BigInt(10000 + (545150 - 25245))
-    const storage_price_per_epoch = BigInt(1)
-
-    const res = `0x${((end_epoch - start_epoch) * storage_price_per_epoch).toString(16)}`
-
-    console.log({ res })
-}
 
 const test1 = async () => {
     //test scenario adopted from rust integration tests
-
-    utils.setDebugMode(true)
 
     const { deployer, anyone, client, storageProvider } = await utils.performGeneralSetup()
 
@@ -83,8 +66,8 @@ const test1 = async () => {
         data: ethers.hexlify(Uint8Array.from([0, ...Array.from(ethers.getBytes(deal.proposal.piece_cid.data))])),
         size: deal.proposal.piece_size,
     }
-    const expectedDealClientId = utils.idAddressToBigInt(client.fil.idAddress)
-    const expectedDealProviderId = utils.idAddressToBigInt(storageProvider.fil.idAddress)
+    const expectedDealClientId = utils.idAddressToBigInt(client.fil.idAddress())
+    const expectedDealProviderId = utils.idAddressToBigInt(storageProvider.fil.idAddress())
 
     const expectedDealLabel: CommonTypes.DealLabelStruct = { data: utils.bytesToHex(deal.proposal.label.data as Uint8Array), isString: true }
 

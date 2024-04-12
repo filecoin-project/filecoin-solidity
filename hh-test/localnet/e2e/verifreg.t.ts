@@ -6,15 +6,17 @@ import { VerifRegTypes, CommonTypes, VerifRegApiTest } from "../../../typechain-
 import * as utils from "../../utils"
 
 describe.only("Verifreg Test", () => {
+    beforeEach(async () => {
+        // await utils.lotus.restart({ LOTUS_FEVM_ENABLEETHRPC: true })
+    })
+
     it("Test 1: Integration test port", async () => {
         await test1()
     })
 })
 
 const test1 = async () => {
-    utils.setDebugMode(true)
-
-    const { deployer, anyone } = await utils.performGeneralSetup()
+    const { deployer, anyone, storageProvider } = await utils.performGeneralSetup()
 
     console.log(`Deploying contracts... (verifreg)`)
 
@@ -31,8 +33,6 @@ const test1 = async () => {
     //enable EVM RPC and restart localnet
 
     await utils.lotus.restart({ LOTUS_FEVM_ENABLEETHRPC: true })
-
-    console.log({ LOTUS_FEVM_ENABLEETHRPC: true })
 
     //add notary
 
@@ -53,10 +53,9 @@ const test1 = async () => {
 
     console.log(`\n ---> Added verified Client !!! \n`)
 
-    const provider = BigInt(0xc9)
     const claim_ids = [0, 1]
     const getClaimsParams: VerifRegTypes.GetClaimsParamsStruct = {
-        provider,
+        provider: storageProvider.fil.id,
         claim_ids,
     }
     const res: VerifRegTypes.GetClaimsReturnStruct = await verifreg.eth.contract.get_claims(getClaimsParams)
@@ -71,5 +70,5 @@ const test1 = async () => {
     await verifreg.eth.contract.remove_expired_allocations(removeParams)
     await utils.defaultTxDelay()
 
-    console.log("remove_expired_allocations finished")
+    console.log("remove_expired_allocations() - done")
 }

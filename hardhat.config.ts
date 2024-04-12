@@ -21,7 +21,7 @@ try {
     process.exit(1)
 }
 
-const HH_NETWORK = process.env.HH_NETWORK
+const HH_NETWORK = process.env.HH_NETWORK != undefined ? process.env.HH_NETWORK : 'localnet'
 const SUPPORTED_NETWORKS =  {
     localnet: {
         url: "http://127.0.0.1:1234/rpc/v1",

@@ -2,9 +2,11 @@
 
 set -e
 
-rm -rf bls-*.keyinfo localnet.json ~/.genesis-sectors $LOTUS_PATH/*.lock $LOTUS_MINER_PATH/*.lock
-
 cd /go/lotus-local-net
+
+(./lotus daemon stop && ./lotus-miner stop) || echo "Lotus/Miner failed to stop"
+
+rm -rf bls-*.keyinfo localnet.json  ~/.genesis-sectors $LOTUS_PATH $LOTUS_MINER_PATH
 
 verifregRootKey1=$(./lotus-shed keyinfo new bls)
 
@@ -32,15 +34,3 @@ sleep 20
 sleep 20
 
 ./lotus wallet import "bls-$verifregRootKey1.keyinfo"
-
-notary1=$(./lotus wallet new secp256k1)
-
-./lotus-shed verifreg add-verifier $verifregRootKey1 $notary1 1000
-
-sleep 50
-
-./lotus msig inspect f080
-
-./lotus filplus list-notaries
-
-# sleep 1000000000

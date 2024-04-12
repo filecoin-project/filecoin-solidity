@@ -53,6 +53,8 @@ RUN ./lotus fetch-params 2048
 
 RUN make lotus-shed
 
+RUN echo "export PATH=\$PATH:/go/lotus-local-net/" >> $HOME/.bashrc
+
 COPY ./*.sh /go/_scripts/
 
 RUN chmod +x /go/_scripts/*.sh

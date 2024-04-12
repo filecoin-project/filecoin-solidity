@@ -7,10 +7,13 @@ import "dotenv/config"
 
 const CID = require("cids")
 
-let DEBUG_ON = false
-export const setDebugMode = (newVal: boolean) => (DEBUG_ON = newVal)
+const DEBUG_ON = process.env.DEBUG_ON == undefined ? true : false
 
-const PREFIX_CMD = `/bin/bash -c "/go/lotus-local-net/`
+const SCRIPTS_DIR = `/var/lib/fil-sol/lib-dev/dev-env`
+
+execSync(`chmod +x ${SCRIPTS_DIR}/*.sh`)
+
+const PREFIX_CMD = `/bin/bash -c "`
 
 export const paddForHex = (hex: string) => {
     //assumes no leading `0x`
@@ -57,7 +60,7 @@ export const utf8Encode = (payload: string) => {
 
 export const lotus = {
     setControlAddress: (filAddress: string) => {
-        return execSync(`${PREFIX_CMD}lotus-miner actor control set --really-do-it ${filAddress}"`).toString()
+        return execSync(`${PREFIX_CMD}/lotus-miner actor control set --really-do-it ${filAddress}"`).toString()
     },
     signMessage: (filAddress: string, message: string) => {
         const signatureCmdOutput = execSync(`${PREFIX_CMD}lotus wallet sign ${filAddress} ${message}"`).toString()
@@ -76,24 +79,21 @@ export const lotus = {
         return hexToBytes("0x" + temp)
     },
     restart: async (params: { LOTUS_FEVM_ENABLEETHRPC: boolean }) => {
-        const cmd = `export LOTUS_FEVM_ENABLEETHRPC=${params.LOTUS_FEVM_ENABLEETHRPC} && /go/_scripts/2_restart-localnet.sh`
-        console.log({ cmd })
+        const exportEnvVar = `export LOTUS_FEVM_ENABLEETHRPC=${params.LOTUS_FEVM_ENABLEETHRPC}`
+        const scriptRun = `${SCRIPTS_DIR}/2_restart-localnet.sh`
 
-        const cmdOutput =  exec(cmd).toString().replace("\n", "")
+        const cmd = `${exportEnvVar} && ${scriptRun}`
+        if (DEBUG_ON) console.log({ cmd })
+
+        exec(cmd).toString().replace("\n", "")
 
         await delay(100_000)
     },
     registerVerifier: (filAddress: string, amount: number) => {
         const rootKey1 = execSync("cat /go/lotus-local-net/verifier1.txt").toString().replace("\n", "")
-        console.log({rootKey1})
+        console.log({ rootKey1 })
         const cmd = `${PREFIX_CMD}lotus-shed verifreg add-verifier ${rootKey1} ${filAddress} ${amount}"`
         console.log({ registerVerifier: cmd })
-        return execSync(cmd).toString().replace("\n", "")
-    },
-    registerNotary: (filAddress: string, amount: number) => {
-        const rootKey1 = "TODO"
-        const cmd = `${PREFIX_CMD}lotus-shed verifreg add-verifier ${rootKey1} ${filAddress} ${amount}`
-        console.log({ registerNotary: cmd })
         return execSync(cmd).toString().replace("\n", "")
     },
 }
@@ -177,19 +177,21 @@ export const defaultTxDelay = async () => {
 
 export const generate_f410_accounts = (n: number) => {
     //generates f410 type of accounts and attaches their convient information
+
     const accounts = []
     const provider = createNetworkProvider()
     for (let i = 0; i < n; i += 1) {
         const signer = ethers.Wallet.createRandom().connect(provider)
-        const filAddress = ethAddressToFilAddress(signer.address)
+        const filAddr = ethAddressToFilAddress(signer.address)
         const account = {
             eth: {
                 signer,
                 address: signer.address,
             },
             fil: {
-                address: filAddress,
-                byteAddress: filAddressToBytes(filAddress),
+                address: filAddr,
+                byteAddress: filAddressToBytes(filAddr),
+                idAddress: () => lotus.findIDAddressToBytes(filAddr),
             },
         }
         accounts.push(account)
@@ -220,7 +222,7 @@ export const generate_f3_accounts = async (n: number) => {
             fil: {
                 address: filAddr,
                 byteAddress: filAddressToBytes(filAddr),
-                // idAddress: lotus.findIDAddressToBytes(filAddr),
+                idAddress: () => lotus.findIDAddressToBytes(filAddr),
             },
         }
         accounts.push(account)
@@ -230,20 +232,23 @@ export const generate_f3_accounts = async (n: number) => {
 
 export const getStorageProvider = () => {
     //packs default miner info into a convient format
-    const filAddr = "t01000" //default - created by lotus-miner in localnet
 
+    const filAddr = "t01000" //default - created by lotus-miner in localnet
+    const idAddress = () => lotus.findIDAddressToBytes(filAddr)
     return {
         eth: {},
         fil: {
             address: filAddr,
             byteAddress: filAddressToBytes(filAddr),
-            idAddress: lotus.findIDAddressToBytes(filAddr),
+            idAddress,
+            id: BigInt(`0x${Buffer.from(idAddress()).toString("hex")}`), // actor id
         },
     }
 }
 
 export const performGeneralSetup = async () => {
     //general setup present in most of the tests
+
     if (DEBUG_ON) {
         console.log(`performGeneralSetup() called`)
     }
@@ -262,9 +267,6 @@ export const performGeneralSetup = async () => {
 
     await defaultTxDelay()
 
-    //note: can happen only after funding and not in `generate_f3`
-    client.fil.idAddress = lotus.findIDAddressToBytes(client.fil.address)
-
     if (DEBUG_ON) {
         console.log(`Funding done.`)
     }
@@ -276,12 +278,16 @@ export const deployContract = async (deployer: any, name: string, params?: { con
     //deploys a contract and attaches all the needed info for tests
 
     const ContractFactory = await ethers.getContractFactory(name, deployer.eth.signer)
-    console.log("pre-contract deploy")
+
+    if (DEBUG_ON) console.log(`Contract: ${name} pre-deploy ...`)
+
+    console.log("deployer balance:", await deployer.eth.signer.provider.getBalance(deployer.eth.address))
+
     let contract
     if (params == null || params.constructorParams == null) contract = await ContractFactory.connect(deployer.eth.signer).deploy()
     else contract = await ContractFactory.connect(deployer.eth.signer).deploy(...params.constructorParams)
 
-    console.log("contract deployed")
+    if (DEBUG_ON) console.log(`Contract: ${name} deployed.`)
 
     await contract.waitForDeployment()
     await defaultTxDelay()
@@ -296,7 +302,7 @@ export const deployContract = async (deployer: any, name: string, params?: { con
         fil: {
             address: filAddr,
             byteAddress: filAddressToBytes(filAddr),
-            idAddress: lotus.findIDAddressToBytes(filAddr),
+            idAddress: () => lotus.findIDAddressToBytes(filAddr),
         },
     }
 }
@@ -310,7 +316,6 @@ export const attachToContract = async (account: any, name: string, contractAddre
 
 export const idAddressToBigInt = (idAddress: Uint8Array) => {
     const result = BigInt(bytesToHex(idAddress).replace("0x00", "0x"))
-    console.log({ idAddressToBigInt: "called", idAddress, result })
     return result
 }
 
