@@ -41,4 +41,15 @@ contract SendApiTest {
 
         return exit_code;
     }
+
+    function send_with_actor_id(CommonTypes.FilActorId target, uint256 amount) public returns (int256) {
+        return send(target, amount);
+    }
+
+    function send_with_address(CommonTypes.FilAddress memory target, uint256 amount) public returns (int256) {
+        return send(target, amount);
+    }
+
+    receive() external payable {}
+    fallback() external payable {}
 }
