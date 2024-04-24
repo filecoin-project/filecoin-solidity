@@ -1,22 +1,17 @@
 #!/bin/sh
 
-set -e
+# set -e
 
 INTERNALS_DIR="/var/lib/fil-sol/lib-dev/dev-env/.internal"
 LOGPATH="$INTERNALS_DIR/dbg_log.txt"
 LOCALNET_JSON="$INTERNALS_DIR/localnet.json"
 DEVGEN_CAR="$INTERNALS_DIR/devgen.car"
 
-# lotus-miner stop
-# lotus daemon stop
-# sleep 10
 ps -ef | grep 'lotus' | grep -v grep | awk '{print $2}' | xargs -r kill -9
 rm -rf ~/.lotus-local-net/repo.lock  ~/.lotus-miner-local-net/repo.lock
 sleep 5
 
-
 rm -rf $INTERNALS_DIR
-# rm -rf bls-*.keyinfo $LOCALNET_JSON devgen.car 
 rm -rf ~/.genesis-sectors ~/.lotus-local-net ~/.lotus-miner-local-net
 
 mkdir -p $INTERNALS_DIR
@@ -59,24 +54,5 @@ sleep 25
 
 lotus wallet import "$INTERNALS_DIR/bls-$verifregRootKey1.keyinfo"
 lotus wallet import "$INTERNALS_DIR/bls-$notary1.keyinfo"
-
-echo "_deployProxies=start" >> $LOGPATH
-cd /var/lib/fil-sol
-npx hardhat run hh-test/_deployProxies.ts 
-echo "_deployProxies=end" >> $LOGPATH
-sleep 25
-
-ps -ef | grep 'lotus' | grep -v grep | awk '{print $2}' | xargs -r kill -9
-rm -rf ~/.lotus-local-net/repo.lock  ~/.lotus-miner-local-net/repo.lock
-sleep 5
-
-echo "LOTUS_FEVM_ENABLEETHRPC=true" >> $LOGPATH
-export LOTUS_FEVM_ENABLEETHRPC=true
-
-lotus daemon start & 
-sleep 25
-
-lotus-miner run --nosync &
-sleep 15
 
 echo "DONE!" >> $LOGPATH
