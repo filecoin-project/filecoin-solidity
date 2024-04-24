@@ -131,6 +131,26 @@ test_deserialize: build
 test_address: build
 	cd testing && cargo test address -- --nocapture
 
+################ TESTS HARDHAT ################
+
+start_localnet:
+	./lib-dev/dev-env/1_clean-start-localnet.sh
+
+restart_localnet:
+	./lib-dev/dev-env/2_restart-localnet.sh
+
+simple_start_localnet:
+	./lib-dev/dev-env/3_clean-simple-start.sh
+
+kill_localnet:
+	./lib-dev/dev-env/4_kill-lotus-ps.sh
+
+test_hh_localnet:
+	export HH_NETWORK=localnet && npx hardhat test
+
+test_hh_calibnet:
+	export HH_NETWORK=calibnet && npx hardhat test
+
 ################ TESTS SECURITY ################
 
 security_account_api:

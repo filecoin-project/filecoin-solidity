@@ -48,7 +48,7 @@
         "chai": "^4.3.7",
         "cids": "^1.1.9",
         "dotenv": "^16.4.5",
-        "ethers": "^6.1.0",
+        "ethers": "^6.4.0",
         "hardhat": "^2.19.1",
         "hardhat-contract-sizer": "^2.10.0",
         "hardhat-deploy-ethers": "^0.3.0-beta.13",
@@ -56,7 +56,13 @@
         "prettier-plugin-solidity": "^1.0.0",
         "ts-node": "^10.9.1",
         "typechain": "^8.3.1",
-        "typescript": "^5.2.2"
+        "typescript": "^5.2.2",
+        "@blitslabs/filecoin-js-signer": "^1.0.6",
+        "@noble/curves": "^1.4.0",
+        "@zondax/filecoin-signing-tools": "^2.4.3",
+        "bls-signatures": "^2.0.3",
+        "keccak": "^3.0.4",
+        "rlp": "^3.0.0"
     },
     "dependencies": {
         "solidity-cborutils": "^2.0.0"

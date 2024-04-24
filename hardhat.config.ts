@@ -21,8 +21,8 @@ try {
     process.exit(1)
 }
 
-const HH_NETWORK = process.env.HH_NETWORK != undefined ? process.env.HH_NETWORK : 'localnet'
-const SUPPORTED_NETWORKS =  {
+const HH_NETWORK = process.env.HH_NETWORK != undefined ? process.env.HH_NETWORK : "localnet"
+const SUPPORTED_NETWORKS = {
     localnet: {
         url: "http://127.0.0.1:1234/rpc/v1",
         chainId: 31415926,
@@ -32,12 +32,12 @@ const SUPPORTED_NETWORKS =  {
     calibnet: {
         url: "https://api.calibration.node.glif.io/rpc/v1",
         chainId: 314159,
-        accounts: [process.env.DEPLOYER_PK],
+        accounts: [process.env.ETH_PK],
     },
 }
 
-if(HH_NETWORK === undefined || SUPPORTED_NETWORKS[HH_NETWORK] == null){
-    console.log({ error: `HH_NETWORK env var (val:${HH_NETWORK}) not supported! (Must be: ${Object.keys(SUPPORTED_NETWORKS).join(' | ')})` })
+if (HH_NETWORK === undefined || SUPPORTED_NETWORKS[HH_NETWORK] == null) {
+    console.log({ error: `HH_NETWORK env var (val:${HH_NETWORK}) not supported! (Must be: ${Object.keys(SUPPORTED_NETWORKS).join(" | ")})` })
     process.exit(1)
 }
 
@@ -52,9 +52,9 @@ const config: HardhatUserConfig = {
         },
     },
     defaultNetwork: HH_NETWORK,
-    networks:SUPPORTED_NETWORKS,
+    networks: SUPPORTED_NETWORKS,
     mocha: {
-        timeout: 100000000,
+        timeout: 1000000000,
     },
     paths: {
         tests: `./hh-test/${HH_NETWORK}/e2e`,
