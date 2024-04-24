@@ -5,11 +5,7 @@ import { VerifRegTypes, CommonTypes, VerifRegApiTest } from "../../../typechain-
 
 import * as utils from "../../utils"
 
-describe.only("Verifreg Test", () => {
-    beforeEach(async () => {
-        // await utils.lotus.restart({ LOTUS_FEVM_ENABLEETHRPC: true })
-    })
-
+describe("Verifreg Test", () => {
     it("Test 1: Integration test port", async () => {
         await test1()
     })
@@ -20,35 +16,24 @@ const test1 = async () => {
 
     console.log(`Deploying contracts... (verifreg)`)
 
+    const VerifRegFactory = await ethers.getContractFactory("VerifRegApiTest")
     const verifreg = await utils.deployContract(deployer, "VerifRegApiTest")
 
-    //disable EVM RPC and restart localnet
-
-    await utils.lotus.restart({ LOTUS_FEVM_ENABLEETHRPC: false })
-
-    //add `verifreg` contract as verifier
-
-    utils.lotus.registerVerifier(verifreg.fil.address, 16000000)
-
-    //enable EVM RPC and restart localnet
-
-    await utils.lotus.restart({ LOTUS_FEVM_ENABLEETHRPC: true })
-
-    //add notary
+    const pVerifreg = await utils.upgradeToVerifRegProxy(deployer, VerifRegFactory, await verifreg.eth.contract.getAddress())
 
     const addr: CommonTypes.FilAddressStruct = {
         data: utils.filAddressToBytes(anyone.fil.address),
     }
 
     const allowance: CommonTypes.BigIntStruct = {
-        val: utils.hexToBytes(BigInt(1_000_000).toString(16)),
+        val: utils.hexToBytes(BigInt(1_000).toString(16)),
         neg: false,
     }
     const params: VerifRegTypes.AddVerifiedClientParamsStruct = {
         addr,
         allowance,
     }
-    await verifreg.eth.contract.add_verified_client(params)
+    await pVerifreg.add_verified_client(params)
     await utils.defaultTxDelay()
 
     console.log(`\n ---> Added verified Client !!! \n`)
@@ -58,17 +43,21 @@ const test1 = async () => {
         provider: storageProvider.fil.id,
         claim_ids,
     }
-    const res: VerifRegTypes.GetClaimsReturnStruct = await verifreg.eth.contract.get_claims(getClaimsParams)
+    const res: VerifRegTypes.GetClaimsReturnStruct = await pVerifreg.get_claims(getClaimsParams)
 
-    console.log("get_claims()", { res }, res.batch_info, res.claims)
-
-    const removeParams: VerifRegTypes.RemoveExpiredAllocationsParamsStruct = {
+    const removeAllocationParams: VerifRegTypes.RemoveExpiredAllocationsParamsStruct = {
         client: BigInt(0x65),
         allocation_ids: [],
     }
 
-    await verifreg.eth.contract.remove_expired_allocations(removeParams)
+    await pVerifreg.remove_expired_allocations(removeAllocationParams)
     await utils.defaultTxDelay()
 
-    console.log("remove_expired_allocations() - done")
+    const removeClaimParams: VerifRegTypes.RemoveExpiredClaimsParamsStruct = {
+        provider: BigInt(0x66),
+        claim_ids,
+    }
+
+    await pVerifreg.remove_expired_claims(removeClaimParams)
+    await utils.defaultTxDelay()
 }
