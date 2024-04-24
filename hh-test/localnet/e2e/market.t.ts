@@ -55,9 +55,15 @@ const test1 = async () => {
 
     console.log(`Publishing deal...`) //Note: Anyone can issue the publishing transaction
 
-    await market.eth.contract.connect(anyone.eth.signer).publish_storage_deals({ deals: [deal] }, { gasLimit: 1_000_000_000 })
+    console.log({ popTx: await market.eth.contract.publish_storage_deals.populateTransaction({ deals: [deal] }) })
 
+    const tx = await market.eth.contract.publish_storage_deals({ deals: [deal] }, { gasLimit: 1_000_000_000 })
+
+    await tx.wait()
     await utils.defaultTxDelay()
+    await utils.defaultTxDelay()
+
+    console.log({ tx })
 
     //Asertions
 
@@ -102,11 +108,14 @@ const test1 = async () => {
 
     //Actual values
     const dealID = await market.eth.contract.publishedDealIds(0)
+    console.log({ dealID })
     const actualDealCommitment: MarketTypes.GetDealDataCommitmentReturnStruct = await market.eth.contract.get_deal_data_commitment(dealID)
+    console.log({ actualDealCommitment })
     const actualDealClientId = await market.eth.contract.get_deal_client(dealID)
     const actualDealProviderId = await market.eth.contract.get_deal_provider(dealID)
     const actualDealLabel: CommonTypes.DealLabelStruct = await market.eth.contract.get_deal_label(dealID)
     const actualDealTerm: MarketTypes.GetDealTermReturnStruct = await market.eth.contract.get_deal_term(dealID)
+    console.log({ actualDealTerm })
     const actualDealTotalPrice: CommonTypes.BigIntStruct = await market.eth.contract.get_deal_total_price(dealID)
     const actualDealClientCollateral: CommonTypes.BigIntStruct = await market.eth.contract.get_deal_client_collateral(dealID)
     const actualDealProviderCollateral: CommonTypes.BigIntStruct = await market.eth.contract.get_deal_provider_collateral(dealID)
