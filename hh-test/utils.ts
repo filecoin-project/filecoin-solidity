@@ -8,6 +8,7 @@ import * as rlp from "rlp"
 import * as keccak from "keccak"
 
 import "dotenv/config"
+import { writeFileSync } from "fs"
 
 const CID = require("cids")
 
@@ -111,6 +112,36 @@ export const lotus = {
         const cmd = `${PREFIX_CMD}lotus filplus grant-datacap --from=${notaryAddress} ${filAddress} ${amount}"`
         return execSync(cmd).toString().replace("\n", "")
     },
+    changeMinerOwner: (newBeneficiary: string) => {
+        // const preCmd = `${PREFIX_CMD}lotus wallet set-default ...`
+        //lotus-miner actor confirm-change-beneficiary  --really-do-it --new-beneficiary
+        const cmd = `${PREFIX_CMD}lotus-miner actor propose-change-beneficiary --really-do-it --overwrite-pending-change ${newBeneficiary} 1 1 "`
+        return execSync(cmd).toString().replace("\n", "")
+    },
+    evmInvoke: (contractFilAddress: string, payload: string) => {
+        const payloadWithout0x = payload.replace(`0x`, ``)
+        const cmd = `${PREFIX_CMD}lotus evm invoke ${contractFilAddress} ${payloadWithout0x}"`
+        return execSync(cmd).toString().replace("\n", "")
+    },
+    importDefaultWallets: () => {
+        const keyFilename = "tmp-000001.keygen"
+        try {
+            //note: try/catch because they are maybe already imported which will cause failure
+
+            writeFileSync(keyFilename, process.env.F3_PK)
+            _execute(`lotus wallet import ${keyFilename}`)
+        } catch (err) {
+            // console.log("ERR (importDefaultWallets):", err)
+        }
+        _execute(`rm -rf ${keyFilename}`)
+
+        return { fil: { address: process.env.F3_ADDR, idAddress: BigInt(process.env.F3_ID) } }
+    },
+}
+
+const _execute = (cmd: string, options?: any) => {
+    const _options = options == null ? { stdio: [] } : options
+    return execSync(`${PREFIX_CMD} ${cmd}"`, _options).toString()
 }
 
 const _getVerifier1RootKey = () => {
@@ -389,32 +420,40 @@ export const performGeneralSetup = async () => {
     return { deployer, anyone, client, storageProvider }
 }
 
-export const performGeneralSetupOnCalibnet = async () => {
+export const performGeneralSetupOnCalibnet = async (addExtraAccounts?: boolean) => {
     const master = new ethers.Wallet(process.env.ETH_PK, createNetworkProvider())
 
-    const [deployer, anyone] = generate_f410_accounts(2)
-    const [client] = await generate_f3_accounts(1)
+    const deployer = { eth: { signer: master, address: await master.getAddress() }, fil: {} }
 
-    const deployerAmount = BigInt(10) * BigInt(10 ** 18)
-    const anyoneAmount = BigInt(1) * BigInt(10 ** 18)
+    const extraAccounts = []
+    if (addExtraAccounts) {
+        const [deployer, anyone] = generate_f410_accounts(2)
+        const [client] = await generate_f3_accounts(1)
 
-    const filecoin_signer = new FilecoinSigner()
+        const deployerAmount = BigInt(10) * BigInt(10 ** 18)
+        const anyoneAmount = BigInt(1) * BigInt(10 ** 18)
 
-    const clientSignMessage = async (message: string) => filecoin_signer.utils.signMessage(message, process.env.F3_PK)
+        const filecoin_signer = new FilecoinSigner()
 
-    await master.sendTransaction({
-        to: deployer.eth.address,
-        value: deployerAmount,
-    })
-    await defaultTxDelay()
+        const clientSignMessage = async (message: string) => filecoin_signer.utils.signMessage(message, process.env.F3_PK)
 
-    // await master.sendTransaction({
-    //     to: anyone.eth.address,
-    //     value: anyoneAmount,
-    // })
-    // await defaultTxDelay()
+        await master.sendTransaction({
+            to: deployer.eth.address,
+            value: deployerAmount,
+        })
+        await defaultTxDelay()
 
-    return { master, deployer, anyone, client, clientSignMessage }
+        await master.sendTransaction({
+            to: anyone.eth.address,
+            value: anyoneAmount,
+        })
+        await defaultTxDelay()
+
+        extraAccounts.push(deployer)
+        extraAccounts.push(anyone)
+    }
+
+    return { master, deployer, extraAccounts }
 }
 
 export const deployContract = async (deployer: any, name: string, params?: { constructorParams?: [] }) => {

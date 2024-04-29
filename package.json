@@ -33,7 +33,9 @@
         "access": "public"
     },
     "devDependencies": {
+        "@blitslabs/filecoin-js-signer": "^1.0.6",
         "@glif/filecoin-address": "^2.0.43",
+        "@noble/curves": "^1.4.0",
         "@nomicfoundation/hardhat-ethers": "^3.0.4",
         "@nomicfoundation/hardhat-foundry": "^1.0.3",
         "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
@@ -45,6 +47,8 @@
         "@types/chai": "^4.3.5",
         "@types/mocha": "^10.0.1",
         "@types/node": "^20.5.0",
+        "@zondax/filecoin-signing-tools": "^2.4.3",
+        "bls-signatures": "^2.0.3",
         "chai": "^4.3.7",
         "cids": "^1.1.9",
         "dotenv": "^16.4.5",
@@ -52,19 +56,16 @@
         "hardhat": "^2.19.1",
         "hardhat-contract-sizer": "^2.10.0",
         "hardhat-deploy-ethers": "^0.3.0-beta.13",
+        "keccak": "^3.0.4",
         "prettier": "^2.7.1",
         "prettier-plugin-solidity": "^1.0.0",
+        "rlp": "^3.0.0",
         "ts-node": "^10.9.1",
         "typechain": "^8.3.1",
-        "typescript": "^5.2.2",
-        "@blitslabs/filecoin-js-signer": "^1.0.6",
-        "@noble/curves": "^1.4.0",
-        "@zondax/filecoin-signing-tools": "^2.4.3",
-        "bls-signatures": "^2.0.3",
-        "keccak": "^3.0.4",
-        "rlp": "^3.0.0"
+        "typescript": "^5.2.2"
     },
     "dependencies": {
+        "@noble/secp256k1": "^2.1.0",
         "solidity-cborutils": "^2.0.0"
     }
 }

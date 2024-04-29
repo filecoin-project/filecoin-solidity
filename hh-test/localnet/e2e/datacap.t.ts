@@ -4,7 +4,7 @@ import { expect, util } from "chai"
 import * as utils from "../../utils"
 import { CommonTypes, DataCapTypes } from "../../../typechain-types/contracts/v0.8/tests/datacap.test.sol/DataCapApiTest"
 
-describe.only("Datacap Test", () => {
+describe("Datacap Test", () => {
     beforeEach(async () => {})
 
     it("Test 1: Integration test port", async () => {

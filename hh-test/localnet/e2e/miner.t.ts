@@ -1,12 +1,6 @@
 import { ethers } from "hardhat"
 import { expect, util } from "chai"
 
-/*
-
-lotus send --method 2 -—params-hex 85420067583103a27f8f61995da2205e0fe541598fee7f2273455c3a1b15afa5b6a706c0912f13a1581f8ac28618abdfe13a8bc31aa5c00a430102038143010203 t04 0
-lotus send --method 2 —-params-hex 854200675831035d733f4beef4e9af1cc73c8e3a053b2c7cb58e0cb4d8234befa28a3811c4630fa73db64b69a0ac5a33cd7b18938f0a430102038143010203 t04 0
-*/
-
 import * as utils from "../../utils"
 import { CommonTypes, MinerTypes } from "../../../typechain-types/contracts/v0.8/tests/miner.test.sol/MinerApiTest"
 
@@ -24,9 +18,36 @@ const test1 = async () => {
     console.log(`Deploying contracts... (MinerApiTest)`)
 
     const minerSC = await utils.deployContract(deployer, "MinerApiTest")
+    console.log({ minerSC })
+
+    utils.lotus.changeMinerOwner(minerSC.fil.address)
+    await utils.defaultTxDelay()
+
+    console.log(`Change owner proposed.`)
+
+    const target = 1000
+
+    // const newBeneficiary: CommonTypes.FilAddressStruct = { data: Uint8Array.from([0, ...Array.from(minerSC.fil.idAddress())]) }
+    const newBeneficiary: CommonTypes.FilAddressStruct = { data: minerSC.fil.idAddress() }
+    // const newBeneficiary: CommonTypes.FilAddressStruct = { data: Uint8Array.from([0, 0x66]) }
+
+    console.log({ newBeneficiary })
+
+    const enc = await minerSC.eth.contract.encodeFilAddress(newBeneficiary)
+    const enc2 = await minerSC.eth.contract.encodeFilAddress({ data: minerSC.fil.byteAddress })
+
+    console.log({ enc, enc2 })
+
+    try {
+        await minerSC.eth.contract.change_owner_address(target, newBeneficiary)
+        await utils.defaultTxDelay()
+    } catch {
+        const popTx = await minerSC.eth.contract.change_owner_address.populateTransaction(target, newBeneficiary)
+        utils.lotus.evmInvoke(minerSC.fil.address, popTx.data)
+    }
+    console.log(`Change owner completed!`)
 
     // const target = storageProvider.fil.id
-    const target = 0x65
 
     //...
 
@@ -38,7 +59,8 @@ const test1 = async () => {
     //.....
 
     // const addr: CommonTypes.FilAddressStruct = { data: storageProvider.fil.byteAddress }
-    const addr: CommonTypes.FilAddressStruct = { data: Uint8Array.from([0x00, 0x65]) }
+    // const addr: CommonTypes.FilAddressStruct = { data: Uint8Array.from([0x00, 0x03, 0xec]) }
+    const addr: CommonTypes.FilAddressStruct = { data: minerSC.fil.idAddress() }
 
     console.log({ target, addr })
 
