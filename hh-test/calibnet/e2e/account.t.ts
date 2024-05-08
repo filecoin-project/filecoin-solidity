@@ -5,18 +5,33 @@ import { CommonTypes, AccountTypes } from "../../../typechain-types/contracts/v0
 
 import * as utils from "../../utils"
 
-describe.only("Account Test", () => {
-    beforeEach(async () => {})
+describe("Account Test", () => {
+    const DBG_TESTS = {}
+    let currentTestName: string
+
+    before(async () => {})
+
+    beforeEach(function () {
+        currentTestName = this.currentTest.title
+        DBG_TESTS[currentTestName] = true
+    })
 
     it("Test 1: Integration test port", async () => {
-        await test1()
+        await test1(currentTestName)
+        DBG_TESTS[currentTestName] = false
+    })
+
+    afterEach(() => {
+        if (DBG_TESTS[currentTestName]) {
+            utils.printDbgLog(currentTestName)
+        }
     })
 })
 
-const test1 = async () => {
-    const { deployer } = await utils.performGeneralSetupOnCalibnet()
+const test1 = async (testName: string) => {
+    const dbg = utils.initDbg(testName)
 
-    console.log({ deployer })
+    const { deployer } = await utils.performGeneralSetupOnCalibnet()
 
     const user = utils.lotus.importDefaultWallets()
 
@@ -25,7 +40,7 @@ const test1 = async () => {
 
     const signature = utils.lotus.signMessage(user.fil.address, message)
 
-    console.log(`Deploying contracts... (account)`)
+    dbg(`Deploying contracts... (account)`)
 
     const account = await utils.deployContract(deployer, "AccountApiTest")
 
@@ -46,10 +61,13 @@ const test1 = async () => {
         message: utils.hexToBytes(message),
     }
 
+    dbg(`Authenticating message...`)
+
     //note: no additional checks performed
     //      it will revert if the signature/message is incorrect
     await account.eth.contract.authenticate_message(target, params)
-    await utils.defaultTxDelay()
+
+    dbg(`Calling universal hook...`)
 
     const universalReceiverParams: CommonTypes.UniversalReceiverParamsStruct = {
         type_: BigInt(0),

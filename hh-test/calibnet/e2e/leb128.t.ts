@@ -4,17 +4,37 @@ import { expect, util } from "chai"
 import * as utils from "../../utils"
 
 describe("Leb128 Test", () => {
-    beforeEach(async () => {})
+    const DBG_TESTS = {}
+    let currentTestName: string
+
+    before(async () => {})
+
+    beforeEach(function () {
+        currentTestName = this.currentTest.title
+        DBG_TESTS[currentTestName] = true
+    })
 
     it("Test 1: Integration test port", async () => {
-        await test1()
+        // await test1(currentTestName)
+        DBG_TESTS[currentTestName] = false
+    })
+
+    afterEach(() => {
+        if (DBG_TESTS[currentTestName]) {
+            utils.printDbgLog(currentTestName)
+        }
     })
 })
 
-const test1 = async () => {
+const test1 = async (testName: string) => {
+    const dbg = utils.initDbg(testName)
+
     const { deployer } = await utils.performGeneralSetupOnCalibnet()
 
-    console.log(`Deploying contracts... (Leb128Generated[1..15]Test)`)
+    dbg(`Deploying contracts... (Leb128Generated[1..15]Test)`)
+
+    const startingNonce = await deployer.eth.signer.getNonce()
+
     const leb128_SC = []
     for (let i = 1; i < 15; ++i) {
         const cName = `Leb128Generated${i}Test`
@@ -25,6 +45,5 @@ const test1 = async () => {
     for (const l128_SC of leb128_SC) {
         //note: additional checks performed inside contracts (all revert on error)
         await l128_SC.eth.contract.unsiged_integer_leb128_encoding_generated()
-        await utils.defaultTxDelay()
     }
 }

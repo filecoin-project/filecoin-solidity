@@ -4,17 +4,34 @@ import { expect, util } from "chai"
 import * as utils from "../../utils"
 
 describe("CborDecode Test", () => {
-    beforeEach(async () => {})
+    const DBG_TESTS = {}
+    let currentTestName: string
+
+    before(async () => {})
+
+    beforeEach(function () {
+        currentTestName = this.currentTest.title
+        DBG_TESTS[currentTestName] = true
+    })
 
     it("Test 1: Integration test port", async () => {
-        await test1()
+        await test1(currentTestName)
+        DBG_TESTS[currentTestName] = false
+    })
+
+    afterEach(() => {
+        if (DBG_TESTS[currentTestName]) {
+            utils.printDbgLog(currentTestName)
+        }
     })
 })
 
-const test1 = async () => {
+const test1 = async (testName: string) => {
+    const dbg = utils.initDbg(testName)
+
     const { deployer } = await utils.performGeneralSetupOnCalibnet()
 
-    console.log(`Deploying contracts... (CborDecodeTest)`)
+    dbg(`Deploying contracts... (CborDecodeTest)`)
 
     const cborDecode = await utils.deployContract(deployer, "CborDecodeTest")
 
