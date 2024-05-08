@@ -6,17 +6,32 @@ import * as utils from "../../utils"
 import { CommonTypes } from "../../../typechain-types/contracts/v0.8/tests/precompiles.test.sol/PrecompilesApiTest"
 
 describe("Precompiles Test", () => {
-    beforeEach(async () => {})
+    const DBG_TESTS = {}
+    let currentTestName: string
+
+    before(async () => {})
+
+    beforeEach(function () {
+        currentTestName = this.currentTest.title
+        DBG_TESTS[currentTestName] = true
+    })
 
     it("Test 1: Integration test port", async () => {
-        await test1()
+        await test1(currentTestName)
+        DBG_TESTS[currentTestName] = false
+    })
+
+    afterEach(() => {
+        if (DBG_TESTS[currentTestName]) {
+            utils.printDbgLog(currentTestName)
+        }
     })
 })
-
-const test1 = async () => {
+const test1 = async (testName: string) => {
+    const dbg = utils.initDbg(testName)
     const { deployer, anyone, client: f3Addr } = await utils.performGeneralSetup()
 
-    console.log(`Deploying contracts... (PrecompilesApiTest)`)
+    dbg(`Deploying contracts... (PrecompilesApiTest)`)
 
     const precompilesSC = await utils.deployContract(deployer, "PrecompilesApiTest")
 

@@ -6,26 +6,45 @@ import { MarketTypes, CommonTypes } from "../../../typechain-types/contracts/v0.
 import * as utils from "../../utils"
 
 describe("Market Tests", () => {
-    it("Test 1: Basic Deal Flow", async () => await test1())
+    const DBG_TESTS = {}
+    let currentTestName: string
+
+    beforeEach(function () {
+        utils.removeProxyArtifacts()
+        currentTestName = this.currentTest.title
+        DBG_TESTS[currentTestName] = true
+    })
+
+    it("Test 1: Basic Deal Flow", async () => {
+        await test1(currentTestName)
+        DBG_TESTS[currentTestName] = false
+    })
+
+    afterEach(() => {
+        if (DBG_TESTS[currentTestName]) {
+            utils.printDbgLog(currentTestName)
+        }
+    })
 })
 
-const test1 = async () => {
+const test1 = async (testName: string) => {
     //test scenario adopted from rust integration tests
+
+    const dbg = utils.initDbg(testName)
 
     const { deployer, anyone, client, storageProvider } = await utils.performGeneralSetup()
 
-    console.log(`Deploying contracts... (market and helper)`)
+    dbg(`Deploying contracts... (market and helper)`)
 
     const market = await utils.deployContract(deployer, "MarketApiTest")
     const helper = await utils.deployContract(deployer, "MarketHelper")
 
-    console.log(`Contracts deployed:`)
-    console.log({ market, helper })
+    dbg(`Contracts deployed:`)
 
-    console.log(`Setting miner control address to market.eth.contract: ${market.fil.address}`)
+    dbg(`Setting miner control address to market.eth.contract: ${market.fil.address}`)
     utils.lotus.setControlAddress(market.fil.address)
 
-    console.log(`Funding Escrows... (client and provider)`)
+    dbg(`Funding Escrows... (client and provider)`)
     const amount = BigInt(10 ** 18)
 
     await market.eth.contract.add_balance({ data: client.fil.byteAddress }, amount, { gasLimit: 1_000_000_000, value: amount })
@@ -40,12 +59,12 @@ const test1 = async () => {
 
     const actualClientBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: client.fil.byteAddress })
 
-    console.log({ expectedClientBalance, actualClientBalance })
+    dbg(JSON.stringify({ expectedClientBalance, actualClientBalance }))
 
     expect(actualClientBalance.balance.val).to.eq(expectedClientBalance.val)
     expect(actualClientBalance.balance.neg).to.eq(expectedClientBalance.neg)
 
-    console.log(`Generating deal params...`)
+    dbg(`Generating deal params...`)
     const { deal, dealDebug } = utils.generateDealParams(client.fil.address, storageProvider.fil.address)
     const serializedDealProposal = (await helper.eth.contract.serialize_deal_proposal(deal.proposal)).slice(2)
 
@@ -53,17 +72,14 @@ const test1 = async () => {
 
     deal.client_signature = utils.hexToBytes(signedDealProposal)
 
-    console.log(`Publishing deal...`) //Note: Anyone can issue the publishing transaction
+    dbg(`Publishing deal...`) //Note: Anyone can issue the publishing transaction
 
-    console.log({ popTx: await market.eth.contract.publish_storage_deals.populateTransaction({ deals: [deal] }) })
+    dbg(JSON.stringify({ popTx: await market.eth.contract.publish_storage_deals.populateTransaction({ deals: [deal] }) }))
 
     const tx = await market.eth.contract.publish_storage_deals({ deals: [deal] }, { gasLimit: 1_000_000_000 })
 
     await tx.wait()
-    await utils.defaultTxDelay()
-    await utils.defaultTxDelay()
-
-    console.log({ tx })
+    await utils.defaultTxDelay(2)
 
     //Asertions
 
@@ -93,49 +109,22 @@ const test1 = async () => {
         terminated: BigInt(0),
     }
 
-    console.log(`EXPECTED:`, {
-        expectedDealCommitment,
-        expectedDealClientId,
-        expectedDealProviderId,
-        expectedDealLabel,
-        expectedDealTerm,
-        expectedDealTotalPrice,
-        expectedDealClientCollateral,
-        expectedDealProviderCollateral,
-        expectedDealVerified,
-        expectedDealActivation,
-    })
-
+    dbg(`Getting deal info...`)
     //Actual values
     const dealID = await market.eth.contract.publishedDealIds(0)
-    console.log({ dealID })
+
+    dbg(`Deal ID: ${dealID}`)
     const actualDealCommitment: MarketTypes.GetDealDataCommitmentReturnStruct = await market.eth.contract.get_deal_data_commitment(dealID)
-    console.log({ actualDealCommitment })
     const actualDealClientId = await market.eth.contract.get_deal_client(dealID)
     const actualDealProviderId = await market.eth.contract.get_deal_provider(dealID)
     const actualDealLabel: CommonTypes.DealLabelStruct = await market.eth.contract.get_deal_label(dealID)
     const actualDealTerm: MarketTypes.GetDealTermReturnStruct = await market.eth.contract.get_deal_term(dealID)
-    console.log({ actualDealTerm })
     const actualDealTotalPrice: CommonTypes.BigIntStruct = await market.eth.contract.get_deal_total_price(dealID)
     const actualDealClientCollateral: CommonTypes.BigIntStruct = await market.eth.contract.get_deal_client_collateral(dealID)
     const actualDealProviderCollateral: CommonTypes.BigIntStruct = await market.eth.contract.get_deal_provider_collateral(dealID)
 
     const actualDealVerified = await market.eth.contract.get_deal_verified(dealID)
     const actualDealActivation: MarketTypes.GetDealActivationReturnStruct = await market.eth.contract.get_deal_activation(dealID)
-
-    console.log(`ACTUAL:`, {
-        dealID,
-        actualDealClientId,
-        actualDealClientCollateral,
-        actualDealProviderCollateral,
-        actualDealProviderId,
-        actualDealLabel,
-        actualDealTerm,
-        actualDealTotalPrice,
-        actualDealCommitment,
-        actualDealVerified,
-        actualDealActivation,
-    })
 
     //Comparison checks
     expect(actualDealCommitment.data).to.eq(expectedDealCommitment.data)

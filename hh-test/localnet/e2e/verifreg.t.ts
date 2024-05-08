@@ -6,15 +6,34 @@ import { VerifRegTypes, CommonTypes, VerifRegApiTest } from "../../../typechain-
 import * as utils from "../../utils"
 
 describe("Verifreg Test", () => {
+    const DBG_TESTS = {}
+    let currentTestName: string
+
+    before(async () => {})
+
+    beforeEach(function () {
+        currentTestName = this.currentTest.title
+        DBG_TESTS[currentTestName] = true
+    })
+
     it("Test 1: Integration test port", async () => {
-        await test1()
+        await test1(currentTestName)
+        DBG_TESTS[currentTestName] = false
+    })
+
+    afterEach(() => {
+        if (DBG_TESTS[currentTestName]) {
+            utils.printDbgLog(currentTestName)
+        }
     })
 })
 
-const test1 = async () => {
+const test1 = async (testName: string) => {
+    const dbg = utils.initDbg(testName)
+
     const { deployer, anyone, storageProvider } = await utils.performGeneralSetup()
 
-    console.log(`Deploying contracts... (verifreg)`)
+    dbg(`Deploying contracts... (verifreg)`)
 
     const VerifRegFactory = await ethers.getContractFactory("VerifRegApiTest")
     const verifreg = await utils.deployContract(deployer, "VerifRegApiTest")
@@ -36,7 +55,7 @@ const test1 = async () => {
     await pVerifreg.add_verified_client(params)
     await utils.defaultTxDelay()
 
-    console.log(`\n ---> Added verified Client !!! \n`)
+    dbg(`---> Added verified Client !!!`)
 
     const claim_ids = [0, 1]
     const getClaimsParams: VerifRegTypes.GetClaimsParamsStruct = {

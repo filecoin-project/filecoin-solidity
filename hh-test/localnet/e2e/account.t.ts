@@ -6,14 +6,31 @@ import { CommonTypes, AccountTypes } from "../../../typechain-types/contracts/v0
 import * as utils from "../../utils"
 
 describe("Account Test", () => {
-    beforeEach(async () => {})
+    const DBG_TESTS = {}
+    let currentTestName: string
+
+    before(async () => {})
+
+    beforeEach(function () {
+        currentTestName = this.currentTest.title
+        DBG_TESTS[currentTestName] = true
+    })
 
     it("Test 1: Integration test port", async () => {
-        await test1()
+        await test1(currentTestName)
+        DBG_TESTS[currentTestName] = false
+    })
+
+    afterEach(() => {
+        if (DBG_TESTS[currentTestName]) {
+            utils.printDbgLog(currentTestName)
+        }
     })
 })
 
-const test1 = async () => {
+const test1 = async (testName: string) => {
+    const dbg = utils.initDbg(testName)
+
     const { deployer, client } = await utils.performGeneralSetup()
 
     const message =
@@ -21,7 +38,7 @@ const test1 = async () => {
 
     const signature = utils.lotus.signMessage(client.fil.address, message)
 
-    console.log(`Deploying contracts... (account)`)
+    dbg(`Deploying contracts... (account)`)
 
     const account = await utils.deployContract(deployer, "AccountApiTest")
 
