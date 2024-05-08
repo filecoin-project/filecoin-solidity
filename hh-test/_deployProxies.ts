@@ -21,10 +21,12 @@ const main = async () => {
     const verifRegProxyAddr = await proxyFact.eth.contract.verifRegProxy()
     const dataCapProxyAddr = await proxyFact.eth.contract.dataCapProxy()
 
-    writeFileSync("/var/lib/fil-sol/lib-dev/dev-env/.internal/proxyFactory.addr", proxyFact.eth.address)
-    writeFileSync("/var/lib/fil-sol/lib-dev/dev-env/.internal/verifRegProxy.addr", verifRegProxyAddr)
-    writeFileSync("/var/lib/fil-sol/lib-dev/dev-env/.internal/dataCapProxy.addr", dataCapProxyAddr)
-    writeFileSync("/var/lib/fil-sol/lib-dev/dev-env/.internal/userWithDataCap.addr", userWithDataCapAddr.fil.address)
+    const filePathPrefix = `/var/lib/fil-sol/lib-dev/dev-env/.internal`
+
+    writeFileSync(`${filePathPrefix}/proxyFactory.addr`, proxyFact.eth.address)
+    writeFileSync(`${filePathPrefix}/verifRegProxy.addr`, verifRegProxyAddr)
+    writeFileSync(`${filePathPrefix}/dataCapProxy.addr`, dataCapProxyAddr)
+    writeFileSync(`${filePathPrefix}/userWithDataCap.addr`, userWithDataCapAddr.fil.address)
 
     await utils.lotus.restart({ LOTUS_FEVM_ENABLEETHRPC: false })
 
@@ -35,8 +37,6 @@ const main = async () => {
     utils.lotus.registerVerifier(verifier2.fil.address, 16000000)
     utils.lotus.grantDatacap(verifier.fil.address, utils.ethAddressToFilAddress(dataCapProxyAddr), 1000)
     // utils.lotus.grantDatacap(verifier2.fil.address, userWithDataCapAddr.fil.address, 1000)
-
-    console.log("RUN done!")
 
     utils.lotus.kill()
 }
