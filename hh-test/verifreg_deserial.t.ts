@@ -12,7 +12,7 @@ const DBG_LOG_ON = false
 const main = async () => {
     const deployerPk = network.config.accounts[0]
 
-    const provider = new ethers.providers.JsonRpcProvider(network.config.url)
+    const provider = utils.createNetworkProvider()
 
     const deployer = new ethers.Wallet(deployerPk, provider)
 

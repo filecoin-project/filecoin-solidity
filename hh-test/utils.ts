@@ -12,7 +12,7 @@ import { writeFileSync } from "fs"
 
 const CID = require("cids")
 
-const DEBUG_ON = false //process.env.DEBUG_ON == undefined ? false : true
+const DEBUG_ON = false
 
 const SCRIPTS_DIR = `/var/lib/fil-sol/lib-dev/dev-env`
 
@@ -211,6 +211,9 @@ export const upgradeToFirstAvailableProxy = async (account, contractFactory, con
 let dealID = 0
 export const DEAL_INFO = [
     { pieceCid: "baga6ea4seaqn7y7fwlhlshrysd2j443pyi6knof2c5qp533co2mqj5rzbq7t2pi", label: "mAXCg5AIgw4oywPmiPRxJLioYxMdIkKmaJ4FFumCvS/GC4gEzGng" },
+    { pieceCid: "baga6ea4seaqlkg6mss5qs56jqtajg5ycrhpkj2b66cgdkukf2qjmmzz6ayksuci", label: "mAXCg5AIg8YBXbFjtdBy1iZjpDYAwRSt0elGLF5GvTqulEii1VcM" },
+    { pieceCid: "baga6ea4seaqdl6geodjdraqwh56yqewcub4pxnlxsc7673xnfazhctawun22aha", label: "mAXCg5AIglPFhEfVlJwt+dkvz/JNQ8BakUxmAZb1dQ8F0sKnHeFE" },
+    { pieceCid: "baga6ea4seaqcxsr53negpkklyb4p6pojm2726yrr34lszn5j7qiacc7htv7vueq", label: "mAXCg5AIgmtJq7yh1JTsGJkPrA1hLaSnXZIE+MfeeP1bT8OOGb4A" },
 ]
 
 export const generateDealParams = (clientFilAddress: string, providerFilAddress: string) => {
@@ -267,8 +270,6 @@ export const generateDealParams = (clientFilAddress: string, providerFilAddress:
         },
     }
 
-    dealID += 1
-
     return dealInfo
 }
 
@@ -277,11 +278,15 @@ export const createNetworkProvider = () => {
     return provider
 }
 
-export const defaultTxDelay = async () => {
-    if (network.name === "localnet") {
-        await delay(10_000)
-    } else if (network.name === "calibnet") {
-        await delay(60_000)
+export const defaultTxDelay = async (repeat?: number) => {
+    const _repeat = repeat == null ? 1 : repeat
+
+    for (let i = 0; i < _repeat; i += 1) {
+        if (network.name === "localnet") {
+            await delay(10_000)
+        } else if (network.name === "calibnet") {
+            await delay(40_000)
+        }
     }
 }
 
@@ -456,7 +461,7 @@ export const performGeneralSetupOnCalibnet = async (addExtraAccounts?: boolean) 
     return { master, deployer, extraAccounts }
 }
 
-export const deployContract = async (deployer: any, name: string, params?: { constructorParams?: [] }) => {
+export const deployContract = async (deployer: any, name: string, params?: { constructorParams?: []; noDelay?: boolean; nonce?: number }) => {
     //deploys a contract and attaches all the needed info for tests
 
     const ContractFactory = await ethers.getContractFactory(name, deployer.eth.signer)
@@ -466,13 +471,23 @@ export const deployContract = async (deployer: any, name: string, params?: { con
     if (DEBUG_ON) console.log("deployer balance:", await deployer.eth.signer.provider.getBalance(deployer.eth.address))
 
     let contract
-    if (params == null || params.constructorParams == null) contract = await ContractFactory.connect(deployer.eth.signer).deploy({ gasLimit: 10000000000 })
-    else contract = await ContractFactory.connect(deployer.eth.signer).deploy(...params.constructorParams)
 
+    const nonce = params && params.nonce
+    if (nonce == null) {
+        if (params == null || params.constructorParams == null) contract = await ContractFactory.connect(deployer.eth.signer).deploy({ gasLimit: 10000000000 })
+        else contract = await ContractFactory.connect(deployer.eth.signer).deploy(...params.constructorParams)
+    } else {
+        if (params == null || params.constructorParams == null)
+            contract = await ContractFactory.connect(deployer.eth.signer).deploy({ gasLimit: 10000000000, nonce })
+        else contract = await ContractFactory.connect(deployer.eth.signer).deploy(...params.constructorParams, { nonce })
+    }
     if (DEBUG_ON) console.log(`Contract: ${name} deployed.`)
 
     await contract.waitForDeployment()
-    await defaultTxDelay()
+    if (params != null && params.noDelay != false) {
+    } else {
+        await defaultTxDelay()
+    }
 
     const ethAddr = await contract.getAddress()
     const filAddr = ethAddressToFilAddress(ethAddr)
@@ -559,4 +574,34 @@ export const getDefaultDeployer = async () => {
     }
 
     return deployer
+}
+
+let _DBG_TEST_LOGS = {}
+export const dbg = (testName: string, info: string) => {
+    if (_DBG_TEST_LOGS[testName] == null) {
+        _DBG_TEST_LOGS[testName] = []
+    }
+    _DBG_TEST_LOGS[testName].push(info)
+}
+
+export const initDbg = (testName: string) => (info: string) => dbg(testName, info)
+
+export const exportDbgLog = (testName: string) => {
+    return _DBG_TEST_LOGS[testName]
+}
+
+export const printDbgLog = (testName: string) => {
+    if (_DBG_TEST_LOGS[testName] == null) {
+        console.log(`DBG::No logs for: '${testName}'`)
+        return
+    }
+
+    console.log(`DBG: (${testName}) :::: `)
+    for (const line of _DBG_TEST_LOGS[testName]) {
+        console.log(`\t${line}\n`)
+    }
+}
+
+export const removeProxyArtifacts = () => {
+    execSync(`rm -rf .openzeppelin`)
 }
