@@ -55,8 +55,10 @@ library PowerAPI {
             return (0, result.deserializeCreateMinerReturn());
         }
 
-        PowerTypes.CreateMinerReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (
+            exit_code,
+            PowerTypes.CreateMinerReturn({id_address: CommonTypes.FilAddress({data: hex""}), robust_address: CommonTypes.FilAddress({data: hex""})})
+        );
     }
 
     /// @notice Returns the total number of miners created, regardless of whether or not they have any pledged storage.
@@ -71,8 +73,7 @@ library PowerAPI {
             return (0, result.deserializeUint64());
         }
 
-        uint64 empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, uint64(0));
     }
 
     /// @notice Returns the total number of miners that have more than the consensus minimum amount of storage active.
@@ -92,8 +93,7 @@ library PowerAPI {
             return (0, result.deserializeInt64());
         }
 
-        int64 empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, int64(0));
     }
 
     /// @notice Returns the total raw power of the network.
@@ -108,8 +108,7 @@ library PowerAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Returns the raw power claimed by the specified miner, and whether the miner has more than the consensus minimum amount of storage active.
@@ -125,7 +124,6 @@ library PowerAPI {
             return (0, result.deserializeMinerRawPowerReturn());
         }
 
-        PowerTypes.MinerRawPowerReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, PowerTypes.MinerRawPowerReturn({raw_byte_power: CommonTypes.BigInt({val: hex"00", neg: false}), meets_consensus_minimum: false}));
     }
 }
