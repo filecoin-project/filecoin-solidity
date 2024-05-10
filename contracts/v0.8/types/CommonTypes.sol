@@ -19,13 +19,12 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
-
 /// @title Filecoin actors' common types for Solidity.
 /// @author Zondax AG
 library CommonTypes {
     /// @dev Protocol byte values
     /// @notice These constants represent the byte value for each protocol.
-    ///         For more information see the Filecoin documentation: 
+    ///         For more information see the Filecoin documentation:
     ///         https://docs.filecoin.io/smart-contracts/filecoin-evm-runtime/address-types
     bytes1 constant PROTOCOL_ID = hex"00";
     bytes1 constant PROTOCOL_SECP256K1 = hex"01";
@@ -39,7 +38,7 @@ library CommonTypes {
 
     /// @dev Protocols address lengths
     /// @notice These constants represent the address lengths for each protocol.
-    ///         For more information see the Filecoin specification: 
+    ///         For more information see the Filecoin specification:
     ///         https://spec.filecoin.io/#section-appendix
     uint256 constant MIN_PROTOCOL_ID_ADDRESS_LENGTH = 1;
     uint256 constant MAX_PROTOCOL_ID_ADDRESS_LENGTH = 11;
