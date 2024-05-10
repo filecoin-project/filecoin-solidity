@@ -84,8 +84,8 @@ library MarketTypes {
     /// @param ids returned storage deal IDs.
     /// @param valid_deals represent all the valid deals.
     struct PublishStorageDealsReturn {
-        uint64[] ids;
         bytes valid_deals;
+        uint64[] ids;
     }
 
     /// @param piece_cid PieceCID.
@@ -116,8 +116,8 @@ library MarketTypes {
     /// @param proposal Proposal
     /// @param client_signature the signature signed by the client.
     struct ClientDealProposal {
-        DealProposal proposal;
         bytes client_signature;
+        DealProposal proposal;
     }
 
     struct MarketDealNotifyParams {
