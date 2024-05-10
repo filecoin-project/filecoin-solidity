@@ -50,18 +50,18 @@ library DataCapTypes {
     /// @param amount a non-negative amount to transfer.
     /// @param operator_data Arbitrary data to pass on via the receiver hook.
     struct TransferParams {
+        bytes operator_data;
         CommonTypes.FilAddress to;
         CommonTypes.BigInt amount;
-        bytes operator_data;
     }
 
     /// @param from_balance the balance of from_address.
     /// @param to_balance the balance of to_address.
     /// @param recipient_data data returned from receive hook.
     struct TransferReturn {
+        bytes recipient_data;
         CommonTypes.BigInt from_balance;
         CommonTypes.BigInt to_balance;
-        bytes recipient_data;
     }
 
     /// @param from the address to send DataCap Token.
@@ -69,10 +69,10 @@ library DataCapTypes {
     /// @param amount a non-negative amount to transfer.
     /// @param operator_data arbitrary data to pass on via the receiver hook.
     struct TransferFromParams {
+        bytes operator_data;
         CommonTypes.FilAddress from;
         CommonTypes.FilAddress to;
         CommonTypes.BigInt amount;
-        bytes operator_data;
     }
 
     /// @param from_balance the balance of from_address.
@@ -80,10 +80,10 @@ library DataCapTypes {
     /// @param allowance the remaining allowance of owner address.
     /// @param recipient_data data returned from receive hook.
     struct TransferFromReturn {
+        bytes recipient_data;
         CommonTypes.BigInt from_balance;
         CommonTypes.BigInt to_balance;
         CommonTypes.BigInt allowance;
-        bytes recipient_data;
     }
 
     /// @param operator the  wallet address of the operator.

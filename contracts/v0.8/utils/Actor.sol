@@ -190,7 +190,7 @@ library Actor {
     /// @param method_num id of the method from the actor to call
     /// @param codec how the request data passed as argument is encoded
     /// @param raw_request encoded arguments to be passed in the call
-    /// @dev it requires the id to be bigger than 99, as singleton actors are smaller than that
+    /// @dev it requires the id to be smaller than 99, as singleton actors are smaller than that
     function callNonSingletonByIDReadOnly(
         CommonTypes.FilActorId target,
         uint256 method_num,
