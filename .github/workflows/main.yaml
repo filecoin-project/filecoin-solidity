@@ -10,10 +10,9 @@ jobs:
         timeout-minutes: 30
         runs-on: ubuntu-latest
         container:
-          image: golang:1.21.7-bullseye
+            image: golang:1.21.7-bullseye
 
         steps:
-
             - name: Install node
               uses: actions/setup-node@v2
               with:
@@ -49,9 +48,9 @@ jobs:
 
             - name: Compilation
               run: |
-                cd testing
-                rustup target add wasm32-unknown-unknown
-                cargo build
+                  cd testing
+                  rustup target add wasm32-unknown-unknown
+                  cargo build
 
             - name: Test-Account
               run: cd testing && cargo test account -- --nocapture
