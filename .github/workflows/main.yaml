@@ -1,0 +1,96 @@
+name: "Main"
+on:
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    api-tests:
+        name: "API tests"
+        timeout-minutes: 30
+        runs-on: ubuntu-latest
+        container:
+          image: golang:1.21.7-bullseye
+
+        steps:
+
+            - name: Install node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "20.0.0"
+
+            - name: Install yarn
+              run: npm install -g yarn
+
+            - name: Checkout repo
+              uses: actions/checkout@main
+              with:
+                  submodules: "true"
+
+            - name: Install other dependencies
+              run: |
+                  rm /bin/sh && ln -s /bin/bash /bin/sh
+                  cat /etc/os-release
+                  apt-get update
+                  apt-get -y install hwloc jq pkg-config bzr ocl-icd-opencl-dev
+                  apt install zsh -y
+                  make install_solc_linux
+                  yarn install
+                  ls -1 /usr/lib/*/libhwloc.so.* | head -n 1 | xargs -n1 -I {} ln -s {} /usr/lib/libhwloc.so
+
+            - name: Install Rust
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: nightly
+                  override: true
+
+            - name: Build Contracts
+              run: make build
+
+            - name: Compilation
+              run: |
+                cd testing
+                rustup target add wasm32-unknown-unknown
+                cargo build
+
+            - name: Test-Account
+              run: cd testing && cargo test account -- --nocapture
+
+            - name: Test-Address
+              run: cd testing && cargo test address -- --nocapture
+
+            - name: Test-Send
+              run: cd testing && cargo test send_test -- --nocapture
+
+            - name: Test-BigInts
+              run: cd testing && cargo test bigints_test -- --nocapture
+
+            - name: Test-Leb128
+              run: cd testing && cargo test leb128 -- --nocapture
+
+            - name: Test-Deserialize
+              run: cd testing && cargo test deserialize_params_tests -- --nocapture
+
+            - name: Test-MarketCbor
+              run: cd testing && cargo test market_cbor_tests -- --nocapture
+
+            - name: Test-CborDecode
+              run: cd testing && cargo test cbor_decode_test -- --nocapture
+
+            - name: Test-FRC0042
+              run: cd testing  && cargo run --example methodnum
+
+            - name: Test-VerifReg
+              run: cd testing && cargo test verifreg_test -- --nocapture
+
+            - name: Test-Power
+              run: cd testing && cargo test power_test -- --nocapture
+
+            - name: Test-Miner
+              run: cd testing && cargo test miner_test -- --nocapture
+
+            - name: Test-Market
+              run: cd testing && cargo test market_test -- --nocapture
+
+            - name: Test-SolcVersions
+              run: chmod +x ./testing/smoke_tests.sh && ./testing/smoke_tests.sh
