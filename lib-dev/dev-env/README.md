@@ -48,16 +48,23 @@ Enter into the container from VS Code (recommended), or run:
 docker exec -it lotus /bin/bash
 ```
 
-Install Solc
+Initialize dependencies
 
 ```
-make install_solc_linux
+make deps_install
 ```
 
-For more control, run (for `localnet`):
+For `localnet` network run:
 
 ```
-./lib-dev/dev-env/1_clean-start-localnet.sh
+make start_localnet
+```
+
+**Note: the localnet setup needs to completely finish before running hardhat tests**
+If it hasn't finished yet, you will receive:
+
+```
+ERR: Cannot run tests - Localnet setup is still running.
 ```
 
 For both **network** = `calibnet` || `localnet`, run:

@@ -227,3 +227,5 @@ install-opencl:
 	sudo apt-get update
 	sudo apt-get install ocl-icd-opencl-dev
 
+deps_install: install_solc_linux
+	yarn install
