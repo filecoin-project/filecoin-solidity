@@ -30,7 +30,7 @@ const SUPPORTED_NETWORKS = {
         blockGasLimit: 1_000_000_000,
     },
     calibnet: {
-        url: "https://api.calibration.node.glif.io/rpc/v1",
+        url: "https://calibration.filfox.info/rpc/v1",
         chainId: 314159,
         accounts: [process.env.ETH_PK],
     },

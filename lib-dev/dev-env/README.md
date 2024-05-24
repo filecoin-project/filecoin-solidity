@@ -42,7 +42,17 @@ Set up the container
 docker compose up
 ```
 
-Enter into the container from VS Code.
+Enter into the container from VS Code (recommended), or run:
+
+```
+docker exec -it lotus /bin/bash
+```
+
+Install Solc
+
+```
+make install_solc_linux
+```
 
 For more control, run (for `localnet`):
 

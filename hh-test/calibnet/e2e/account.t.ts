@@ -5,7 +5,7 @@ import { CommonTypes, AccountTypes } from "../../../typechain-types/contracts/v0
 
 import * as utils from "../../utils"
 
-describe("Account Test", () => {
+describe.only("Account Test", () => {
     const DBG_TESTS = {}
     let currentTestName: string
 
@@ -33,12 +33,17 @@ const test1 = async (testName: string) => {
 
     const { deployer } = await utils.performGeneralSetupOnCalibnet()
 
-    const user = utils.lotus.importDefaultWallets()
-
     const message =
         "8eabea2a4001061ac4c9fe3c517725b8829b159149a863b2a2320cc628d026a871d3cb34947371f384a9eb49ff9bd56a019fa70e10c06ac5ca93df3c1d6f54d540c57cbe2f5209cafdc12146d5d59172dd4d8359015e10584fa6327de0ce5a6a"
 
-    const signature = utils.lotus.signMessage(user.fil.address, message)
+    //note: the following code snippet is the way the `signature` variable value was generated
+    const user = utils.lotus.importDefaultWallets()
+    const _signature = utils.lotus.signMessage(user.fil.address, message)
+
+    const signature =
+        "02b179ef5bdedaffffdd5a8c245c7e3a9629329b7870ee56eff12dbbc5479cebaae70233d708b37d1ff57ccab813c22aa80a9ea5d8fd8df5364d3dc71e024e1ffd872d87c2c60cab54966aac4f6b1fee4b0b3c663dde7d6d525a26f57e569452c5"
+
+    expect(_signature).to.eq(signature)
 
     dbg(`Deploying contracts... (account)`)
 
@@ -54,7 +59,7 @@ const test1 = async (testName: string) => {
 
     const _sig = Uint8Array.from([...bytes.slice(1)])
 
-    const target = user.fil.idAddress
+    const target = BigInt(process.env.F3_ID)
 
     const params: AccountTypes.AuthenticateMessageParamsStruct = {
         signature: _sig,
