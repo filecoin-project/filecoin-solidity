@@ -5,7 +5,7 @@ import { CommonTypes, AccountTypes } from "../../../typechain-types/contracts/v0
 
 import * as utils from "../../utils"
 
-describe.only("Account Test", () => {
+describe("Account Test", () => {
     const DBG_TESTS = {}
     let currentTestName: string
 

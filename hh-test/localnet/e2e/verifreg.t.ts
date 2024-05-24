@@ -5,7 +5,7 @@ import { VerifRegTypes, CommonTypes, VerifRegApiTest } from "../../../typechain-
 
 import * as utils from "../../utils"
 
-describe.only("Verifreg Test", () => {
+describe("Verifreg Test", () => {
     const DBG_TESTS = {}
     let currentTestName: string
 
