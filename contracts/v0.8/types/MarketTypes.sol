@@ -116,8 +116,8 @@ library MarketTypes {
     /// @param proposal Proposal
     /// @param client_signature the signature signed by the client.
     struct ClientDealProposal {
-        bytes client_signature;
         DealProposal proposal;
+        bytes client_signature;
     }
 
     struct MarketDealNotifyParams {
