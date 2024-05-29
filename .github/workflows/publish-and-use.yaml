@@ -1,0 +1,44 @@
+name: "Publish & use NPM package"
+
+on:
+    release:
+        types:
+            - created
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: "20"
+            - name: Install dependencies
+              run: |
+                  yarn install
+                  make install_solc_linux
+            - name: Compile contract file
+              run: make
+            - uses: JS-DevTools/npm-publish@v3
+              with:
+                  token: ${{ secrets.NPM_TOKEN }}
+
+    lib-install-use:
+        runs-on: ubuntu-latest
+        needs: ["publish"]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: "20"
+            - name: Checkout repo
+              uses: actions/checkout@main
+              with:
+                  submodules: "true"
+            - name: Install from NPM registry
+              run: |
+                  rm -rf hardhat.config.ts package.json
+                  cd .github/test-api-use
+                  yarn add filecoin-solidity-api
+                  yarn install 
+                  npx hardhat compile

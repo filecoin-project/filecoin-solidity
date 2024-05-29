@@ -1,121 +1,86 @@
 name: "Security checks"
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+    pull_request:
+        branches:
+            - master
 
 jobs:
-  account:
-    name: "Account API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_account_api
+    security-tests-part-1:
+        name: "API Security tests - part 1"
+        timeout-minutes: 30
+        runs-on: ubuntu-latest
+        steps:
+            - name: Install node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "20.0.0"
 
-  power:
-    name: "Power API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_power_api
+            - name: Install yarn
+              run: npm install -g yarn
 
-  verifreg:
-    name: "VerifReg API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_verifreg_api
+            - name: Checkout repo
+              uses: actions/checkout@main
+              with:
+                  submodules: "true"
 
-  market:
-    name: "Market API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_market_api
+            - name: Install other dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get -y install hwloc jq pkg-config bzr ocl-icd-opencl-dev
+                  sudo apt install zsh -y
+                  yarn install
 
-  miner:
-    name: "Miner API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_miner_api
+            - name: Install mythril
+              run: pip3 install mythril
 
-  datacap:
-    name: "DataCap API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_datacap_api
+            - name: Run checks on Account API
+              run: make security_account_api
 
-  send:
-    name: "Send API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_send_api
+            - name: Run checks on Market API
+              run: make security_market_api
 
-  precompiles:
-    name: "Precompiles API: security checks"
-    timeout-minutes: 20
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          submodules: 'false'
-      - name: Install mythril
-        run: pip3 install mythril
-      - name: Run checks
-        run:  make security_precompiles_api
+            - name: Run checks on Miner API
+              run: make security_miner_api
+
+            - name: Run checks on VerifReg API
+              run: make security_verifreg_api
+
+    security-tests-part-2:
+        name: "API Security tests - part 2"
+        timeout-minutes: 30
+        runs-on: ubuntu-latest
+        steps:
+            - name: Install node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "20.0.0"
+
+            - name: Install yarn
+              run: npm install -g yarn
+
+            - name: Checkout repo
+              uses: actions/checkout@main
+              with:
+                  submodules: "true"
+
+            - name: Install other dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get -y install hwloc jq pkg-config bzr ocl-icd-opencl-dev
+                  sudo apt install zsh -y
+                  yarn install
+
+            - name: Install mythril
+              run: pip3 install mythril
+
+            - name: Run checks on Power API
+              run: make security_power_api
+
+            - name: Run checks on Datacap API
+              run: make security_datacap_api
+
+            - name: Run checks on Send API
+              run: make security_send_api
+
+            - name: Run checks on Precompiles API
+              run: make security_precompiles_api
