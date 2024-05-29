@@ -48,8 +48,8 @@ jobs:
 
             - name: Clean up disk space
               run: |
-                  sudo apt-get clean
-                  sudo rm -rf /var/log/*.log
+                  apt-get clean
+                  rm -rf /var/log/*.log
                   df -h
 
             - name: Compilation
