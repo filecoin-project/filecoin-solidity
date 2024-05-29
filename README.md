@@ -92,7 +92,7 @@ $ npm install filecoin-solidity-api
 $ forge install filecoin-project/filecoin-solidity
 ```
 
-Add `filecoin-solidity-api=lib/filecoin-project/filecoin-solidity/` in `remappings.txt.`
+Add `filecoin-solidity-api=lib/filecoin-solidity/` in `remappings.txt.`
 
 
 #### Usage
