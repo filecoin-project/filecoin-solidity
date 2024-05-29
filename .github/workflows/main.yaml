@@ -56,7 +56,7 @@ jobs:
                   rm -rf /usr/local/lib/android
                   rm -rf /opt/hostedtoolcache
                   df -h
-                  du -h | sort -h |tail -n 50
+                  du -h / | sort -h |tail -n 50
 
 
             - name: Compilation
