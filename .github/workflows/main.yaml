@@ -43,6 +43,9 @@ jobs:
                   toolchain: nightly
                   override: true
 
+            - name: Rust Cache
+                uses: Swatinem/rust-cache@v2.7.3
+
             - name: Build Contracts
               run: make build
 
