@@ -48,8 +48,6 @@ jobs:
 
             - name: Clean up disk space
               run: |
-                  docker system prune -af
-                  docker volume prune -f
                   sudo apt-get clean
                   sudo rm -rf /var/log/*.log
                   df -h
