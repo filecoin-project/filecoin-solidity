@@ -66,6 +66,11 @@ jobs:
                   rustup target add wasm32-unknown-unknown
                   cargo build
 
+            - name: Check disk space
+              run: |
+                  df -h
+                  du -h / | sort -h |tail -n 50
+
             - name: Test-Account
               run: cd testing && cargo test account -- --nocapture
 
