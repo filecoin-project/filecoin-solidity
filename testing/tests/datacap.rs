@@ -464,14 +464,14 @@ fn datacap_tests() {
 
     let abi_encoded_call = api_contracts::datacap_test::transferCall{
         params: api_contracts::datacap_test::TransferParams{
+            operator_data: fixed_bytes!("").to_vec(),
             to: api_contracts::datacap_test::FilAddress{
                 data: vec![0x00_u8, 0xc8, 0x01]
             },
             amount: api_contracts::datacap_test::BigInt{
                 val: fixed_bytes!("1BC16D674EC80000").to_vec(),
                 neg: false
-            },
-            operator_data: fixed_bytes!("").to_vec()
+            }
         }
     }.abi_encode();
 
@@ -499,6 +499,7 @@ fn datacap_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     let expected_transfer_return = api_contracts::datacap_test::TransferReturn{
+        recipient_data: fixed_bytes!("").to_vec(),
         from_balance: api_contracts::datacap_test::BigInt{
             val: fixed_bytes!("361A08405E8FD80000").to_vec(),
             neg: false
@@ -506,8 +507,7 @@ fn datacap_tests() {
         to_balance: api_contracts::datacap_test::BigInt{
             val: fixed_bytes!("1BC16D674EC80000").to_vec(),
             neg: false
-        },
-        recipient_data: fixed_bytes!("").to_vec()
+        }
     };
 
     let abi_encoded_call = api_contracts::datacap_test::TransferReturn::abi_encode(&expected_transfer_return);
@@ -524,6 +524,7 @@ fn datacap_tests() {
 
     let abi_encoded_call = api_contracts::datacap_test::transfer_fromCall{
         params: api_contracts::datacap_test::TransferFromParams{
+            operator_data: fixed_bytes!("").to_vec(),
             from: api_contracts::datacap_test::FilAddress{
                 data: sender[0].1.to_bytes()
             },
@@ -533,8 +534,7 @@ fn datacap_tests() {
             amount: api_contracts::datacap_test::BigInt{
                 val: fixed_bytes!("3782DACE9D900000").to_vec(),
                 neg: false
-            },
-            operator_data: fixed_bytes!("").to_vec()
+            }
         }
     }.abi_encode();
 
@@ -564,6 +564,7 @@ fn datacap_tests() {
     assert_eq!(res.msg_receipt.exit_code.value(), 0);
 
     let expected_transfer_from = api_contracts::datacap_test::TransferFromReturn{
+        recipient_data: fixed_bytes!("").to_vec(),
         from_balance: api_contracts::datacap_test::BigInt{
             val: fixed_bytes!("35FE46D2F741100000").to_vec(),
             neg: false
@@ -575,8 +576,7 @@ fn datacap_tests() {
         allowance: api_contracts::datacap_test::BigInt{
             val: fixed_bytes!("02F050FE938943ACC427E27BB162700000").to_vec(),
             neg: false
-        },
-        recipient_data: fixed_bytes!("").to_vec()
+        }      
     };
 
     let abi_encoded_call = api_contracts::datacap_test::TransferFromReturn::abi_encode(&expected_transfer_from);
