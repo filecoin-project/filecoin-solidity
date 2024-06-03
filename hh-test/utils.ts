@@ -8,7 +8,7 @@ import * as rlp from "rlp"
 import * as keccak from "keccak"
 
 import "dotenv/config"
-import { writeFileSync } from "fs"
+import { readFileSync, writeFileSync } from "fs"
 
 const CID = require("cids")
 
@@ -125,23 +125,34 @@ export const lotus = {
     },
     importDefaultWallets: () => {
         const keyFilename = "tmp-000001.keygen"
-        try {
-            //note: try/catch because they are maybe already imported which will cause failure
 
-            writeFileSync(keyFilename, process.env.F3_PK)
-            _execute(`lotus wallet import ${keyFilename}`)
+        writeFileSync(keyFilename, process.env.F3_PK)
+
+        let f3Addr: string
+        //note: wallet could have been already imported, re-import will throw an error
+        try {
+            const output = _execute(`lotus wallet import ${keyFilename}`)
+            f3Addr = _extractWalletAddress(output, "imported key", "successfully!")
         } catch (err) {
-            // console.log("ERR (importDefaultWallets):", err)
+            const output = err.stderr.toString()
+            f3Addr = _extractWalletAddress(output, "'wallet-", "': key already exists")
         }
+
         _execute(`rm -rf ${keyFilename}`)
 
-        return { fil: { address: process.env.F3_ADDR, idAddress: BigInt(process.env.F3_ID) } }
+        return { fil: { address: f3Addr, idAddress: BigInt(process.env.F3_ID) } }
     },
 }
 
 const _execute = (cmd: string, options?: any) => {
     const _options = options == null ? { stdio: [] } : options
     return execSync(`${PREFIX_CMD} ${cmd}"`, _options).toString()
+}
+
+const _extractWalletAddress = (str: string, startStr: string, endStr: string) => {
+    const startIdx = str.indexOf(startStr) + startStr.length
+    let tmp = str.slice(startIdx)
+    return tmp.slice(0, tmp.indexOf(endStr))
 }
 
 const _getVerifier1RootKey = () => {
@@ -157,6 +168,7 @@ export const getProxyFactory = async (account) => {
 
     return pff
 }
+
 export const upgradeToDataCapProxy = async (account, contractFactory, contractAddress: string) => {
     const pff = await getProxyFactory(account)
 

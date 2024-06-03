@@ -42,12 +42,29 @@ Set up the container
 docker compose up
 ```
 
-Enter into the container from VS Code.
-
-For more control, run (for `localnet`):
+Enter into the container from VS Code (recommended), or run:
 
 ```
-./lib-dev/dev-env/1_clean-start-localnet.sh
+docker exec -it lotus /bin/bash
+```
+
+Initialize dependencies
+
+```
+make deps_install
+```
+
+For `localnet` network run:
+
+```
+make start_localnet
+```
+
+**Note: the localnet setup needs to completely finish before running hardhat tests**
+If it hasn't finished yet, you will receive:
+
+```
+ERR: Cannot run tests - Localnet setup is still running.
 ```
 
 For both **network** = `calibnet` || `localnet`, run:

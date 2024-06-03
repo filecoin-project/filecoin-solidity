@@ -2,6 +2,8 @@
 
 set -e
 
+touch localnet-setup-running.lock
+
 INTERNALS_DIR="/var/lib/fil-sol/lib-dev/dev-env/.internal"
 LOGPATH="$INTERNALS_DIR/dbg_log.txt"
 LOCALNET_JSON="$INTERNALS_DIR/localnet.json"
@@ -78,5 +80,7 @@ sleep 25
 
 lotus-miner run --nosync &
 sleep 15
+
+rm -rf localnet-setup-running.lock
 
 echo "DONE!" >> $LOGPATH

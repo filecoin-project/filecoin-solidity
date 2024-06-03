@@ -57,7 +57,7 @@ const test1 = async (testName: string) => {
     expect(actualSymbol).to.eq(expectedSymbol)
 
     const expectedTotalSupply = {
-        val: "0x0393110ee5ed51c00000",
+        val: "0x3635c9adc5dea00000", // 1000 FIL (1e21 attoFIL) minted during setup
         neg: false,
     }
 

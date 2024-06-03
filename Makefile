@@ -1,4 +1,6 @@
 
+hh_localnet_setup_lock := "localnet-setup-running.lock"
+
 ################ BUILD ################
 solc := "./bin/solc"
 
@@ -146,7 +148,7 @@ kill_localnet:
 	./lib-dev/dev-env/4_kill-lotus-ps.sh
 
 test_hh_localnet:
-	export HH_NETWORK=localnet && npx hardhat test
+	./lib-dev/dev-env/5_test-run-localnet.sh
 
 test_hh_calibnet:
 	export HH_NETWORK=calibnet && npx hardhat test
@@ -225,3 +227,5 @@ install-opencl:
 	sudo apt-get update
 	sudo apt-get install ocl-icd-opencl-dev
 
+deps_install: install_solc_linux
+	yarn install
