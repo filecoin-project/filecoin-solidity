@@ -20,3 +20,6 @@ typechain-types
 
 .openzeppelin/
 .env
+.vscode
+
+lib-dev/dev-env/.internal

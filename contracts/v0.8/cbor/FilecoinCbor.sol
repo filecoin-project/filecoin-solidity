@@ -50,7 +50,7 @@ library FilecoinCBOR {
         buf.buf.appendUint8(uint8(((MAJOR_TYPE_TAG << 5) | PAYLOAD_LEN_8_BITS)));
         buf.buf.appendUint8(TAG_TYPE_CID_CODE);
         // See https://ipld.io/specs/codecs/dag-cbor/spec/#links for explanation on 0x00 prefix.
-        buf.writeBytes(bytes.concat(hex'00', value));
+        buf.writeBytes(bytes.concat(hex"00", value));
     }
 
     function readCid(bytes memory cborData, uint byteIdx) internal pure returns (CommonTypes.Cid memory, uint) {
@@ -70,7 +70,7 @@ library FilecoinCBOR {
         CommonTypes.Cid memory ret;
         ret.data = new bytes(raw.length - 1);
         for (uint256 i = 1; i < raw.length; i++) {
-            ret.data[i-1] = raw[i];
+            ret.data[i - 1] = raw[i];
         }
 
         return (ret, byteIdx);

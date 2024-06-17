@@ -50,8 +50,7 @@ library MinerAPI {
             return (0, result.deserializeGetOwnerReturn());
         }
 
-        MinerTypes.GetOwnerReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, MinerTypes.GetOwnerReturn({owner: CommonTypes.FilAddress({data: hex""}), proposed: CommonTypes.FilAddress({data: hex""})}));
     }
 
     /// @notice Proposes or confirms a change of owner address.
@@ -96,8 +95,7 @@ library MinerAPI {
             return (0, result.deserializeBool());
         }
 
-        bool empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, false);
     }
 
     /// @dev For more information about sector sizes, please refer to https://spec.filecoin.io/systems/filecoin_mining/sector/#section-systems.filecoin_mining.sector
@@ -113,8 +111,7 @@ library MinerAPI {
             return (0, result.deserializeUint64());
         }
 
-        uint64 empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, uint64(0));
     }
 
     /// @notice This is calculated as actor balance - (vesting funds + pre-commit deposit + initial pledge requirement + fee debt)
@@ -136,8 +133,7 @@ library MinerAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Returns specified miner's vesting funds
@@ -150,8 +146,7 @@ library MinerAPI {
         if (exit_code == 0) {
             return (0, result.deserializeGetVestingFundsReturn());
         }
-        MinerTypes.VestingFunds[] memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, new MinerTypes.VestingFunds[](0));
     }
 
     /// @notice Proposes or confirms a change of beneficiary address.
@@ -298,8 +293,7 @@ library MinerAPI {
             return (0, result.deserializeArrayFilAddress());
         }
 
-        CommonTypes.FilAddress memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.FilAddress({data: hex""}));
     }
 
     /// @notice Returns miner's multiaddresses
@@ -314,8 +308,7 @@ library MinerAPI {
             return (0, result.deserializeGetMultiaddrsReturn());
         }
 
-        CommonTypes.FilAddress[] memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, new CommonTypes.FilAddress[](0));
     }
 
     /// @notice Withdraws balance for a specified miner
@@ -339,7 +332,6 @@ library MinerAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 }

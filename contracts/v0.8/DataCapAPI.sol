@@ -75,8 +75,7 @@ library DataCapAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Return the DataCap token balance for the wallet address.
@@ -92,8 +91,7 @@ library DataCapAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Return the allowance between owner and operator address.
@@ -109,8 +107,7 @@ library DataCapAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Transfers data cap tokens to an address.
@@ -178,8 +175,7 @@ library DataCapAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Decrease the DataCap token allowance that an operator controls of the owner's balance by the requested amount.
@@ -202,8 +198,7 @@ library DataCapAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Revoke the DataCap token allowance from the operator and set the operator's allowance in behave of owner/caller address to 0.
@@ -226,8 +221,7 @@ library DataCapAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Burn an amount of DataCap token from the owner/caller address, decreasing total token supply.
@@ -243,8 +237,7 @@ library DataCapAPI {
             return (0, result.deserializeArrayBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Burn an amount of DataCap token from the specified address (owner address), decrease the allowance of operator/caller, and decrease total token supply.
@@ -260,7 +253,9 @@ library DataCapAPI {
             return (0, result.deserializeBurnFromReturn());
         }
 
-        DataCapTypes.BurnFromReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (
+            exit_code,
+            DataCapTypes.BurnFromReturn({balance: CommonTypes.BigInt({val: hex"00", neg: false}), allowance: CommonTypes.BigInt({val: hex"00", neg: false})})
+        );
     }
 }
