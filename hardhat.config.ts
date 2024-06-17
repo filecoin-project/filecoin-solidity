@@ -30,9 +30,14 @@ const SUPPORTED_NETWORKS = {
         blockGasLimit: 1_000_000_000,
     },
     calibnet: {
-        url: "https://calibration.filfox.info/rpc/v1",
+        url: "https://filecoin-calibration.chainup.net/rpc/v1",
         chainId: 314159,
         accounts: [process.env.ETH_PK],
+    },
+    localhost: {
+        url: "http://0.0.0.0:8545",
+        chainId: 31337,
+        accounts: [process.env.ETH_PK], // Acc. 0 - npx hardhat node generated
     },
 }
 
