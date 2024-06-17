@@ -7,7 +7,7 @@ import { CHECKING_DEAL_IDS, EXPECTED_DEAL_INFO, getActualDealInfo } from "../_co
 
 import { MarketTypes, CommonTypes } from "../../../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
 
-describe("Market Tests (UUPS)", () => {
+describe.only("Market Tests (UUPS)", () => {
     const DBG_TESTS = {}
     let currentTestName: string
     let market, beacon, deployer
@@ -22,8 +22,9 @@ describe("Market Tests (UUPS)", () => {
         const marketContract = (await upgrades.deployProxy(MarketContractFactory, [], {
             kind: "uups",
             unsafeAllow: ["delegatecall"],
+            timeout: 10000000000,
         })) as unknown as any
-        await utils.defaultTxDelay()
+        await utils.defaultTxDelay(2)
 
         market = { eth: { contract: marketContract, address: await marketContract.getAddress() }, fil: { address: "" } }
         market.fil = { address: utils.ethAddressToFilAddress(market.eth.address) }
@@ -64,7 +65,7 @@ describe("Market Tests (UUPS)", () => {
 })
 
 const test1 = async (testName, { deployer, market }) => {
-    const dbg = utils.initDbg(testName)
+    const dbg = utils.init //dbg(testName)
 
     let amount = BigInt(10 ** 18)
 
@@ -75,7 +76,7 @@ const test1 = async (testName, { deployer, market }) => {
     const previousBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: targetByteAddr })
 
     await market.eth.contract.add_balance({ data: targetByteAddr }, amount, { gasLimit: 1_000_000_000, value: amount })
-    await utils.defaultTxDelay()
+    await utils.defaultTxDelay(4)
 
     let previousBalanceBigInt = BigInt(previousBalance.balance.val as string)
 
@@ -83,7 +84,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     let actualClientBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: targetByteAddr })
 
-    dbg("Adding Balance: " + JSON.stringify({ expectedClientBalance, actualClientBalance }))
+    //dbg("Adding Balance: " + JSON.stringify({ expectedClientBalance, actualClientBalance }))
 
     expect(actualClientBalance.balance.val).to.eq(expectedClientBalance.val)
     expect(actualClientBalance.balance.neg).to.eq(expectedClientBalance.neg)
@@ -94,7 +95,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     amount = BigInt(64)
     const tokenAmount = { val: Uint8Array.from([64]), neg: false }
-    dbg(JSON.stringify({ amount, tokenAmount }))
+    //dbg(JSON.stringify({ amount, tokenAmount }))
 
     const withdrawalParams: MarketTypes.WithdrawBalanceParamsStruct = {
         provider_or_client: { data: targetByteAddr },
@@ -102,9 +103,9 @@ const test1 = async (testName, { deployer, market }) => {
     }
 
     const withdrawTx = await market.eth.contract.withdraw_balance(withdrawalParams, { gasLimit: 1_000_000_000 })
-    dbg("withdrawTx: " + JSON.stringify({ withdrawTx }))
+    //dbg("withdrawTx: " + JSON.stringify({ withdrawTx }))
 
-    await utils.defaultTxDelay()
+    await utils.defaultTxDelay(4)
 
     previousBalanceBigInt = BigInt(balanceBeforeWithdrawal.val as string)
 
@@ -112,7 +113,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     actualClientBalance = await market.eth.contract.get_balance({ data: targetByteAddr })
 
-    dbg("Withdrawing Balance: " + JSON.stringify({ expectedClientBalance, actualClientBalance }))
+    //dbg("Withdrawing Balance: " + JSON.stringify({ expectedClientBalance, actualClientBalance }))
 
     expect(actualClientBalance.balance.val).to.eq(expectedClientBalance.val)
     expect(actualClientBalance.balance.neg).to.eq(expectedClientBalance.neg)
@@ -154,8 +155,9 @@ const _upgradeProxy = async ({ market, beacon, deployer }) => {
     await upgrades.upgradeProxy(market.eth.contract, MarketContractFactoryV2, {
         kind: "uups",
         unsafeAllow: ["delegatecall"],
+        timeout: 10000000000,
     })
-    await utils.defaultTxDelay()
+    await utils.defaultTxDelay(2)
 
     market.eth.contract = MarketContractFactoryV2.attach(market.eth.address)
 

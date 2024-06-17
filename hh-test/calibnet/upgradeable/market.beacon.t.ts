@@ -19,11 +19,11 @@ describe("Market Tests (Beacon)", () => {
 
         const MarketContractFactory = (await ethers.getContractFactory("MarketApiUpgradeableTest", deployer.eth.signer)) as any
 
-        beacon = await upgrades.deployBeacon(MarketContractFactory)
-        await utils.defaultTxDelay()
+        beacon = await upgrades.deployBeacon(MarketContractFactory, { timeout: 10000000000 })
+        await utils.defaultTxDelay(2)
 
-        const instance = await upgrades.deployBeaconProxy(beacon, MarketContractFactory, [])
-        await utils.defaultTxDelay()
+        const instance = await upgrades.deployBeaconProxy(beacon, MarketContractFactory, [], { timeout: 10000000000 })
+        await utils.defaultTxDelay(2)
 
         market = { eth: { contract: instance, address: await instance.getAddress() }, fil: { address: "" } }
         market.fil = { address: utils.ethAddressToFilAddress(market.eth.address) }
@@ -64,7 +64,7 @@ describe("Market Tests (Beacon)", () => {
 })
 
 const test1 = async (testName, { deployer, market }) => {
-    const dbg = utils.initDbg(testName)
+    const dbg = utils.init //dbg(testName)
 
     let amount = BigInt(10 ** 18)
 
@@ -75,7 +75,7 @@ const test1 = async (testName, { deployer, market }) => {
     const previousBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: targetByteAddr })
 
     await market.eth.contract.add_balance({ data: targetByteAddr }, amount, { gasLimit: 1_000_000_000, value: amount })
-    await utils.defaultTxDelay()
+    await utils.defaultTxDelay(2)
 
     let previousBalanceBigInt = BigInt(previousBalance.balance.val as string)
 
@@ -83,7 +83,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     let actualClientBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: targetByteAddr })
 
-    dbg("Adding Balance: " + JSON.stringify({ expectedClientBalance, actualClientBalance }))
+    //dbg(`Adding Balance:: expected: ${expectedClientBalance.val} | actual: ${actualClientBalance.balance.val}`)
 
     expect(actualClientBalance.balance.val).to.eq(expectedClientBalance.val)
     expect(actualClientBalance.balance.neg).to.eq(expectedClientBalance.neg)
@@ -94,7 +94,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     amount = BigInt(64)
     const tokenAmount = { val: Uint8Array.from([64]), neg: false }
-    dbg(JSON.stringify({ amount, tokenAmount }))
+    //dbg(JSON.stringify({ amount, tokenAmount: tokenAmount.val }))
 
     const withdrawalParams: MarketTypes.WithdrawBalanceParamsStruct = {
         provider_or_client: { data: targetByteAddr },
@@ -102,9 +102,9 @@ const test1 = async (testName, { deployer, market }) => {
     }
 
     const withdrawTx = await market.eth.contract.withdraw_balance(withdrawalParams, { gasLimit: 1_000_000_000 })
-    dbg("withdrawTx: " + JSON.stringify({ withdrawTx }))
+    //dbg("withdrawTx: " + JSON.stringify({ withdrawTx }))
 
-    await utils.defaultTxDelay()
+    await utils.defaultTxDelay(2)
 
     previousBalanceBigInt = BigInt(balanceBeforeWithdrawal.val as string)
 
@@ -112,7 +112,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     actualClientBalance = await market.eth.contract.get_balance({ data: targetByteAddr })
 
-    dbg("Withdrawing Balance: " + JSON.stringify({ expectedClientBalance, actualClientBalance }))
+    //dbg("Withdrawing Balance: " + JSON.stringify({ expectedClientBalance: expectedClientBalance.val, actualClientBalance: actualClientBalance.balance.val }))
 
     expect(actualClientBalance.balance.val).to.eq(expectedClientBalance.val)
     expect(actualClientBalance.balance.neg).to.eq(expectedClientBalance.neg)
@@ -151,8 +151,8 @@ const _upgradeProxy = async ({ market, beacon, deployer }) => {
     if (proxyUpgraded) return
 
     const MarketContractFactoryV2 = (await ethers.getContractFactory("MarketApiUpgradeableV2Test", deployer.eth.signer)) as any
-    await upgrades.upgradeBeacon(beacon, MarketContractFactoryV2)
-    await utils.defaultTxDelay()
+    await upgrades.upgradeBeacon(beacon, MarketContractFactoryV2, { timeout: 10000000000 })
+    await utils.defaultTxDelay(2)
 
     market.eth.contract = MarketContractFactoryV2.attach(market.eth.address)
 
