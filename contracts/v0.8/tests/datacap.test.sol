@@ -30,11 +30,6 @@ import "../utils/Errors.sol";
 /// @notice It imports the library and create a callable method for each method in the library
 /// @author Zondax AG
 contract DataCapApiTest {
-    address _n;
-    address _n2;
-    function dummy() public view returns (uint) {
-        return 1301;
-    }
     function name() public view returns (string memory) {
         (int256 exit_code, string memory result) = DataCapAPI.name();
 
