@@ -7,7 +7,7 @@ import * as utils from "../../utils"
 
 import { CHECKING_DEAL_IDS, EXPECTED_DEAL_INFO, getActualDealInfo } from "../_common"
 
-describe.only("Market Test", () => {
+describe("Market Test", () => {
     const DBG_TESTS = {}
     let currentTestName: string
 
