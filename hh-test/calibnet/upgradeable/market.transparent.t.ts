@@ -8,7 +8,7 @@ import { CHECKING_DEAL_IDS, EXPECTED_DEAL_INFO, getActualDealInfo } from "../_co
 import { MarketApiUpgradeableTest } from "../../../typechain-types"
 import { MarketTypes, CommonTypes } from "../../../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
 
-describe("Market Tests (Transparent)", () => {
+describe.only("Market Tests (Transparent)", () => {
     const DBG_TESTS = {}
     let currentTestName: string
     let market, deployer
@@ -24,7 +24,7 @@ describe("Market Tests (Transparent)", () => {
             timeout: 10000000000,
         })) as unknown as MarketApiUpgradeableTest
 
-        await utils.defaultTxDelay(2)
+        await utils.defaultTxDelay(3)
 
         market = { eth: { contract: marketContract, address: await marketContract.getAddress() }, fil: { address: "" } }
         market.fil = { address: utils.ethAddressToFilAddress(market.eth.address) }
@@ -76,7 +76,7 @@ const test1 = async (testName, { deployer, market }) => {
     const previousBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: targetByteAddr })
 
     await market.eth.contract.add_balance({ data: targetByteAddr }, amount, { gasLimit: 1_000_000_000, value: amount })
-    await utils.defaultTxDelay(2)
+    await utils.defaultTxDelay(3)
 
     let previousBalanceBigInt = BigInt(previousBalance.balance.val as string)
 
@@ -105,7 +105,7 @@ const test1 = async (testName, { deployer, market }) => {
     const withdrawTx = await market.eth.contract.withdraw_balance(withdrawalParams, { gasLimit: 1_000_000_000 })
     //dbg("withdrawTx: " + JSON.stringify({ withdrawTx }))
 
-    await utils.defaultTxDelay(2)
+    await utils.defaultTxDelay(3)
 
     previousBalanceBigInt = BigInt(balanceBeforeWithdrawal.val as string)
 
@@ -156,7 +156,7 @@ const _upgradeProxy = async ({ market, deployer }) => {
         unsafeAllow: ["delegatecall"],
         timeout: 10000000000,
     })
-    await utils.defaultTxDelay(2)
+    await utils.defaultTxDelay(3)
 
     proxyUpgraded = true
 }
