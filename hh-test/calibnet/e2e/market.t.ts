@@ -7,7 +7,7 @@ import * as utils from "../../utils"
 
 import { CHECKING_DEAL_IDS, EXPECTED_DEAL_INFO, getActualDealInfo } from "../_common"
 
-describe("Market Test", () => {
+describe.only("Market Test", () => {
     const DBG_TESTS = {}
     let currentTestName: string
 
@@ -51,7 +51,7 @@ const test1 = async (testName: string, { deployer, market }) => {
     const previousBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: targetByteAddr })
 
     await market.eth.contract.add_balance({ data: targetByteAddr }, amount, { gasLimit: 1_000_000_000, value: amount })
-    await utils.defaultTxDelay()
+    await utils.defaultTxDelay(2)
 
     let previousBalanceBigInt = BigInt(previousBalance.balance.val as string)
 
@@ -73,7 +73,7 @@ const test1 = async (testName: string, { deployer, market }) => {
     }
 
     await market.eth.contract.withdraw_balance(withdrawalParams, { gasLimit: 1_000_000_000 })
-    await utils.defaultTxDelay()
+    await utils.defaultTxDelay(2)
 
     previousBalanceBigInt = BigInt(actualClientBalance.balance.val as string)
 

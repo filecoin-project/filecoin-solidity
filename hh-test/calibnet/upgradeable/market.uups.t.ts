@@ -7,7 +7,7 @@ import { CHECKING_DEAL_IDS, EXPECTED_DEAL_INFO, getActualDealInfo } from "../_co
 
 import { MarketTypes, CommonTypes } from "../../../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
 
-describe.only("Market Tests (UUPS)", () => {
+describe("Market Tests (UUPS)", () => {
     const DBG_TESTS = {}
     let currentTestName: string
     let market, beacon, deployer

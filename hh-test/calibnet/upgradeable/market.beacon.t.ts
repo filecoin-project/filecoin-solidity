@@ -64,7 +64,7 @@ describe("Market Tests (Beacon)", () => {
 })
 
 const test1 = async (testName, { deployer, market }) => {
-    const dbg = utils.init //dbg(testName)
+    const dbg = utils.initDbg(testName)
 
     let amount = BigInt(10 ** 18)
 
@@ -83,7 +83,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     let actualClientBalance: MarketTypes.GetBalanceReturnStruct = await market.eth.contract.get_balance({ data: targetByteAddr })
 
-    //dbg(`Adding Balance:: expected: ${expectedClientBalance.val} | actual: ${actualClientBalance.balance.val}`)
+    dbg(`Adding Balance:: expected: ${expectedClientBalance.val} | actual: ${actualClientBalance.balance.val}`)
 
     expect(actualClientBalance.balance.val).to.eq(expectedClientBalance.val)
     expect(actualClientBalance.balance.neg).to.eq(expectedClientBalance.neg)
@@ -94,7 +94,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     amount = BigInt(64)
     const tokenAmount = { val: Uint8Array.from([64]), neg: false }
-    //dbg(JSON.stringify({ amount, tokenAmount: tokenAmount.val }))
+    dbg(JSON.stringify({ amount: amount.toString(), tokenAmount: tokenAmount.val }))
 
     const withdrawalParams: MarketTypes.WithdrawBalanceParamsStruct = {
         provider_or_client: { data: targetByteAddr },
@@ -102,7 +102,7 @@ const test1 = async (testName, { deployer, market }) => {
     }
 
     const withdrawTx = await market.eth.contract.withdraw_balance(withdrawalParams, { gasLimit: 1_000_000_000 })
-    //dbg("withdrawTx: " + JSON.stringify({ withdrawTx }))
+    dbg("withdrawTx: " + JSON.stringify({ withdrawTx }))
 
     await utils.defaultTxDelay(2)
 
@@ -112,7 +112,7 @@ const test1 = async (testName, { deployer, market }) => {
 
     actualClientBalance = await market.eth.contract.get_balance({ data: targetByteAddr })
 
-    //dbg("Withdrawing Balance: " + JSON.stringify({ expectedClientBalance: expectedClientBalance.val, actualClientBalance: actualClientBalance.balance.val }))
+    dbg("Withdrawing Balance: " + JSON.stringify({ expectedClientBalance: expectedClientBalance.val, actualClientBalance: actualClientBalance.balance.val }))
 
     expect(actualClientBalance.balance.val).to.eq(expectedClientBalance.val)
     expect(actualClientBalance.balance.neg).to.eq(expectedClientBalance.neg)
