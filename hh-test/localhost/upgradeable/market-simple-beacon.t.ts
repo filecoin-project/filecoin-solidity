@@ -28,8 +28,6 @@ describe.only("Market Tests (Beacon)", () => {
         beacon = await upgrades.deployBeacon(MarketContractFactory)
         await utils.defaultTxDelay()
 
-        // console.log({ beacon })
-
         const instance = await upgrades.deployBeaconProxy(beacon, MarketContractFactory, [])
         await utils.defaultTxDelay()
 
