@@ -295,7 +295,7 @@ export const defaultTxDelay = async (repeat?: number) => {
 
     for (let i = 0; i < _repeat; i += 1) {
         if (network.name === "localnet") {
-            await delay(10_000)
+            await delay(18_000)
         } else if (network.name === "calibnet") {
             await delay(33_000)
         } else if (network.name === "localhost") {

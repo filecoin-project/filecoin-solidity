@@ -151,7 +151,7 @@ test_hh_localnet:
 	./lib-dev/dev-env/5_test-run-localnet.sh
 
 test_hh_calibnet:
-	export HH_NETWORK=calibnet && npx hardhat test
+	export HH_NETWORK=calibnet && npx hardhat test --bail
 
 ################ TESTS SECURITY ################
 

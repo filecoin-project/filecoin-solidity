@@ -6,5 +6,5 @@ if [ -f $LOCK_FILE ]; then
     echo "ERR: Cannot run tests - Localnet setup is still running."
 else
     echo "Localnet setup done - Running tests ..."
-    export HH_NETWORK=localnet && npx hardhat test
+    export HH_NETWORK=localnet && npx hardhat test --bail
 fi
