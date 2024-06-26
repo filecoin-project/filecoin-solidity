@@ -73,7 +73,7 @@ const test1 = async (testName: string, { deployer, market }) => {
     }
 
     await market.eth.contract.withdraw_balance(withdrawalParams, { gasLimit: 1_000_000_000 })
-    await utils.defaultTxDelay(2)
+    await utils.defaultTxDelay(4)
 
     previousBalanceBigInt = BigInt(actualClientBalance.balance.val as string)
 
