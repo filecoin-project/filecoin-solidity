@@ -39,9 +39,7 @@ library PrecompilesAPI {
             revert FailToCallActor();
         }
 
-        uint256 actor_id = abi.decode(raw_response, (uint256));
-
-        return uint64(actor_id);
+        return uint64(abi.decode(raw_response, (uint256)));
     }
 
     /// @notice Returns the actor id from an eth address
@@ -55,9 +53,7 @@ library PrecompilesAPI {
             revert FailToCallActor();
         }
 
-        uint256 actor_id = abi.decode(raw_response, (uint256));
-
-        return uint64(actor_id);
+        return uint64(abi.decode(raw_response, (uint256)));
     }
 
     /// @notice Returns the actor's delegated address (f4) from an actor id

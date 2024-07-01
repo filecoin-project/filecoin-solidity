@@ -51,11 +51,14 @@ library BigInts {
     /// @notice allow to get a uint256 from a BigInt value.
     /// @notice If the value is negative, it will generate an error.
     /// @param value BigInt number
-    /// @return a uint256 value and flog that indicates whether it was possible to convert or not (the value overflows uint256 type)
+    /// @return a uint256 value and a flag that indicates whether it was possible to convert the arg. value
+    ///         (returns true if the arg. value overflows uint256 type)
     function toUint256(CommonTypes.BigInt memory value) internal view returns (uint256, bool) {
         if (value.neg) {
             revert NegativeValueNotAllowed();
         }
+
+        if (value.val.length == 0) value.val = hex"00";
 
         BigNumber memory max = BigNumbers.init(MAX_UINT, false);
         BigNumber memory bigNumValue = BigNumbers.init(value.val, value.neg);
@@ -69,8 +72,11 @@ library BigInts {
     /// @notice allow to get a int256 from a BigInt value.
     /// @notice If the value is grater than what a int256 can store, it will generate an error.
     /// @param value BigInt number
-    /// @return a int256 value and flog that indicates whether it was possible to convert or not (the value overflows int256 type)
+    /// @return a int256 value and a flag that indicates whether it was possible to convert or not
+    ///         (returns true if the arg. value overflows int256 type)
     function toInt256(CommonTypes.BigInt memory value) internal view returns (int256, bool) {
+        if (value.val.length == 0) value.val = hex"00";
+
         BigNumber memory max = BigNumbers.init(MAX_INT, false);
         BigNumber memory bigNumValue = BigNumbers.init(value.val, false);
         if (BigNumbers.gt(bigNumValue, max)) {

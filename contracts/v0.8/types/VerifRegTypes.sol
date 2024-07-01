@@ -101,13 +101,13 @@ library VerifRegTypes {
     /// @param term_start the epoch at which the piece was committed.
     /// @param sector ID of the provider's sector in which the data is committed.
     struct Claim {
+        bytes data;
         CommonTypes.FilActorId provider;
         CommonTypes.FilActorId client;
-        bytes data;
-        uint64 size;
         CommonTypes.ChainEpoch term_min;
         CommonTypes.ChainEpoch term_max;
         CommonTypes.ChainEpoch term_start;
         CommonTypes.FilActorId sector;
+        uint64 size;
     }
 }

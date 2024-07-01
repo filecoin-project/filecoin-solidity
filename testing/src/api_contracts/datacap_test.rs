@@ -17,30 +17,30 @@ sol!{
     }
 
     struct TransferParams {
+        bytes operator_data;
         FilAddress to;
         BigInt amount;
-        bytes operator_data;
     }
 
     struct TransferReturn {
+        bytes recipient_data;
         BigInt from_balance;
         BigInt to_balance;
-        bytes recipient_data;
     }
 
     struct TransferFromParams {
+        bytes operator_data;
         FilAddress from;
         FilAddress to;
         BigInt amount;
-        bytes operator_data;
     }
 
 
     struct TransferFromReturn {
+        bytes recipient_data;
         BigInt from_balance;
         BigInt to_balance;
         BigInt allowance;
-        bytes recipient_data;
     }
 
     struct IncreaseAllowanceParams {

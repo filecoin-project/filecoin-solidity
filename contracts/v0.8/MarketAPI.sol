@@ -79,8 +79,7 @@ library MarketAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Return the escrow balance and locked amount for an address.
@@ -96,8 +95,10 @@ library MarketAPI {
             return (0, result.deserializeGetBalanceReturn());
         }
 
-        MarketTypes.GetBalanceReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (
+            exit_code,
+            MarketTypes.GetBalanceReturn({balance: CommonTypes.BigInt({val: hex"00", neg: false}), locked: CommonTypes.BigInt({val: hex"00", neg: false})})
+        );
     }
 
     /// @notice This will be available after the deal is published (whether or not is is activated) and up until some undefined period after it is terminated.
@@ -118,8 +119,7 @@ library MarketAPI {
             return (0, result.deserializeGetDealDataCommitmentReturn());
         }
 
-        MarketTypes.GetDealDataCommitmentReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, MarketTypes.GetDealDataCommitmentReturn({data: hex"", size: 0}));
     }
 
     /// @notice Returns the client for the specified deal
@@ -135,8 +135,7 @@ library MarketAPI {
             return (0, result.deserializeUint64());
         }
 
-        uint64 empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, uint64(0));
     }
 
     /// @notice Returns the provider for a specified deal
@@ -157,8 +156,7 @@ library MarketAPI {
             return (0, result.deserializeUint64());
         }
 
-        uint64 empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, uint64(0));
     }
 
     /// @notice Returns the label of a storage deal
@@ -174,8 +172,7 @@ library MarketAPI {
             return (0, result.deserializeDealLabel());
         }
 
-        CommonTypes.DealLabel memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.DealLabel({data: hex"", isString: false}));
     }
 
     /// @notice Returns the start epoch and duration(in epochs) of a deal proposal.
@@ -191,8 +188,7 @@ library MarketAPI {
             return (0, result.deserializeGetDealTermReturn());
         }
 
-        MarketTypes.GetDealTermReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, MarketTypes.GetDealTermReturn({start: CommonTypes.ChainEpoch.wrap(0), duration: CommonTypes.ChainEpoch.wrap(0)}));
     }
 
     /// @notice Returns the total price that will be paid from the client to the provider for this deal.
@@ -213,8 +209,7 @@ library MarketAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice get the client collateral requirement for a deal
@@ -235,8 +230,7 @@ library MarketAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Returns the provider's collateral requirement for a deal
@@ -257,8 +251,7 @@ library MarketAPI {
             return (0, result.deserializeBytesBigInt());
         }
 
-        CommonTypes.BigInt memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, CommonTypes.BigInt({val: hex"00", neg: false}));
     }
 
     /// @notice Returns the verified flag for a deal
@@ -280,8 +273,7 @@ library MarketAPI {
             return (0, result.deserializeBool());
         }
 
-        bool empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, false);
     }
 
     /// @notice Fetches activation state for a deal.
@@ -301,8 +293,7 @@ library MarketAPI {
             return (0, result.deserializeGetDealActivationReturn());
         }
 
-        MarketTypes.GetDealActivationReturn memory empty_res;
-        return (exit_code, empty_res);
+        return (exit_code, MarketTypes.GetDealActivationReturn({activated: CommonTypes.ChainEpoch.wrap(0), terminated: CommonTypes.ChainEpoch.wrap(0)}));
     }
 
     /// @notice Publish a new set of storage deals (not yet included in a sector).

@@ -17,7 +17,32 @@ try {
 
     extractedSolcVersion = tomlData.split(`solc`)[1].split("=")[1].split("\n")[0].replaceAll(" ", "").replaceAll('"', "").replaceAll("'", "")
 } catch {
-    console.log({ error: "Solc version in foundry.toml not set" })
+    console.log({ error: "Solc version in foundry.toml not set (Hardhat needs to be run from projects root)" })
+    process.exit(1)
+}
+
+const HH_NETWORK = process.env.HH_NETWORK != undefined ? process.env.HH_NETWORK : "localnet"
+const SUPPORTED_NETWORKS = {
+    localnet: {
+        url: "http://127.0.0.1:1234/rpc/v1",
+        chainId: 31415926,
+        gas: 1_000_000_000,
+        blockGasLimit: 1_000_000_000,
+    },
+    calibnet: {
+        url: "https://filecoin-calibration.chainup.net/rpc/v1",
+        chainId: 314159,
+        accounts: [process.env.ETH_PK],
+    },
+    localhost: {
+        url: "http://0.0.0.0:8545",
+        chainId: 31337,
+        accounts: [process.env.ETH_PK], // Acc. 0 - npx hardhat node generated
+    },
+}
+
+if (HH_NETWORK === undefined || SUPPORTED_NETWORKS[HH_NETWORK] == null) {
+    console.log({ error: `HH_NETWORK env var (val:${HH_NETWORK}) not supported! (Must be: ${Object.keys(SUPPORTED_NETWORKS).join(" | ")})` })
     process.exit(1)
 }
 
@@ -31,27 +56,13 @@ const config: HardhatUserConfig = {
             },
         },
     },
-    networks: {
-        hardhat: {
-            blockGasLimit: 1000000000000000,
-        },
-        localnet: {
-            url: "http://127.0.0.1:1234/rpc/v1",
-            chainId: 31415926,
-            gas: 1_000_000_000,
-            blockGasLimit: 1_000_000_000,
-        },
-        calibnet: {
-            url: "https://api.calibration.node.glif.io/rpc/v1",
-            chainId: 314159,
-            accounts: [process.env.DEPLOYER_PK],
-        },
-    },
+    defaultNetwork: HH_NETWORK,
+    networks: SUPPORTED_NETWORKS,
     mocha: {
-        timeout: 100000000,
+        timeout: 1000000000,
     },
     paths: {
-        tests: "./hh-test",
+        tests: `./hh-test/${HH_NETWORK}`,
     },
 }
 

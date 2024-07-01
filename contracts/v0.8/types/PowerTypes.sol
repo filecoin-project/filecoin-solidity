@@ -40,9 +40,9 @@ library PowerTypes {
     struct CreateMinerParams {
         CommonTypes.FilAddress owner;
         CommonTypes.FilAddress worker;
-        RegisteredPoStProof window_post_proof_type;
         CommonTypes.FilAddress peer;
         CommonTypes.FilAddress[] multiaddrs;
+        RegisteredPoStProof window_post_proof_type;
     }
 
     /// @param id_address the canonical ID-based address for the actor.

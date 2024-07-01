@@ -1,4 +1,6 @@
 
+hh_localnet_setup_lock := "localnet-setup-running.lock"
+
 ################ BUILD ################
 solc := "./bin/solc"
 
@@ -131,6 +133,26 @@ test_deserialize: build
 test_address: build
 	cd testing && cargo test address -- --nocapture
 
+################ TESTS HARDHAT ################
+
+start_localnet:
+	./lib-dev/dev-env/1_clean-start-localnet.sh
+
+restart_localnet:
+	./lib-dev/dev-env/2_restart-localnet.sh
+
+simple_start_localnet:
+	./lib-dev/dev-env/3_clean-simple-start.sh
+
+kill_localnet:
+	./lib-dev/dev-env/4_kill-lotus-ps.sh
+
+test_hh_localnet:
+	./lib-dev/dev-env/5_test-run-localnet.sh
+
+test_hh_calibnet:
+	export HH_NETWORK=calibnet && npx hardhat test --bail
+
 ################ TESTS SECURITY ################
 
 security_account_api:
@@ -205,3 +227,5 @@ install-opencl:
 	sudo apt-get update
 	sudo apt-get install ocl-icd-opencl-dev
 
+deps_install: install_solc_linux
+	yarn install

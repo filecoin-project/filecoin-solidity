@@ -1,0 +1,33 @@
+version: "3.8"
+
+x-logging: &default-logging
+    options:
+        max-size: "20m"
+        max-file: "3"
+    driver: json-file
+
+networks:
+    default:
+        name: devnet
+
+services:
+    lotus:
+        container_name: lotus
+        image: ${FIL_SOL_DOCKER_IMG}
+        entrypoint: ["/go/_scripts/0_sleep.sh"]
+        healthcheck:
+            test: >-
+                curl -s -X POST -H "Content-Type: application/json"
+                --data '{ "jsonrpc": "2.0", "method": "Filecoin.ChainHead", "params": [], "id": 1 }'
+                http://lotus:1234/rpc/v0 || exit 1
+            interval: 20s
+            retries: 5
+            start_period: 6000s
+            timeout: 10s
+        ports:
+            - "1234:1234"
+            - "9090:9090"
+        restart: unless-stopped
+        logging: *default-logging
+        volumes:
+            - ../../.:/var/lib/fil-sol:rw
