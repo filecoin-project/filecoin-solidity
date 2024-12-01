@@ -26,7 +26,7 @@ import "./CommonTypes.sol";
 library AccountTypes {
     uint constant AuthenticateMessageMethodNum = 2643134072;
 
-    /// @param it should be a raw byte of signature, NOT a serialized signature object with a signatureType.
+    /// @param signature should be a raw byte of signature, NOT a serialized signature object with a signatureType.
     /// @param message The message which is signed by the corresponding account address.
     struct AuthenticateMessageParams {
         bytes signature;
