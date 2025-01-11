@@ -205,6 +205,7 @@ library VerifRegCBOR {
         capacity += Misc.getPrefixSize(1);
         capacity += Misc.getPrefixSize(termsLen);
         for (uint i = 0; i < termsLen; i++) {
+            capacity += Misc.getPrefixSize(3);
             capacity += Misc.getFilActorIdSize(terms[i].provider);
             capacity += Misc.getFilActorIdSize(terms[i].claim_id);
             capacity += Misc.getChainEpochSize(terms[i].term_max);
