@@ -237,6 +237,9 @@ library CBORDecoder {
         (maj, value, byteIdx) = parseCborHeader(cborData, byteIdx);
         require(maj == MajUnsignedInt, "invalid maj (expected MajUnsignedInt)");
 
+        // Validation to prevent truncation
+        require(value <= type(uint32).max, "value exceeds uint32 max limit");
+
         return (uint32(value), byteIdx);
     }
 
