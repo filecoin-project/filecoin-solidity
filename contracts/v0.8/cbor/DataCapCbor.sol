@@ -87,7 +87,10 @@ library DataCapCBOR {
         bytes memory tmp;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 3);
+        if (!(len == 3)) {
+            revert Errors.InvalidArrayLength(3, len);
+        }
+
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         ret.from_balance = tmp.deserializeBigInt();
@@ -133,7 +136,9 @@ library DataCapCBOR {
         bytes memory tmp;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 4);
+        if (!(len == 4)) {
+            revert Errors.InvalidArrayLength(4, len);
+        }
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         ret.from_balance = tmp.deserializeBigInt();
@@ -217,7 +222,10 @@ library DataCapCBOR {
         bytes memory tmp;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
+
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         ret.balance = tmp.deserializeBigInt();

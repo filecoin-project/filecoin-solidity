@@ -18,6 +18,8 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.17;
 
+import "./Errors.sol";
+
 // 	MajUnsignedInt = 0
 // 	MajSignedInt   = 1
 // 	MajByteString  = 2
@@ -64,7 +66,9 @@ library CBORDecoder {
 
         (maj, value, byteIdx) = parseCborHeader(cborData, byteIdx);
         require(maj == MajOther, "invalid maj (expected MajOther)");
-        assert(value == True_Type || value == False_Type);
+        if (!(value == True_Type || value == False_Type)) {
+            revert Errors.InvalidBooleanType();
+        }
 
         return (value != False_Type, byteIdx);
     }
@@ -118,7 +122,9 @@ library CBORDecoder {
 
         if (maj == MajTag) {
             (maj, len, byteIdx) = parseCborHeader(cborData, byteIdx);
-            assert(maj == MajByteString);
+            if (!(maj == MajByteString)) {
+                revert Errors.ExpectedMajorByteString();
+            }
         }
 
         uint max_len = byteIdx + len;
@@ -195,7 +201,9 @@ library CBORDecoder {
         require(maj == MajTag || maj == MajSignedInt, "invalid maj (expected MajTag or MajSignedInt)");
 
         if (maj == MajTag) {
-            assert(value == TagTypeNegativeBigNum);
+            if (!(value == TagTypeNegativeBigNum)) {
+                revert Errors.ExpectedNegativeBigNumTag();
+            }
 
             uint len;
             (maj, len, byteIdx) = parseCborHeader(cborData, byteIdx);
@@ -415,7 +423,9 @@ library CBORDecoder {
         }
 
         // extra in next 8 bytes
-        assert(low == 27);
+        if (!(low == 27)) {
+            revert Errors.ExpectedLowValue27();
+        }
         uint64 extra64 = sliceUInt64(cbor, byteIndex);
         byteIndex += 8;
         return (maj, extra64, byteIndex);

@@ -2,6 +2,13 @@
 pragma solidity ^0.8.18;
 
 library Errors {
+
+    error InvalidArrayLength(uint256 expected, uint256 actual);
+    error InvalidBooleanType();
+    error ExpectedMajorByteString();
+    error ExpectedNegativeBigNumTag();
+    error ExpectedLowValue27();
+
     error NonZeroExitCode(int256 exit_code, string description);
 
     // Exit codes

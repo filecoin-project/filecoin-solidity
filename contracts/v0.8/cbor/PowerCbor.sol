@@ -25,6 +25,7 @@ import "../types/CommonTypes.sol";
 import "../types/PowerTypes.sol";
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
+import "../utils/Errors.sol";
 import "./BigIntCbor.sol";
 import "./BytesCbor.sol";
 
@@ -76,7 +77,9 @@ library PowerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.id_address.data, byteIdx) = rawResp.readBytes(byteIdx);
         (ret.robust_address.data, byteIdx) = rawResp.readBytes(byteIdx);
@@ -92,7 +95,9 @@ library PowerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         bytes memory tmp;
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);

@@ -24,6 +24,7 @@ import "@ensdomains/buffer/contracts/Buffer.sol";
 
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
+import "../utils/Errors.sol";
 
 import "../types/CommonTypes.sol";
 
@@ -145,7 +146,10 @@ library FilecoinCBOR {
         bytes memory tmp;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 1);
+        if (!(len == 1)) {
+            revert Errors.InvalidArrayLength(1, len);
+        }
+
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         return tmp.deserializeBigInt();

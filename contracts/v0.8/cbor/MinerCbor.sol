@@ -30,6 +30,7 @@ import "../types/CommonTypes.sol";
 
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
+import "../utils/Errors.sol";
 
 /// @title This library is a set of functions meant to handle CBOR parameters serialization and return values deserialization for Miner actor exported methods.
 /// @author Zondax AG
@@ -69,7 +70,9 @@ library MinerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.owner.data, byteIdx) = rawResp.readBytes(byteIdx);
 
@@ -91,15 +94,21 @@ library MinerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.active.beneficiary.data, byteIdx) = rawResp.readBytes(byteIdx);
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 3);
+        if (!(len == 3)) {
+            revert Errors.InvalidArrayLength(3, len);
+        }
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         if (tmp.length > 0) {
@@ -119,7 +128,9 @@ library MinerCBOR {
 
         if (!rawResp.isNullNext(byteIdx)) {
             (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(len == 5);
+            if (!(len == 5)) {
+                revert Errors.InvalidArrayLength(5, len);
+            }
 
             (ret.proposed.new_beneficiary.data, byteIdx) = rawResp.readBytes(byteIdx);
 
@@ -151,7 +162,9 @@ library MinerCBOR {
         uint leni;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 1);
+        if (len != 1) {
+            revert Errors.InvalidArrayLength(1, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         vesting_funds = new MinerTypes.VestingFunds[](len);
@@ -229,7 +242,9 @@ library MinerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 1);
+        if (len != 1) {
+            revert Errors.InvalidArrayLength(1, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         multi_addrs = new CommonTypes.FilAddress[](len);
