@@ -31,14 +31,12 @@ import "../utils/CborDecode.sol";
 import "./FilecoinCbor.sol";
 import "./BigIntCbor.sol";
 import "./FilecoinCbor.sol";
-import "./BytesCbor.sol";
 
 /// @title This library is a set of functions meant to handle CBOR parameters serialization and return values deserialization for Market actor exported methods.
 /// @author Zondax AG
 library MarketCBOR {
     using CBOR for CBOR.CBORBuffer;
     using CBORDecoder for bytes;
-    using BytesCBOR for bytes;
 
     using BigIntCBOR for *;
     using FilecoinCBOR for *;
@@ -74,10 +72,10 @@ library MarketCBOR {
         assert(len == 2);
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
-        ret.balance = tmp.deserializeBytesBigInt();
+        ret.balance = tmp.deserializeBigInt();
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
-        ret.locked = tmp.deserializeBytesBigInt();
+        ret.locked = tmp.deserializeBigInt();
 
         return ret;
     }
@@ -299,14 +297,14 @@ library MarketCBOR {
 
         bytes memory storage_price_per_epoch_bytes;
         (storage_price_per_epoch_bytes, byteIdx) = rawResp.readBytes(byteIdx);
-        ret.storage_price_per_epoch = storage_price_per_epoch_bytes.deserializeBytesBigInt();
+        ret.storage_price_per_epoch = storage_price_per_epoch_bytes.deserializeBigInt();
 
         bytes memory provider_collateral_bytes;
         (provider_collateral_bytes, byteIdx) = rawResp.readBytes(byteIdx);
-        ret.provider_collateral = provider_collateral_bytes.deserializeBytesBigInt();
+        ret.provider_collateral = provider_collateral_bytes.deserializeBigInt();
 
         bytes memory client_collateral_bytes;
         (client_collateral_bytes, byteIdx) = rawResp.readBytes(byteIdx);
-        ret.client_collateral = client_collateral_bytes.deserializeBytesBigInt();
+        ret.client_collateral = client_collateral_bytes.deserializeBigInt();
     }
 }
