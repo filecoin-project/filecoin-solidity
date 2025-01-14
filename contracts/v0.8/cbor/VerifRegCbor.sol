@@ -29,12 +29,14 @@ import "../utils/Misc.sol";
 
 import "./BigIntCbor.sol";
 import "./FilecoinCbor.sol";
+import "./BytesCbor.sol";
 
 /// @title This library is a set of functions meant to handle CBOR parameters serialization and return values deserialization for VerifReg actor exported methods.
 /// @author Zondax AG
 library VerifRegCBOR {
     using CBOR for CBOR.CBORBuffer;
     using CBORDecoder for bytes;
+    using BytesCBOR for bytes;
     using BigIntCBOR for *;
     using FilecoinCBOR for *;
 
@@ -190,7 +192,7 @@ library VerifRegCBOR {
 
         bytes memory tmp;
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
-        ret.datacap_recovered = tmp.deserializeBigInt();
+        ret.datacap_recovered = tmp.deserializeBytesBigInt();
 
         return ret;
     }

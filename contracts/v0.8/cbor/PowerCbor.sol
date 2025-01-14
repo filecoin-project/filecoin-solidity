@@ -26,12 +26,14 @@ import "../types/PowerTypes.sol";
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
 import "./BigIntCbor.sol";
+import "./BytesCbor.sol";
 
 /// @title This library is a set of functions meant to handle CBOR parameters serialization and return values deserialization for Power actor exported methods.
 /// @author Zondax AG
 library PowerCBOR {
     using CBOR for CBOR.CBORBuffer;
     using CBORDecoder for bytes;
+    using BytesCBOR for bytes;
     using BigIntCBOR for CommonTypes.BigInt;
     using BigIntCBOR for bytes;
 
@@ -95,7 +97,7 @@ library PowerCBOR {
         bytes memory tmp;
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         if (tmp.length > 0) {
-            ret.raw_byte_power = tmp.deserializeBigInt();
+            ret.raw_byte_power = tmp.deserializeBytesBigInt();
         } else {
             ret.raw_byte_power = CommonTypes.BigInt(new bytes(0), false);
         }

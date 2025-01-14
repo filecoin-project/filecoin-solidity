@@ -23,6 +23,7 @@ import "solidity-cborutils/contracts/CBOR.sol";
 
 import "./BigIntCbor.sol";
 import "./FilecoinCbor.sol";
+import "./BytesCbor.sol";
 
 import "../types/MinerTypes.sol";
 import "../types/CommonTypes.sol";
@@ -35,6 +36,7 @@ import "../utils/Misc.sol";
 library MinerCBOR {
     using CBOR for CBOR.CBORBuffer;
     using CBORDecoder for bytes;
+    using BytesCBOR for bytes;
     using BigIntCBOR for *;
     using FilecoinCBOR for *;
 
@@ -101,14 +103,14 @@ library MinerCBOR {
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         if (tmp.length > 0) {
-            ret.active.term.quota = tmp.deserializeBigInt();
+            ret.active.term.quota = tmp.deserializeBytesBigInt();
         } else {
             ret.active.term.quota = CommonTypes.BigInt(new bytes(0), false);
         }
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         if (tmp.length > 0) {
-            ret.active.term.used_quota = tmp.deserializeBigInt();
+            ret.active.term.used_quota = tmp.deserializeBytesBigInt();
         } else {
             ret.active.term.used_quota = CommonTypes.BigInt(new bytes(0), false);
         }
@@ -123,7 +125,7 @@ library MinerCBOR {
 
             (tmp, byteIdx) = rawResp.readBytes(byteIdx);
             if (tmp.length > 0) {
-                ret.proposed.new_quota = tmp.deserializeBigInt();
+                ret.proposed.new_quota = tmp.deserializeBytesBigInt();
             } else {
                 ret.proposed.new_quota = CommonTypes.BigInt(new bytes(0), false);
             }
@@ -161,7 +163,7 @@ library MinerCBOR {
             (epoch, byteIdx) = rawResp.readChainEpoch(byteIdx);
             (tmp, byteIdx) = rawResp.readBytes(byteIdx);
 
-            amount = tmp.deserializeBigInt();
+            amount = tmp.deserializeBytesBigInt();
             vesting_funds[i] = MinerTypes.VestingFunds(epoch, amount);
         }
     }
