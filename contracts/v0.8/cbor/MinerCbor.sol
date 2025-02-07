@@ -23,18 +23,21 @@ import "solidity-cborutils/contracts/CBOR.sol";
 
 import "./BigIntCbor.sol";
 import "./FilecoinCbor.sol";
+import "./BytesCbor.sol";
 
 import "../types/MinerTypes.sol";
 import "../types/CommonTypes.sol";
 
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
+import "../utils/Errors.sol";
 
 /// @title This library is a set of functions meant to handle CBOR parameters serialization and return values deserialization for Miner actor exported methods.
 /// @author Zondax AG
 library MinerCBOR {
     using CBOR for CBOR.CBORBuffer;
     using CBORDecoder for bytes;
+    using BytesCBOR for bytes;
     using BigIntCBOR for *;
     using FilecoinCBOR for *;
 
@@ -67,7 +70,9 @@ library MinerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.owner.data, byteIdx) = rawResp.readBytes(byteIdx);
 
@@ -89,26 +94,32 @@ library MinerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.active.beneficiary.data, byteIdx) = rawResp.readBytes(byteIdx);
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 3);
+        if (!(len == 3)) {
+            revert Errors.InvalidArrayLength(3, len);
+        }
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         if (tmp.length > 0) {
-            ret.active.term.quota = tmp.deserializeBigInt();
+            ret.active.term.quota = tmp.deserializeBytesBigInt();
         } else {
             ret.active.term.quota = CommonTypes.BigInt(new bytes(0), false);
         }
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         if (tmp.length > 0) {
-            ret.active.term.used_quota = tmp.deserializeBigInt();
+            ret.active.term.used_quota = tmp.deserializeBytesBigInt();
         } else {
             ret.active.term.used_quota = CommonTypes.BigInt(new bytes(0), false);
         }
@@ -117,13 +128,15 @@ library MinerCBOR {
 
         if (!rawResp.isNullNext(byteIdx)) {
             (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(len == 5);
+            if (!(len == 5)) {
+                revert Errors.InvalidArrayLength(5, len);
+            }
 
             (ret.proposed.new_beneficiary.data, byteIdx) = rawResp.readBytes(byteIdx);
 
             (tmp, byteIdx) = rawResp.readBytes(byteIdx);
             if (tmp.length > 0) {
-                ret.proposed.new_quota = tmp.deserializeBigInt();
+                ret.proposed.new_quota = tmp.deserializeBytesBigInt();
             } else {
                 ret.proposed.new_quota = CommonTypes.BigInt(new bytes(0), false);
             }
@@ -149,7 +162,9 @@ library MinerCBOR {
         uint leni;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 1);
+        if (len != 1) {
+            revert Errors.InvalidArrayLength(1, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         vesting_funds = new MinerTypes.VestingFunds[](len);
@@ -161,7 +176,7 @@ library MinerCBOR {
             (epoch, byteIdx) = rawResp.readChainEpoch(byteIdx);
             (tmp, byteIdx) = rawResp.readBytes(byteIdx);
 
-            amount = tmp.deserializeBigInt();
+            amount = tmp.deserializeBytesBigInt();
             vesting_funds[i] = MinerTypes.VestingFunds(epoch, amount);
         }
     }
@@ -171,20 +186,25 @@ library MinerCBOR {
     /// @return cbor serialized data as bytes
     function serializeChangeWorkerAddressParams(MinerTypes.ChangeWorkerAddressParams memory params) internal pure returns (bytes memory) {
         uint256 capacity = 0;
+        uint64 addressCount = uint64(params.new_control_addresses.length);
+
+        // Safety check to prevent silent truncation
+        require(params.new_control_addresses.length == addressCount, "Address count exceeds uint64 limit");
 
         capacity += Misc.getPrefixSize(2);
         capacity += Misc.getBytesSize(params.new_worker.data);
-        capacity += Misc.getPrefixSize(uint256(params.new_control_addresses.length));
-        for (uint64 i = 0; i < params.new_control_addresses.length; i++) {
+        capacity += Misc.getPrefixSize(addressCount);
+
+        for (uint64 i = 0; i < addressCount; i++) {
             capacity += Misc.getBytesSize(params.new_control_addresses[i].data);
         }
         CBOR.CBORBuffer memory buf = CBOR.create(capacity);
 
         buf.startFixedArray(2);
         buf.writeBytes(params.new_worker.data);
-        buf.startFixedArray(uint64(params.new_control_addresses.length));
+        buf.startFixedArray(addressCount);
 
-        for (uint64 i = 0; i < params.new_control_addresses.length; i++) {
+        for (uint64 i = 0; i < addressCount; i++) {
             buf.writeBytes(params.new_control_addresses[i].data);
         }
 
@@ -222,7 +242,9 @@ library MinerCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 1);
+        if (len != 1) {
+            revert Errors.InvalidArrayLength(1, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         multi_addrs = new CommonTypes.FilAddress[](len);

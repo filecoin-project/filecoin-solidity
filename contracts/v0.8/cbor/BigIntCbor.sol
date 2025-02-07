@@ -49,6 +49,9 @@ library BigIntCBOR {
             return CommonTypes.BigInt(hex"00", false);
         }
 
+        // Validate the sign byte
+        require(raw[0] == 0x00 || raw[0] == 0x01, "Invalid sign byte: must be 0x00 or 0x01");
+
         bytes memory val = new bytes(raw.length - 1);
         bool neg = false;
 

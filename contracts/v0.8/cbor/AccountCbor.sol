@@ -25,6 +25,7 @@ import "../types/AccountTypes.sol";
 
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
+import "../utils/Errors.sol";
 
 /// @title This library is a set of functions meant to handle CBOR parameters serialization and return values deserialization for Account actor exported methods.
 /// @author Zondax AG
@@ -59,7 +60,10 @@ library AccountCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
+
 
         (ret.signature, byteIdx) = rawResp.readBytes(byteIdx);
         (ret.message, byteIdx) = rawResp.readBytes(byteIdx);

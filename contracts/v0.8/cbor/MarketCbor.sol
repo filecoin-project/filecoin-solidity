@@ -25,6 +25,7 @@ import "../types/MarketTypes.sol";
 import "../types/CommonTypes.sol";
 
 import "../utils/Misc.sol";
+import "../utils/Errors.sol";
 import "../utils/FilAddresses.sol";
 import "../utils/CborDecode.sol";
 
@@ -37,6 +38,7 @@ import "./FilecoinCbor.sol";
 library MarketCBOR {
     using CBOR for CBOR.CBORBuffer;
     using CBORDecoder for bytes;
+
     using BigIntCBOR for *;
     using FilecoinCBOR for *;
 
@@ -68,7 +70,9 @@ library MarketCBOR {
         bytes memory tmp;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
         ret.balance = tmp.deserializeBigInt();
@@ -88,7 +92,10 @@ library MarketCBOR {
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
 
-        if (len > 0) {
+        // Ensure the array length is exactly 2 or 0
+        require(len == 2 || len == 0, "Invalid array length: must be 0 or 2");
+
+        if (len == 2) {
             (ret.data, byteIdx) = rawResp.readBytes(byteIdx);
             (ret.size, byteIdx) = rawResp.readUInt64(byteIdx);
         } else {
@@ -107,7 +114,9 @@ library MarketCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.start, byteIdx) = rawResp.readChainEpoch(byteIdx);
         (ret.duration, byteIdx) = rawResp.readChainEpoch(byteIdx);
@@ -123,7 +132,9 @@ library MarketCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.activated, byteIdx) = rawResp.readChainEpoch(byteIdx);
         (ret.terminated, byteIdx) = rawResp.readChainEpoch(byteIdx);
@@ -195,7 +206,9 @@ library MarketCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         ret.ids = new uint64[](len);
@@ -226,7 +239,9 @@ library MarketCBOR {
         uint len;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.dealProposal, byteIdx) = rawResp.readBytes(byteIdx);
         (ret.dealId, byteIdx) = rawResp.readUInt64(byteIdx);
@@ -275,7 +290,9 @@ library MarketCBOR {
         bytes memory tmp;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 11);
+        if (!(len == 11)) {
+            revert Errors.InvalidArrayLength(11, len);
+        }
 
         (ret.piece_cid, byteIdx) = rawResp.readCid(byteIdx);
         (ret.piece_size, byteIdx) = rawResp.readUInt64(byteIdx);

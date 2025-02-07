@@ -26,15 +26,18 @@ import "../types/VerifRegTypes.sol";
 
 import "../utils/CborDecode.sol";
 import "../utils/Misc.sol";
+import "../utils/Errors.sol";
 
 import "./BigIntCbor.sol";
 import "./FilecoinCbor.sol";
+import "./BytesCbor.sol";
 
 /// @title This library is a set of functions meant to handle CBOR parameters serialization and return values deserialization for VerifReg actor exported methods.
 /// @author Zondax AG
 library VerifRegCBOR {
     using CBOR for CBOR.CBORBuffer;
     using CBORDecoder for bytes;
+    using BytesCBOR for bytes;
     using BigIntCBOR for *;
     using FilecoinCBOR for *;
 
@@ -72,10 +75,14 @@ library VerifRegCBOR {
         uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.batch_info.success_count, byteIdx) = rawResp.readUInt32(byteIdx);
 
@@ -84,7 +91,9 @@ library VerifRegCBOR {
 
         for (uint i = 0; i < len; i++) {
             (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(ilen == 2);
+            if (!(len == 2)) {
+                revert Errors.InvalidArrayLength(2, len);
+            }
 
             (ret.batch_info.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.batch_info.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
@@ -95,7 +104,9 @@ library VerifRegCBOR {
 
         for (uint i = 0; i < len; i++) {
             (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(ilen == 8);
+            if (!(len == 8)) {
+                revert Errors.InvalidArrayLength(8, len);
+            }
 
             (ret.claims[i].provider, byteIdx) = rawResp.readFilActorId(byteIdx);
             (ret.claims[i].client, byteIdx) = rawResp.readFilActorId(byteIdx);
@@ -163,7 +174,9 @@ library VerifRegCBOR {
         uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 3);
+        if (!(len == 3)) {
+            revert Errors.InvalidArrayLength(3, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         ret.considered = new CommonTypes.FilActorId[](len);
@@ -173,7 +186,9 @@ library VerifRegCBOR {
         }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.results.success_count, byteIdx) = rawResp.readUInt32(byteIdx);
 
@@ -182,7 +197,9 @@ library VerifRegCBOR {
 
         for (uint i = 0; i < len; i++) {
             (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(ilen == 2);
+            if (!(len == 2)) {
+                revert Errors.InvalidArrayLength(2, len);
+            }
 
             (ret.results.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.results.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
@@ -190,7 +207,7 @@ library VerifRegCBOR {
 
         bytes memory tmp;
         (tmp, byteIdx) = rawResp.readBytes(byteIdx);
-        ret.datacap_recovered = tmp.deserializeBigInt();
+        ret.datacap_recovered = tmp.deserializeBytesBigInt();
 
         return ret;
     }
@@ -205,6 +222,7 @@ library VerifRegCBOR {
         capacity += Misc.getPrefixSize(1);
         capacity += Misc.getPrefixSize(termsLen);
         for (uint i = 0; i < termsLen; i++) {
+            capacity += Misc.getPrefixSize(3);
             capacity += Misc.getFilActorIdSize(terms[i].provider);
             capacity += Misc.getFilActorIdSize(terms[i].claim_id);
             capacity += Misc.getChainEpochSize(terms[i].term_max);
@@ -232,7 +250,9 @@ library VerifRegCBOR {
         uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.success_count, byteIdx) = rawResp.readUInt32(byteIdx);
 
@@ -241,7 +261,9 @@ library VerifRegCBOR {
 
         for (uint i = 0; i < len; i++) {
             (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(ilen == 2);
+            if (!(len == 2)) {
+                revert Errors.InvalidArrayLength(2, len);
+            }
 
             (ret.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
@@ -284,7 +306,9 @@ library VerifRegCBOR {
         uint ilen;
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
         ret.considered = new CommonTypes.FilActorId[](len);
@@ -294,7 +318,9 @@ library VerifRegCBOR {
         }
 
         (len, byteIdx) = rawResp.readFixedArray(byteIdx);
-        assert(len == 2);
+        if (!(len == 2)) {
+            revert Errors.InvalidArrayLength(2, len);
+        }
 
         (ret.results.success_count, byteIdx) = rawResp.readUInt32(byteIdx);
 
@@ -303,7 +329,9 @@ library VerifRegCBOR {
 
         for (uint i = 0; i < len; i++) {
             (ilen, byteIdx) = rawResp.readFixedArray(byteIdx);
-            assert(ilen == 2);
+            if (!(len == 2)) {
+                revert Errors.InvalidArrayLength(2, len);
+            }
 
             (ret.results.fail_codes[i].idx, byteIdx) = rawResp.readUInt32(byteIdx);
             (ret.results.fail_codes[i].code, byteIdx) = rawResp.readUInt32(byteIdx);
