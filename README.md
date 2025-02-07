@@ -106,6 +106,19 @@ import { MarketTypes } from "filecoin-solidity-api/contracts/v0.8/types/MarketTy
 import { BigIntCBOR } from "filecoin-solidity-api/contracts/v0.8/cbor/BigIntCbor.sol";
 ```
 
+### **Suggested README Edits**  
+
+To integrate the FAQ smoothly into the **Filecoin Solidity Library** documentation, I recommend adding a **FAQ section** in a logical place within the README. A good spot is **after "How to Use It" and before "Complementary Lectures"**, as this is where developers will likely look for troubleshooting information.  
+
+---
+
+#### **📌 Frequently Asked Questions (FAQ)**
+If you have questions about **serialization, BigInt handling, allowances, actor calls, or other key concepts**, check out the **[Filecoin Solidity FAQ](./FAQ.md)**. It provides clear explanations to help you use this library efficiently.
+
+📌 **Read the FAQ here:** [FAQ.md](./FAQ.md)
+
+---
+
 ## Complementary lectures
 
 ### Introduction to Filecoin [:link:](https://docs.filecoin.io/intro/intro-to-filecoin/what-is-filecoin/)
